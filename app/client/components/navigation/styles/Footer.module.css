@@ -1,0 +1,141 @@
+/* This global function checks if a nav link has the .active class */
+/* .active is assigned by React Router automatically when clicked */
+.nav :global(.active),
+.nav li:hover,
+.logo:hover,
+.profile:hover {
+  .icon,
+  .btn {
+    color: #79fac5;
+  }
+
+  .logo-com {
+    filter: invert(83%) sepia(51%) saturate(383%) hue-rotate(90deg)
+      brightness(101%) contrast(96%);
+  }
+
+  .btn {
+    background-color: rgba(121, 250, 197, 0.3);
+    border: 2.5px solid #79fac5;
+  }
+
+  .img {
+    border: 3px solid #79fac5;
+  }
+}
+
+
+.profile {
+  display: flex;
+}
+
+
+.logo-long,
+.logo-com {
+  filter: invert(100%) sepia(3%) saturate(7040%) hue-rotate(280deg)
+    brightness(136%) contrast(98%);
+
+  animation: fadeIn 0.2s ease-in forwards;
+}
+
+.burger-open,
+.nav label,
+.logo-text-short {
+  display: none;
+}
+
+.main-nav {
+  display: flex;
+  position: relative;
+  gap: 1.75em;
+}
+
+.login-menu {
+  display: flex;
+  animation: fadeIn 0.2s ease-in forwards;
+}
+
+.fade-in-nav,
+.nav-bar {
+  animation: fadeIn 0.2s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 1%;
+  }
+
+  100% {
+    opacity: 100%;
+  }
+}
+
+@media (min-width: 640px) {
+
+  @keyframes fadeTransform {
+    0% {
+      opacity: 0;
+      transform: translateY(-5em);
+    }
+
+    100% {
+      opacity: 100%;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Width greater than 890px */
+@media (max-width: 890px) {
+  .main-nav,
+  .profile-stats,
+  .burger-close,
+  .login-menu,
+  .profile {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 5.45em;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    padding-top: 1em;
+    padding-bottom: 1em;
+
+    animation: fadeIn 0.2s ease-in forwards;
+  }
+  
+  /* Toggle mobile nav */
+  nav input:checked + .burger-label {
+    .burger-close {
+      display: flex;
+      border: transparent;
+    }
+
+    .burger-open {
+      display: none;
+      border: transparent;
+    }
+  }
+
+  .burger-open,
+  .nav label,
+  .logo-text-short {
+    display: flex;
+  }
+
+  .profile-stats {
+    display: flex;
+    animation: fadeIn 0.2s ease-in forwards;
+  }
+}
+
+@media (max-width: 540px) {
+  .profile-stats {
+    display: none;
+  }
+}

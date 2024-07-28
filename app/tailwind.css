@@ -1,3 +1,42 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Karla:wght@700&family=Lato&family=Lora:wght@700&family=Nunito:ital,wght@1,700&family=Overlock:ital,wght@1,900&family=Roboto+Serif:ital,opsz,wght@1,8..144,500&display=swap"); */
+
+/* 
+Roboto Serif: 500 Italic (So Medium font)
+Nunito: 700 Italic (So bold font)
+Overlock: 900 Italic (So Black-bold font)
+Lato: 400 Regular (So Regular font)
+Karla: 700 Regular (so bold font)
+Lora: 700 Regular (so bold font)
+
+font-family: 'Lato', sans-serif;
+font-family: 'Nunito', sans-serif;
+font-family: 'Overlock', sans-serif;
+font-family: 'Roboto Serif', serif;
+font-family: 'Karla', sans-serif;
+font-family: 'Lora', serif;
+*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Nunito";
+  font-weight: bold;
+  src: local("nunito"), url("fonts/Nunito-Bold.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  font-weight: regular;
+  src: local("lato"), url("fonts/Lato-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lora";
+  font-weight: regular;
+  src: local("lora"), url("fonts/Lora-Bold.woff2") format("woff2");
+  font-display: swap;
+}

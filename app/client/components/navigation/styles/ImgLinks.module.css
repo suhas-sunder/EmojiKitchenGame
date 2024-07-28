@@ -1,0 +1,14 @@
+.link-img {
+  filter: invert(16%) sepia(56%) saturate(3020%) hue-rotate(198deg)
+    brightness(91%) contrast(93%);
+}
+
+.link-list:hover .link-img {
+  filter: invert(21%) sepia(90%) saturate(1958%) hue-rotate(182deg)
+    brightness(100%) contrast(98%);
+}
+
+.link-list:hover span {
+  background-color: #0284c7;
+  border-color: #0284c7;
+}
