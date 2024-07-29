@@ -15,7 +15,7 @@ function Logo({ setShowMobileMenu }: PropTypes) {
       onClick={() => setShowMobileMenu(false)}
       aria-label="freetypingcamp.com logo as navigation link with highlight when hovered or clicked"
       to="/"
-      className={`${styles.logo} relative flex items-center py-1 font-overlock text-[1.25rem] font-black italic tracking-wider `}
+      className={`${styles.logo} relative flex items-center  font-overlock text-[1.25rem] font-black italic tracking-wider `}
     >
       <LogoText customStyle={styles["logo-long"]} />
       <LogoTextEnd customStyle={styles["logo-com"]} />

@@ -38,41 +38,41 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
         )}
         <NavLink
           onClick={() => setShowMobileMenu(false)}
-          to="/courses"
+          to="/games"
           className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
         >
-          Courses
+          Games
+          🎲
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          onClick={() => setShowMobileMenu(false)}
+          to="/emojis"
+          className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
+        >
+          Emojis
           😀
         </NavLink>
       </li>
       <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
-          to="/projects"
+          to="/text_faces"
           className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
         >
-          Projects
-          😀
+          Text Faces
+          📖
         </NavLink>
       </li>
       <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
-          to="/about"
+          to="/tools"
           className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
         >
-          About
-          💀
-        </NavLink>
-      </li>
-      <li>
-        <NavLink
-          onClick={() => setShowMobileMenu(false)}
-          to="/resources"
-          className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
-        >
-          Resources
-          😀
+          Tools
+          🪛
         </NavLink>
       </li>
     </ul>
@@ -109,7 +109,7 @@ export default function NavBar() {
 
   return (
     <nav
-      className={`${styles.nav} relative left-0 right-0 top-0 bg-defaultblue font-lora text-base tracking-widest text-white`}
+      className={`${styles.nav} relative left-0 right-0 top-0 bg-defaultblue font-lato text-base tracking-widest text-white`}
     >
       <div
         className={`${styles["fade-in-nav"]} m-auto flex  max-w-[1400px] px-5 items-center justify-between`}
