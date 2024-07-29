@@ -4,9 +4,9 @@ import { NavLink } from "react-router-dom";
 function Footer() {
   return (
     <nav
-      className={`w-full mt-[16em] bottom-0 flex gap-5 sm:gap-20 justify-center items-center py-1 sm:py-2 text-xs text-white  bg-slate-800`}
+      className={`w-full mt-[16em] bottom-0 flex gap-5 sm:gap-20 justify-center items-center py-1 sm:py-2 text-xs text-white  bg-purple-500 `}
     >
-      <div className="flex text-slate-300">
+      <div className="flex text-purple-300">
         <span>&copy; 2024 | EmojiTypingGame</span>{" "}
         <span className="hidden sm:flex"> - All Rights Reserved.</span>
       </div>

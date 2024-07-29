@@ -74,6 +74,9 @@ const iconComponents: Record<
   sailing: () => import("@mui/icons-material/SailingTwoTone"),
   movie: () => import("@mui/icons-material/MovieFilterTwoTone"),
   cake: () => import("@mui/icons-material/CakeTwoTone"),
+  copy: () => import("@mui/icons-material/ContentCopyRounded"),
+  dice: () => import("@mui/icons-material/CasinoRounded"),
+  deselect: () => import("@mui/icons-material/DoDisturbRounded"),
 };
 
 interface Props {
@@ -85,7 +88,7 @@ interface Props {
 export default function Icon({ title, customStyle, icon }: Props) {
   const [mounted, setMounted] = useState(false);
   const [IconComponent, setIconComponent] = useState<React.ElementType | null>(
-    null,
+    null
   );
 
   useEffect(() => {

@@ -109,7 +109,7 @@ export default function NavBar() {
 
   return (
     <nav
-      className={`${styles.nav} relative left-0 right-0 top-0 bg-defaultblue font-lato text-base tracking-widest text-white`}
+      className={`${styles.nav} relative left-0 right-0 top-0 bg-purple-800 font-lato text-base tracking-widest text-white`}
     >
       <div
         className={`${styles["fade-in-nav"]} m-auto flex  max-w-[1400px] px-5 items-center justify-between`}
