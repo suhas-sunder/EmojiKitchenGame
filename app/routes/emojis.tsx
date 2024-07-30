@@ -10,8 +10,6 @@ import {
 import localforage from "localforage";
 import cloudflareR2API from "../client/api/cloudflareR2API";
 import Icon from "../client/components/utils/other/Icon";
-import { useEffect, useState } from "react";
-import Paginate from "../client/components/ui/Paginate";
 
 export const meta: MetaFunction = () => {
   return [
@@ -109,26 +107,15 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 export default function Emojis() {
   const { filenames }: { filenames: { id: string; keys: string }[] } =
     useLoaderData<typeof loader>();
-  const [isClient, setIsClient] = useState(false); //App crashes when server side tries to run the react-paginate library so this checks if client side is ready before serving client-side code.
-
-  const itemsPerPage: number = 12;
-
-  const [paginatedItems, setPaginatedItems] = useState<
-    { id: string; keys: string }[]
-  >(filenames.slice(0, itemsPerPage));
 
   const pathname: string =
     useLocation().pathname?.split("/")?.at(-1)?.split("_")[0] || "";
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito">
       <Outlet />
       <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-9 mt-14 w-full max-w-[1200px] px-5">
-        {paginatedItems.map((filename) =>
+        {filenames.map((filename) =>
           filename.id !== pathname ? (
             <li
               key={filename?.id}
@@ -201,16 +188,6 @@ export default function Emojis() {
           ) : null
         )}
       </ul>
-      {isClient && (
-        <Paginate
-          itemsPerPage={itemsPerPage}
-          items={filenames}
-          setPaginatedItems={(items) =>
-            setPaginatedItems(items as { id: string; keys: string }[])
-          }
-          paginatedItems={paginatedItems}
-        />
-      )}
     </div>
   );
 }
