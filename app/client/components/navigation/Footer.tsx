@@ -1,10 +1,14 @@
 import { NavLink } from "react-router-dom";
 import styles from "./styles/NavBar.module.css";
+import { useLocation } from "@remix-run/react";
+
 //Used by App.tsx component
 function Footer() {
+  const pathname = useLocation().pathname;
+
   return (
     <nav
-      className={`${styles.nav} w-full fixed mt-[16em] bottom-0 flex gap-5 sm:gap-20 justify-center items-center py-1 sm:py-2 text-xs font-nunito  bg-purple-500 `}
+      className={`${styles.nav} w-full ${ pathname === "/" && "fixed"} mt-[16em] bottom-0 flex gap-5 sm:gap-20 justify-center items-center py-1 sm:py-2 text-xs font-nunito  bg-purple-500 `}
     >
       <div className="flex text-purple-200 gap-1 font-bold tracking-widest">
         <span>&copy; 2024</span> <span className="hidden md:flex"> | </span>

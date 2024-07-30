@@ -5,7 +5,6 @@ import { NavLink } from "react-router-dom";
 import styles from "./styles/NavBar.module.css";
 import Icon from "../utils/other/Icon";
 import Logo from "./Logo";
-import LogoImg from "../../../assets/images/logo_img.png";
 
 interface PropType {
   showMobileMenu?: boolean;
@@ -58,7 +57,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
       <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
-          to="/text_faces"
+          to="/text-faces"
           className={`relative flex items-center justify-center gap-2 tracking-[0.1em] ${styles.icon}`}
         >
           <span className={`${styles.icon}`}>Text ಥ_ಥ</span>
@@ -112,15 +111,7 @@ export default function NavBar() {
       <div
         className={`${styles["fade-in-nav"]} m-auto flex  max-w-[1400px] px-5 items-center justify-between`}
       >
-        <div className="flex gap-3">
-          <img
-            width={50}
-            height={50}
-            src={LogoImg}
-            alt="logo depicting a chef cooking with emoji as ingredients"
-          />
-          <Logo setShowMobileMenu={setShowMobileMenu} />
-        </div>
+        <Logo setShowMobileMenu={setShowMobileMenu} />
         <MainLinks
           showMobileMenu={showMobileMenu}
           setShowMobileMenu={setShowMobileMenu}

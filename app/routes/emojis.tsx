@@ -1,11 +1,17 @@
 import {
   ClientLoaderFunctionArgs,
   json,
+  Link,
   MetaFunction,
+  Outlet,
   useLoaderData,
+  useLocation,
 } from "@remix-run/react";
 import localforage from "localforage";
 import cloudflareR2API from "../client/api/cloudflareR2API";
+import Icon from "../client/components/utils/other/Icon";
+import { useEffect, useState } from "react";
+import Paginate from "../client/components/ui/Paginate";
 
 export const meta: MetaFunction = () => {
   return [
@@ -103,23 +109,45 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 export default function Emojis() {
   const { filenames }: { filenames: { id: string; keys: string }[] } =
     useLoaderData<typeof loader>();
+  const [isClient, setIsClient] = useState(false); //App crashes when server side tries to run the react-paginate library so this checks if client side is ready before serving client-side code.
+
+  const itemsPerPage: number = 12;
+
+  const [paginatedItems, setPaginatedItems] = useState<
+    { id: string; keys: string }[]
+  >(filenames.slice(0, itemsPerPage));
+
+  const pathname: string =
+    useLocation().pathname?.split("/")?.at(-1)?.split("_")[0] || "";
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
-    <div className="flex justify-center items-center">
-      <ul className="grid grid-cols-4 gap-6">
-        {filenames.map((filename, index) =>
-          index <= 12 ? (
+    <div className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito">
+      <Outlet />
+      <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-9 mt-14 w-full max-w-[1200px] px-5">
+        {paginatedItems.map((filename) =>
+          filename.id !== pathname ? (
             <li
-              title={
-                filename.keys.split("~")[0] + " " + filename.keys.split("~")[1]
-              }
-              aria-label={
-                filename.keys.split("~")[0] + " " + filename.keys.split("~")[1]
-              }
               key={filename?.id}
-              className="flex justify-center items-center"
+              className="flex flex-col gap-5 justify-center items-center border-2 border-purple-300 p-5 rounded-lg w-full min-h-[15em] text-center"
             >
+              <h2 className="uppercase font-lora">
+                {filename.keys.split("~")[0]} ~ (U+{filename.id.slice(1)})
+              </h2>
               <img
+                title={
+                  filename.keys.split("~")[0] +
+                  " " +
+                  filename.keys.split("~")[1]
+                }
+                aria-label={
+                  filename.keys.split("~")[0] +
+                  " " +
+                  filename.keys.split("~")[1]
+                }
                 width={50}
                 height={50}
                 loading="lazy"
@@ -132,10 +160,57 @@ export default function Emojis() {
                     : filename?.id.split("-").join("_")
                 }/emoji.svg`}
               />
+              <p className="capitalize  font-lora">
+                {" "}
+                {filename.keys.split("~")[1]}
+              </p>
+              <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center items-center">
+                <li className="flex gap-2 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
+                  <span>Copy</span>{" "}
+                  <span>
+                    <Icon icon="copy" />
+                  </span>
+                </li>
+                <li className="flex justify-between border-2 px-[0.9em] py-2 rounded-md border-rose-300 text-rose-500 cursor-pointer hover:border-rose-200 hover:text-rose-400">
+                  <span>Like</span>{" "}
+                  <span>
+                    <Icon icon="heart" customStyle="pr-[0.2em]" />
+                  </span>
+                </li>
+                <li className="col-span-2 mx-auto sm:col-span-1 ">
+                  <Link
+                    to={`/emojis/${
+                      filename?.id +
+                      "_✨" +
+                      filename.keys.split("~")[0] +
+                      "✨_" +
+                      filename.keys.split("~")[1].split(" ").join("-") +
+                      "-emoji"
+                    }`}
+                    className="flex justify-between border-2 px-3 py-2 rounded-md  border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400"
+                  >
+                    {" "}
+                    <span>View</span>{" "}
+                    <span>
+                      <Icon icon="viewPage" />
+                    </span>
+                  </Link>
+                </li>
+              </ul>
             </li>
           ) : null
         )}
       </ul>
+      {isClient && (
+        <Paginate
+          itemsPerPage={itemsPerPage}
+          items={filenames}
+          setPaginatedItems={(items) =>
+            setPaginatedItems(items as { id: string; keys: string }[])
+          }
+          paginatedItems={paginatedItems}
+        />
+      )}
     </div>
   );
 }
