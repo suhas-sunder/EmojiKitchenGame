@@ -8,7 +8,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function games() {
+export default function Games() {
   return (
     <div>games</div>
   )

@@ -7,6 +7,6 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function text_faces() {
+export default function TextFaces() {
   return <div>(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧</div>;
 }

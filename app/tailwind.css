@@ -41,6 +41,12 @@ font-family: 'Lora', serif;
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Overlock";
+  font-weight: bold;
+  src: local("lora"), url("fonts/Overlock-BlackItalic.woff2") format("woff2");
+  font-display: swap;
+}
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

@@ -9,7 +9,11 @@ import {
 } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import Icon from "../client/components/utils/other/Icon";
-interface emojiDataType {
+import FirstEmojiWindow from "../client/components/layout/FirstEmojiWindow";
+import SecondEmojiWindow from "../client/components/layout/SecondEmojiWindow";
+import ThirdEmojiWindow from "../client/components/layout/ThirdEmojiWindow";
+
+export interface emojiDataType {
   title: string;
   name: string;
   keywords: string[];
@@ -119,290 +123,125 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
+  const { filenames }: { filenames: { id: string; keys: string }[] } =
+    useLoaderData<typeof loader>();
   const [searchEmoji, setSearchEmoji] = useState<string>("");
-  const [searchSecondEmoji, setSearchSecondEmoji] = useState<string>("");
   const [emojiData, setEmojiData] = useState<emojiDataType>();
-  const [firstEmoji, setFirstEmoji] = useState<string>();
-  const [secondEmoji, setSecondEmoji] = useState<string>();
-  const [thirdEmoji, setThirdEmoji] = useState<{ code: string; baseUnicode: string; unicode: string }[]>();
+  const [firstEmoji, setFirstEmoji] = useState<string>("");
+  const [secondEmoji, setSecondEmoji] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  /**
-   * This function loads emoji data from the server or cache.
-   * It first checks if the emoji data is already cached in local storage.
-   * If it is, it returns the cached data.
-   * If it is not cached, it fetches the data from the server and caches it. *
-   * @param {string} emojiUnicode - The Unicode of the emoji to load.
-   * @returns {Promise<{ id: string, keys: string }[] | undefined>} - A promise that resolves to an array of emoji data objects, or undefined if there was an error.
-   */
-
-  const handleCacheEmojiData = async (emojiUnicode: string) => {
-    try {
-      // Check if the emoji data is already cached in local storage
-      const cachedEmojiData = await localforage.getItem<emojiDataType>(
-        emojiUnicode
-      );
-
-      // If the emoji data is cached, save it to state
-      if (cachedEmojiData) {
-        return cachedEmojiData;
-      } else {
-        // If the emoji data is not cached, fetch it from the server, cache it, and save it to state
-        const response = await cloudflareR2API
-          .get(
-            `/emojis/${
-              emojiUnicode.length < 9 ? emojiUnicode.slice(1) : emojiUnicode
-            }.json`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((response) => response.data);
-
-        if (response) {
-          await localforage.setItem(emojiUnicode, response);
-          return response;
-        }
-      }
-    } catch (error) {
-      // If there is an error fetching the emoji data, log the error
-      console.error("Error fetching emoji data:", error);
+  const handleComboImage = () => {
+    // If either of the selected emojis is not available, return an empty array
+    if (!firstEmoji || !secondEmoji) {
+      return [];
     }
-  };
 
-  const loadEmojiData = async (emojiUnicode: string) => {
-    if (emojiData?.unicode === emojiUnicode) return;
-    handleCacheEmojiData(emojiUnicode);
-  };
+    // Extract the baseUnicode from the first and second emojis
+    let firstEmojiBaseUnicode = firstEmoji.split("~")[0];
+    let secondEmojiBaseUnicode = secondEmoji.split("~")[0];
 
-  const handleDisplayCombos = async (emojiUnicode: string, emoji: string) => {
-    const emojiData = await handleCacheEmojiData(emojiUnicode);
-    setFirstEmoji(emojiUnicode + "~" + emoji);
+    //Adjust for special images that have a uniquely long unicode value
+    if (firstEmojiBaseUnicode.length >= 9)
+      firstEmojiBaseUnicode = "u" + firstEmojiBaseUnicode.split("-").join("-u");
 
-    setEmojiData(emojiData);
+    if (secondEmojiBaseUnicode.length >= 9)
+      secondEmojiBaseUnicode =
+        "u" + secondEmojiBaseUnicode.split("-").join("-u");
+
+    const filterComboSet = () => {
+      // Filter the combos based on the selected emojis
+      // The filter condition checks if the baseUnicode of the combo includes either of the baseUnicode of the selected emojis
+      return emojiData?.combos?.filter(
+        (combo) =>
+          (combo.baseUnicode.includes(firstEmojiBaseUnicode) &&
+            combo.unicode.endsWith(secondEmojiBaseUnicode)) ||
+          (combo.baseUnicode.includes(secondEmojiBaseUnicode) &&
+            combo.unicode.endsWith(firstEmojiBaseUnicode))
+      );
+    };
+    let filteredCombos = filterComboSet();
+
+    //Covers edge cases for wierdly formatted emojis codes
+    if (filteredCombos?.length === 0) {
+      firstEmojiBaseUnicode = firstEmojiBaseUnicode + "-ufe0f";
+      filteredCombos = filterComboSet();
+    }
+
+    //Covers edge cases for wierdly formatted emojis codes
+    if (filteredCombos?.length === 0) {
+      firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
+      secondEmojiBaseUnicode = secondEmojiBaseUnicode + "-ufe0f";
+      filteredCombos = filterComboSet();
+    }
+
+    //If no combo image exists, it means the first image was changed while a stale second image (not a combo of first) remains in state so clear second image from state.
+    if (
+      (filteredCombos && filteredCombos?.length > 1) ||
+      filteredCombos?.length === 0
+    ) {
+      setSecondEmoji("");
+      return null;
+    }
+
+    // The map function creates an image element for each combo
+    // The key of each image element is a combination of the combo's unicode, baseUnicode, and code
+    return Array.from(new Set(filteredCombos)).map((combo, index) =>
+      index === 0 ? (
+        <img
+          className="flex w-12 md:w-20"
+          key={`${combo.unicode}-${combo.baseUnicode}-${combo.code}-combo-img`}
+          loading="lazy"
+          alt={`Combination of two emojis ${combo.unicode}`}
+          src={`https://www.gstatic.com/android/keyboard/emojikitchen/${combo.code}/${combo.baseUnicode}/${combo.unicode}.png`}
+        />
+      ) : null
+    );
   };
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 100);
-
-    return () => clearTimeout(timeout);
+    setIsLoading(false);
   }, []);
 
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-3 justify-center items-center w-full max-w-[1500px] mx-auto">
-        <div className="flex flex-col h-[20em] lg:h-[53em] border-r  border-b sm:border-hidden ">
-          <input
-            type="search"
-            onChange={(e) => setSearchEmoji(e.target.value)}
-            placeholder={"🔍 Search First Emoji"}
-            className="flex  mx-5 border-2 border-purple-400 rounded-md py-1 my-2 px-5"
-          />
-          <ul
-            className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 scrollbar scrollbar-thumb-purple-500 hover:scrollbar-thumb-purple-400 ${
-              isLoading && "opacity-30"
-            }`}
-          >
-            {data.filenames.map((filename: { id: string; keys: string }) => {
-              return filename?.keys?.includes(searchEmoji.trim()) ||
-                searchEmoji === "" ? (
-                <li
-                  title={
-                    filename.keys.split("~")[0] +
-                    " " +
-                    filename.keys.split("~")[1]
-                  }
-                  aria-label={
-                    filename.keys.split("~")[0] +
-                    " " +
-                    filename.keys.split("~")[1]
-                  }
-                  key={filename?.id}
-                >
-                  <button
-                    onMouseEnter={() => loadEmojiData(filename.id)}
-                    onClick={() =>
-                      handleDisplayCombos(
-                        filename.id,
-                        filename.keys.split("~")[0] +
-                          "~" +
-                          filename.keys.split("~")[1]
-                      )
-                    }
-                    disabled={isLoading}
-                    className="flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400"
-                  >
-                    <img
-                      loading="lazy"
-                      alt={`Emoji of ${filename?.keys?.split("~")[0]} ${
-                        filename?.id
-                      }`}
-                      src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
-                        filename?.id?.length < 9
-                          ? filename?.id.slice(1)
-                          : filename?.id.split("-").join("_")
-                      }/emoji.svg`}
-                    />
-                  </button>
-                </li>
-              ) : null;
-            })}
-          </ul>
-        </div>
-        <div className="flex flex-col h-[20em] lg:h-[53em] border-l border-b sm:border-hidden ">
-          <input
-            type="search"
-            onChange={(e) => setSearchSecondEmoji(e.target.value)}
-            placeholder="🔍 Search Second Emoji"
-            className="flex  mx-5 border-2 border-purple-400 rounded-md py-1 my-2 px-5"
-          />
-          <ul className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1  scrollbar scrollbar-thumb-purple-500 hover:scrollbar-thumb-purple-400">
-            {emojiData?.combos
-              ? [
-                  ...new Set(
-                    emojiData.combos.map((combos) => combos.baseUnicode)
-                  ),
-                ].map((secondEmojiFilename) => {
-                  const keywords = data.filenames.filter(
-                    (filename) => filename.id === secondEmojiFilename
-                  )[0]?.keys;
-
-                  return keywords?.includes(searchSecondEmoji.trim()) ? (
-                    <li
-                      title={
-                        keywords.split("~")[0] + " " + keywords.split("~")[1]
-                      }
-                      aria-label={
-                        keywords.split("~")[0] + " " + keywords.split("~")[1]
-                      }
-                      key={secondEmojiFilename + "combo-pair"}
-                    >
-                      <button
-                        onClick={() =>
-                          setSecondEmoji(
-                            secondEmojiFilename +
-                              "~" +
-                              keywords.split("~")[0] +
-                              "~" +
-                              keywords.split("~")[1]
-                          )
-                        }
-                        className={`flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400`}
-                      >
-                        <img
-                          loading="lazy"
-                          alt={`Emoji of ${
-                            keywords?.split("~")[0]
-                          } ${secondEmojiFilename}`}
-                          src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
-                            secondEmojiFilename.length <= 13
-                              ? secondEmojiFilename.split("-")[0].slice(1)
-                              : secondEmojiFilename
-                                  .split("-")
-                                  .join("_")
-                                  .split("u")
-                                  .join("")
-                          }/emoji.svg`}
-                        />
-                      </button>
-                    </li>
-                  ) : null;
-                })
-              : data?.filenames?.map(
-                  (filename: { id: string; keys: string }) => {
-                    return filename?.keys?.includes(searchSecondEmoji.trim()) ||
-                      searchSecondEmoji === "" ? (
-                      <li key={filename?.id}>
-                        <button
-                          onClick={() => setSecondEmoji(filename.id)}
-                          disabled={!emojiData?.combos}
-                          className={`flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400 opacity-30`}
-                        >
-                          <img
-                            loading="lazy"
-                            alt={`Emoji of ${filename?.keys?.split("~")[0]} ${
-                              filename.id
-                            }`}
-                            src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
-                              filename.id.length < 9
-                                ? filename.id.slice(1)
-                                : filename.id.split("-").join("_")
-                            }/emoji.svg`}
-                          />
-                        </button>
-                      </li>
-                    ) : null;
-                  }
-                )}
-          </ul>
-        </div>
-        <div className="flex flex-col h-[20em] col-span-2 lg:col-span-1 lg:h-[53em] border-l border-b sm:border-hidden ">
-          <ul
-            className={`${
-              emojiData?.combos
-                ? "grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5"
-                : "flex h-full"
-            } justify-center items-center overflow-y-auto py-6 px-1 scrollbar scrollbar-thumb-rose-400 hover:scrollbar-thumb-rose-300`}
-          >
-            {emojiData?.combos ? (
-              emojiData?.combos?.map(
-                (filename: {
-                  code: string;
-                  baseUnicode: string;
-                  unicode: string;
-                }) => (
-                  <li
-                    title={filename?.unicode.split("_").join(" + ")}
-                    aria-label={filename?.unicode.split("_").join(" + ")}
-                    key={
-                      filename?.code + filename?.baseUnicode + filename?.unicode
-                    }
-                  >
-                    <button
-                      className={`hover:scale-110 p-1 m-1 border-2 rounded-lg border-transparent hover:border-purple-500 ${
-                        firstEmoji && secondEmoji && "opacity-30"
-                      }`}
-                    >
-                      <img
-                        loading="lazy"
-                        alt={`Combination of two emojis ${filename?.unicode}`}
-                        src={`https://www.gstatic.com/android/keyboard/emojikitchen/${filename?.code}/${filename?.baseUnicode}/${filename?.unicode}.png`}
-                      />
-                    </button>
-                  </li>
-                )
-              )
-            ) : (
-              <li className="flex flex-col justify-center items-center w-full gap-8 sm:gap-12 font-nunito text-xl sm:text-2xl px-5 text-center tracking-widest leading-loose text-rose-500">
-                <span className="hidden lg:flex flex-col scale-[3] md:scale-[2.5]">
-                  👈🏼🧑🏼‍🍳
-                </span>
-                <span className="lg:hidden flex flex-col scale-[3] md:scale-[2.5]">
-                  ☝🏼🧑🏼‍🍳
-                </span>{" "}
-                <span>
-                  {/* eslint-disable-next-line react/no-unescaped-entities */}
-                  Select an emoji from the first column & start cookin'!
-                </span>
-              </li>
-            )}
-          </ul>
-        </div>
+        <FirstEmojiWindow
+          emojiData={emojiData}
+          isLoading={isLoading}
+          filenames={filenames}
+          searchEmoji={searchEmoji}
+          setSearchEmoji={setSearchEmoji}
+          handleComboImage={handleComboImage}
+          setEmojiData={setEmojiData}
+          setFirstEmoji={setFirstEmoji}
+          firstEmoji={firstEmoji}
+          setSecondEmoji={setSecondEmoji}
+          secondEmoji={secondEmoji}
+        />
+        <SecondEmojiWindow
+          emojiData={emojiData}
+          isLoading={isLoading}
+          filenames={filenames}
+          firstEmoji={firstEmoji}
+          setSecondEmoji={setSecondEmoji}
+        />
+        <ThirdEmojiWindow
+          emojiData={emojiData}
+          handleComboImage={handleComboImage}
+          firstEmoji={firstEmoji}
+          setSecondEmoji={setSecondEmoji}
+          secondEmoji={secondEmoji}
+        />
       </div>
-      <ul className="flex fixed bottom-8 justify-center items-center w-full h-[12em] gap-6 bg-white">
+      <ul className="flex fixed bottom-6 justify-center items-center w-full h-[8em] sm:h-[12em] gap-2 sm:gap-6 bg-white">
         <li
           title={firstEmoji?.split("~")[1] + " " + firstEmoji?.split("~")[2]}
           className="flex relative border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-3"
         >
           {firstEmoji && (
             <img
-              className="flex w-20"
+              className="flex w-12 md:w-20"
               alt={`Emoji of ${firstEmoji?.split("~")[1]} ${
                 firstEmoji?.split("~")[2]
               }`}
@@ -413,27 +252,32 @@ export default function Index() {
               }/emoji.svg`}
             />
           )}
-          <div className="absolute -bottom-8 scale-[.80] flex gap-3">
+          <div className="absolute -bottom-10 scale-[.80] flex gap-3">
             <button className="hover:scale-110">
-              <Icon icon="copy" customStyle="text-purple-500" title="Copy Emoji" />
+              <Icon
+                icon="copy"
+                customStyle="text-purple-500 p-2"
+                title="Copy Emoji"
+              />
             </button>
             <button
               className="hover:scale-110"
               onClick={() => {
                 setFirstEmoji("");
                 setSecondEmoji("");
+                setEmojiData(undefined);
               }}
             >
               <Icon
                 icon="deselect"
-                customStyle="text-purple-500"
+                customStyle="text-purple-500 p-2"
                 title="Deselect Emoji"
               />
             </button>
             <button className="hover:scale-110">
               <Icon
                 icon="dice"
-                customStyle="text-purple-500"
+                customStyle="text-purple-500 p-2"
                 title="Random Second Emoji"
               />
             </button>
@@ -446,7 +290,7 @@ export default function Index() {
         >
           {secondEmoji && (
             <img
-              className="flex w-20"
+              className="flex w-12 md:w-20"
               alt={`Emoji of ${secondEmoji?.split("~")[1]} ${
                 secondEmoji?.split("~")[2]
               }`}
@@ -457,9 +301,13 @@ export default function Index() {
               }/emoji.svg`}
             />
           )}
-          <div className="absolute -bottom-8 scale-[.80] flex gap-3">
+          <div className="absolute -bottom-10 scale-[.80] flex gap-3">
             <button className="hover:scale-110">
-              <Icon icon="copy" customStyle="text-purple-500" title="Copy Emoji" />
+              <Icon
+                icon="copy"
+                customStyle="text-purple-500 p-2"
+                title="Copy Emoji"
+              />
             </button>
             <button
               className="hover:scale-110"
@@ -467,25 +315,29 @@ export default function Index() {
             >
               <Icon
                 icon="deselect"
-                customStyle="text-purple-500"
+                customStyle="text-purple-500 p-2"
                 title="Deselect Emoji"
               />
             </button>
             <button className="hover:scale-110">
               <Icon
                 icon="dice"
-                customStyle="text-purple-500"
+                customStyle="text-purple-500 p-2"
                 title="Random Second Emoji"
               />
             </button>
           </div>
         </li>
         <li className="-translate-y-3">🟰</li>
-
         <li className="flex border-2 rounded-2xl justify-center items-center p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] -translate-y-3">
-          <div className="absolute -bottom-8 scale-[.80] flex gap-3">
+          {handleComboImage()}
+          <div className="absolute -bottom-10 scale-[.80] flex gap-3">
             <button className="hover:scale-110">
-              <Icon icon="copy" customStyle="text-rose-400" title="Copy Emoji" />
+              <Icon
+                icon="copy"
+                customStyle="text-rose-400 p-2"
+                title="Copy Emoji"
+              />
             </button>
             <button
               className="hover:scale-110"
@@ -493,14 +345,14 @@ export default function Index() {
             >
               <Icon
                 icon="deselect"
-                customStyle="text-rose-400"
+                customStyle="text-rose-400 p-2"
                 title="Deselect Emoji"
               />
             </button>
             <button className="hover:scale-110">
               <Icon
                 icon="dice"
-                customStyle="text-rose-400"
+                customStyle="text-rose-400 p-2"
                 title="Random Second Emoji"
               />
             </button>

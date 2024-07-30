@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom";
 import styles from "./styles/NavBar.module.css";
 import Icon from "../utils/other/Icon";
 import Logo from "./Logo";
+import LogoImg from "../../../assets/images/logo_img.png";
 
 interface PropType {
   showMobileMenu?: boolean;
@@ -19,9 +20,9 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
       id={showMobileMenu ? "mobile-links" : "main-links"}
       className={`text-white  ${
         showMobileMenu ? styles["mobile-nav"] : styles["main-nav"]
-      }`}
+      } pr-14`}
     >
-      <li>
+      {/* <li>
         {showMobileMenu && (
           <NavLink
             onClick={() => setShowMobileMenu(false)}
@@ -41,40 +42,37 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
           to="/games"
           className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
         >
-          Games
-          🎲
+          Games 🎲
         </NavLink>
-      </li>
+      </li> */}
       <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/emojis"
-          className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
+          className={`relative flex items-center justify-center gap-2 tracking-[0.1em] `}
         >
-          Emojis
-          😀
+          <span className={`${styles.icon}`}> Emojis 😀</span>
         </NavLink>
       </li>
+
       <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/text_faces"
-          className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
+          className={`relative flex items-center justify-center gap-2 tracking-[0.1em] ${styles.icon}`}
         >
-          Text Faces
-          📖
+          <span className={`${styles.icon}`}>Text ಥ_ಥ</span>
         </NavLink>
       </li>
-      <li>
+      {/* <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/tools"
           className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
         >
-          Tools
-          🪛
+          Tools 🪛
         </NavLink>
-      </li>
+      </li> */}
     </ul>
   );
 }
@@ -109,12 +107,20 @@ export default function NavBar() {
 
   return (
     <nav
-      className={`${styles.nav} relative left-0 right-0 top-0 bg-purple-800 font-lato text-base tracking-widest text-white`}
+      className={`${styles.nav} relative left-0 right-0 top-0 bg-purple-800 font-nunito text-base tracking-widest text-white`}
     >
       <div
         className={`${styles["fade-in-nav"]} m-auto flex  max-w-[1400px] px-5 items-center justify-between`}
       >
-        <Logo setShowMobileMenu={setShowMobileMenu} />
+        <div className="flex gap-3">
+          <img
+            width={50}
+            height={50}
+            src={LogoImg}
+            alt="logo depicting a chef cooking with emoji as ingredients"
+          />
+          <Logo setShowMobileMenu={setShowMobileMenu} />
+        </div>
         <MainLinks
           showMobileMenu={showMobileMenu}
           setShowMobileMenu={setShowMobileMenu}

@@ -7,6 +7,6 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function termsofservice() {
+export default function TermsOfService() {
   return <div>games</div>;
 }

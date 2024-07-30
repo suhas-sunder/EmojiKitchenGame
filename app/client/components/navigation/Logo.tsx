@@ -1,7 +1,5 @@
 import { NavLink } from "react-router-dom";
 import styles from "./styles/NavBar.module.css";
-import LogoText from "../svg/LogoText";
-import LogoTextEnd from "../svg/LogoTextEnd";
 
 interface PropTypes {
   setShowMobileMenu: (value: boolean) => void;
@@ -17,8 +15,16 @@ function Logo({ setShowMobileMenu }: PropTypes) {
       to="/"
       className={`${styles.logo} relative flex items-center  font-overlock text-[1.25rem] font-black italic tracking-wider `}
     >
-      <LogoText customStyle={styles["logo-long"]} />
-      <LogoTextEnd customStyle={styles["logo-com"]} />
+      <p
+        className={`font-overlock text-xl italic font-bold  ${styles["logo-long"]}`}
+      >
+        EmojiKitchenGame
+      </p>
+      <p
+        className={`font-overlock text-xl italic font-bold ${styles["logo-com"]}`}
+      >
+        .com
+      </p>
     </NavLink>
   );
 }

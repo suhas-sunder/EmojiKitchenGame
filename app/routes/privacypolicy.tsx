@@ -7,6 +7,6 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function privacypolicy() {
+export default function PrivacyPolicy() {
   return <div>games</div>;
 }
