@@ -1,0 +1,14 @@
+.title-svg {
+  filter: invert(36%) sepia(67%) saturate(756%) hue-rotate(176deg)
+    brightness(88%) contrast(90%);
+}
+
+.difficulty-label-svg {
+  filter: invert(48%) sepia(10%) saturate(549%) hue-rotate(182deg)
+    brightness(88%) contrast(84%);
+}
+
+.start-btn-text {
+  filter: invert(94%) sepia(92%) saturate(138%) hue-rotate(228deg)
+    brightness(122%) contrast(100%);
+}

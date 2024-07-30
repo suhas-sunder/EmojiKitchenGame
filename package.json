@@ -11,12 +11,17 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.5",
     "@remix-run/node": "^2.10.3",
     "@remix-run/react": "^2.10.3",
     "@remix-run/serve": "^2.10.3",
+    "axios": "^1.7.2",
     "isbot": "^4.1.0",
+    "localforage": "^1.10.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tailwind-scrollbar": "^3.1.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.10.3",

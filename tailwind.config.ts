@@ -16,7 +16,7 @@ export default {
         'roboto': ['"Roboto Serif"', 'serif'],
         'lato': ['"Lato"', 'sans-serif'],
         'karla': ['"Karla"', 'sans-serif'],
-        'lora': ['"Lora"', 'serif']
+        'lora': ['"Lora"', 'serif'],
       },
       colors: {
         defaultblue: "#09427d",
@@ -27,5 +27,9 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // ...
+    require("tailwind-scrollbar"),
+    
+  ],
 } satisfies Config;
