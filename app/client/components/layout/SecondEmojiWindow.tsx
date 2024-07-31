@@ -3,7 +3,7 @@ import { emojiDataType } from "../../../routes/_index";
 
 interface PropType {
   isLoading: boolean;
-  filenames: { id: string; keys: string }[];
+  filenames?: { id: string; keys: string }[];
   emojiData: emojiDataType | undefined;
   firstEmoji: string;
   setSecondEmoji: (value: string) => void;
@@ -38,7 +38,7 @@ export default function SecondEmojiWindow({
                 )
               ),
             ].map((secondEmojiFilename) => {
-              const keywords = filenames.filter(
+              const keywords = filenames?.filter(
                 (filename) => filename.id === secondEmojiFilename
               )[0]?.keys;
 

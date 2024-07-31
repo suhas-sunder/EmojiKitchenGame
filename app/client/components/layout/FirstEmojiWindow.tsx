@@ -5,7 +5,7 @@ import localforage from "localforage";
 
 interface PropType {
   isLoading: boolean;
-  filenames: { id: string; keys: string }[];
+  filenames?: { id: string; keys: string }[];
   searchEmoji: string;
   setSearchEmoji: (value: string) => void;
   emojiData: emojiDataType | undefined;
@@ -98,7 +98,7 @@ export default function FirstEmojiWindow({
           isLoading && "opacity-30"
         } pb-[4em] lg:pb-[13em]`}
       >
-        {filenames.map((filename: { id: string; keys: string }) => {
+        {filenames?.map((filename: { id: string; keys: string }) => {
           return filename?.keys?.includes(searchEmoji.trim()) ||
             searchEmoji === "" ? (
             <li
