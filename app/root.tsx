@@ -14,7 +14,6 @@ import {
 import localforage from "localforage";
 import cloudflareR2API from "./client/api/cloudflareR2API";
 
-
 export const loader = async () => {
   let filenames: { id: string; keys: string }[] = [];
 
@@ -30,7 +29,7 @@ export const loader = async () => {
         return response.data;
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err, "Failed to fetch filenames for emoji!");
       });
 
     const parseRes = await response;

@@ -124,7 +124,7 @@ export default function ThirdEmojiWindow({
         )}
       </ul>
       {firstEmoji && secondEmoji && (
-        <div className="flex absolute justify-center items-center translate-y-2 lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 p-12  scale-150">
+        <div className="flex absolute justify-center items-center top-32 p-12  scale-150">
           <div className="scale-[2.1]  md:scale-150  lg:scale-[2.5]">
             {" "}
             {handleComboImage()}
@@ -133,7 +133,7 @@ export default function ThirdEmojiWindow({
             <button className="hover:scale-110">
               <Icon
                 icon="copy"
-                customStyle="text-rose-400 p-2"
+                customStyle="fill-rose-400 w-7"
                 title="Copy Emoji"
               />
             </button>
@@ -143,14 +143,14 @@ export default function ThirdEmojiWindow({
             >
               <Icon
                 icon="deselect"
-                customStyle="text-rose-400 p-2"
+                customStyle="fill-rose-400 w-7"
                 title="Deselect Emoji"
               />
             </button>
             <button className="hover:scale-110">
               <Icon
                 icon="dice"
-                customStyle="text-rose-400 p-2"
+                customStyle="fill-rose-400 w-7"
                 title="Random Second Emoji"
               />
             </button>

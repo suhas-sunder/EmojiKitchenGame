@@ -1,121 +1,95 @@
-import React, { useState, useEffect } from "react";
+// Define SVG components
+const CopyIcon = () => (
+  <svg
+    className="flex justify-center items-center"
+    focusable="false"
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    data-testid="ContentCopyRoundedIcon"
+  >
+    <path d="M15 20H5V7c0-.55-.45-1-1-1s-1 .45-1 1v13c0 1.1.9 2 2 2h10c.55 0 1-.45 1-1s-.45-1-1-1m5-4V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h9c1.1 0 2-.9 2-2m-2 0H9V4h9z"></path>
+  </svg>
+);
 
-// Define a mapping object for icon imports
-const iconComponents: Record<
-  string,
-  () => Promise<{ default: React.ElementType }>
-> = {
-  eye: () => import("@mui/icons-material/VisibilityRounded"),
-  mastery: () => import("@mui/icons-material/WorkspacePremiumRounded"),
-  speed: () => import("@mui/icons-material/SpeedRounded"),
-  suitcase: () => import("@mui/icons-material/BusinessCenterRounded"),
-  law: () => import("@mui/icons-material/GavelRounded"),
-  math: () => import("@mui/icons-material/CalculateRounded"),
-  bee: () => import("@mui/icons-material/EmojiNatureRounded"),
-  mountain: () => import("@mui/icons-material/TerrainRounded"),
-  microscope: () => import("@mui/icons-material/BiotechRounded"),
-  book: () => import("@mui/icons-material/MenuBookRounded"),
-  paw: () => import("@mui/icons-material/PetsRounded"),
-  quote: () => import("@mui/icons-material/FormatQuoteRounded"),
-  eyeCrossed: () => import("@mui/icons-material/VisibilityOffRounded"),
-  doubleArrowDown: () =>
-    import("@mui/icons-material/KeyboardDoubleArrowDownRounded"),
-  doubleArrowUp: () =>
-    import("@mui/icons-material/KeyboardDoubleArrowUpRounded"),
-  heart: () => import("@mui/icons-material/FavoriteRounded"),
-  questionMark: () => import("@mui/icons-material/LiveHelpRounded"),
-  save: () => import("@mui/icons-material/SaveRounded"),
-  brokenHeart: () => import("@mui/icons-material/HeartBrokenRounded"),
-  lockOpen: () => import("@mui/icons-material/LockOpenRounded"),
-  lockClosed: () => import("@mui/icons-material/LockRounded"),
-  graduationHat: () => import("@mui/icons-material/SchoolRounded"),
-  gamepad: () => import("@mui/icons-material/GamepadRounded"),
-  burgerOpen: () => import("@mui/icons-material/MenuRounded"),
-  burgerClosed: () => import("@mui/icons-material/MenuOpenRounded"),
-  trophy: () => import("@mui/icons-material/EmojiEventsRounded"),
-  settingsSparkle: () => import("@mui/icons-material/SettingsSuggestRounded"),
-  confetti: () => import("@mui/icons-material/CelebrationRounded"),
-  starFull: () => import("@mui/icons-material/StarRounded"),
-  starHalf: () => import("@mui/icons-material/StarHalfRounded"),
-  starEmpty: () => import("@mui/icons-material/GradeOutlined"),
-  plus: () => import("@mui/icons-material/AddRounded"),
-  boxingGlove: () => import("@mui/icons-material/SportsMmaRounded"),
-  chevron: () => import("@mui/icons-material/ExpandMoreRounded"),
-  lightMode: () => import("@mui/icons-material/LightModeRounded"),
-  darkMode: () => import("@mui/icons-material/DarkModeRounded"),
-  keyboard: () => import("@mui/icons-material/KeyboardRounded"),
-  article: () => import("@mui/icons-material/ArticleRounded"),
-  threeDotsVertical: () => import("@mui/icons-material/MoreVertRounded"),
-  closeBtn: () => import("@mui/icons-material/HighlightOffRounded"),
-  info: () => import("@mui/icons-material/InfoRounded"),
-  flame: () => import("@mui/icons-material/LocalFireDepartmentRounded"),
-  profile: () => import("@mui/icons-material/PermIdentityRounded"),
-  profileSettings: () => import("@mui/icons-material/ManageAccountsRounded"),
-  profileImage: () => import("@mui/icons-material/WallpaperRounded"),
-  achievements: () => import("@mui/icons-material/MilitaryTechRounded"),
-  stats: () => import("@mui/icons-material/InsightsRounded"),
-  sparkle: () => import("@mui/icons-material/AutoAwesomeRounded"),
-  sparkleFill: () => import("@mui/icons-material/AutoAwesomeRounded"),
-  circleCheckmark: () =>
-    import("@mui/icons-material/PlaylistAddCheckCircleRounded"),
-  paperQuill: () => import("@mui/icons-material/HistoryEduRounded"),
-  clock: () => import("@mui/icons-material/AccessAlarmRounded"),
-  upgrade: () => import("@mui/icons-material/SwitchAccessShortcutRounded"),
-  leftArrow: () => import("@mui/icons-material/ArrowBackIosRounded"),
-  horizontalLine: () => import("@mui/icons-material/HorizontalRuleRounded"),
-  certificate: () => import("@mui/icons-material/VerifiedRounded"),
-  rocket: () => import("@mui/icons-material/RocketLaunchRounded"),
-  face: () => import("@mui/icons-material/FaceRetouchingNaturalRounded"),
-  azLetters: () => import("@mui/icons-material/SortByAlphaRounded"),
-  mouse: () => import("@mui/icons-material/PestControlRodentRounded"),
-  bird: () => import("@mui/icons-material/FlutterDashRounded"),
-  grass: () => import("@mui/icons-material/GrassRounded"),
-  flower: () => import("@mui/icons-material/LocalFloristRounded"),
-  sailing: () => import("@mui/icons-material/SailingRounded"),
-  movie: () => import("@mui/icons-material/MovieFilterRounded"),
-  cake: () => import("@mui/icons-material/CakeRounded"),
-  copy: () => import("@mui/icons-material/ContentCopyRounded"),
-  dice: () => import("@mui/icons-material/CasinoRounded"),
-  deselect: () => import("@mui/icons-material/DoDisturbRounded"),
-  viewPage: () => import("@mui/icons-material/OpenInNew"),
+const DiceIcon = () => (
+  <svg
+    className="flex justify-center items-center"
+    focusable="false"
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    data-testid="CasinoRoundedIcon"
+  >
+    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18m0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9"></path>
+  </svg>
+);
+
+const DoNotDisturbRounded = () => (
+  <svg
+    className="flex justify-center items-center"
+    focusable="false"
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    data-testid="DoNotDisturbRoundedIcon"
+  >
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20m6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9"></path>
+  </svg>
+);
+
+const FavoriteRoundedIcon = () => (
+  <svg
+    className="flex justify-center items-center"
+    focusable="false"
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    data-testid="FavoriteRoundedIcon"
+  >
+    <path d="M13.35 20.13c-.76.69-1.93.69-2.69-.01l-.11-.1C5.3 15.27 1.87 12.16 2 8.28c.06-1.7.93-3.33 2.34-4.29 2.64-1.8 5.9-.96 7.66 1.1 1.76-2.06 5.02-2.91 7.66-1.1 1.41.96 2.28 2.59 2.34 4.29.14 3.88-3.3 6.99-8.55 11.76z"></path>
+  </svg>
+);
+
+const ViewPageIcon = () => (
+  <svg
+    className="flex justify-center items-center"
+    focusable="false"
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    data-testid="ViewPageIcon"
+  >
+    <path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1M14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1"></path>
+  </svg>
+);
+
+// Define a mapping object for icon components
+const iconComponents = {
+  copy: CopyIcon,
+  dice: DiceIcon,
+  heart: FavoriteRoundedIcon,
+  deselect: DoNotDisturbRounded,
+  viewPage: ViewPageIcon,
 };
+
+// Define the type for icon names
+type IconName = keyof typeof iconComponents;
 
 interface Props {
   title?: string;
   customStyle?: string;
-  icon: string;
+  icon: IconName;
 }
 
 export default function Icon({ title, customStyle, icon }: Props) {
-  const [mounted, setMounted] = useState(false);
-  const [IconComponent, setIconComponent] = useState<React.ElementType | null>(
-    null
-  );
+  const IconComponent = iconComponents[icon];
 
-  useEffect(() => {
-    const fetchIcon = async () => {
-      if (iconComponents[icon]) {
-        try {
-          // Dynamically import the appropriate icon component
-          const { default: importedIcon } = await iconComponents[icon]();
-          setIconComponent(importedIcon);
-          setMounted(true);
-        } catch (error) {
-          console.error(`Error importing ${icon} icon:`, error);
-        }
-      }
-    };
-
-    fetchIcon();
-  }, [icon]);
-
-  if (!mounted) {
-    return null; // Return null during SSR to prevent hydration errors with MUI.
+  if (!IconComponent) {
+    return null;
   }
 
   return (
-    <i title={title || "default-star-icon"} className={`flex ${customStyle}`}>
-      {IconComponent ? <IconComponent /> : null}
+    <i
+      title={title || "default-star-icon"}
+      className={`flex justify-center items-center min-w-5 ${customStyle}`}
+    >
+      <IconComponent />
     </i>
   );
 }

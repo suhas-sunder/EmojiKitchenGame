@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
-import { emojiDataType } from "../../../routes/_index";
+import { emojiDataType, Filename } from "../../../routes/_index";
 import cloudflareR2API from "../../../client/api/cloudflareR2API";
 import localforage from "localforage";
 
 interface PropType {
   isLoading: boolean;
-  filenames?: { id: string; keys: string }[];
+  filenames?: Filename[];
   searchEmoji: string;
   setSearchEmoji: (value: string) => void;
   emojiData: emojiDataType | undefined;
@@ -98,7 +98,7 @@ export default function FirstEmojiWindow({
           isLoading && "opacity-30"
         } pb-[4em] lg:pb-[13em]`}
       >
-        {filenames?.map((filename: { id: string; keys: string }) => {
+        {filenames?.map((filename: Filename) => {
           return filename?.keys?.includes(searchEmoji.trim()) ||
             searchEmoji === "" ? (
             <li
