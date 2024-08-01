@@ -17,59 +17,103 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
   return (
     <ul
       id={showMobileMenu ? "mobile-links" : "main-links"}
-      className={`text-white  ${
+      className={`text-white text-xs  justify-center items-center text-center ${
         showMobileMenu ? styles["mobile-nav"] : styles["main-nav"]
-      } pr-14`}
+      } `}
     >
-      {/* <li>
-        {showMobileMenu && (
-          <NavLink
-            onClick={() => setShowMobileMenu(false)}
-            to="/"
-            className={`relative flex items-center justify-center gap-2 tracking-[0.1em]`}
-          >
-            Typing Test
-            <Icon
-              icon="speed"
-              title="typing-test-icon"
-              customStyle={`${styles.icon} text-white -translate-y-[0.07em] relative`}
-            />
-          </NavLink>
-        )}
+      {/* <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/games"
-          className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
+          className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
         >
-          Games 🎲
+          <span className="text-xl">🀄</span>
+          <span className={`${styles.icon}`}>Games</span>
         </NavLink>
       </li> */}
       <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
-          to="/emojis"
-          className={`relative flex items-center justify-center gap-2 tracking-[0.1em] `}
+          to="/emoji-combos"
+          className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
         >
-          <span className={`${styles.icon}`}> Emojis 😀</span>
+          <span className="text-xl">😀</span>
+          <span className={`${styles.icon} hidden xl:flex`}> Emoji Combos</span>
+          <span className={`${styles.icon} xl:hidden`}>Combos</span>
         </NavLink>
       </li>
-
       <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/text-faces"
-          className={`relative flex items-center justify-center gap-2 tracking-[0.1em] ${styles.icon}`}
+          className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
         >
-          <span className={`${styles.icon}`}>Text ಥ_ಥ</span>
+          <span className={`${styles.icon}`}>ಥ_ಥ Text Faces</span>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          onClick={() => setShowMobileMenu(false)}
+          to="/emoji-copy-and-paste"
+          className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
+        >
+          <span className="text-xl">✂️</span>
+          <span className={`${styles.icon} hidden xl:flex`}>
+            {" "}
+            Emoji Copy and Paste
+          </span>
+          <span className={`${styles.icon} xl:hidden`}>Copy & Paste</span>
         </NavLink>
       </li>
       {/* <li>
         <NavLink
           onClick={() => setShowMobileMenu(false)}
-          to="/tools"
-          className="relative flex items-center justify-center gap-2 tracking-[0.1em]"
+          to="/emoji-generator"
+          className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
         >
-          Tools 🪛
+          <span className="text-xl">💀</span>
+          <span className={`${styles.icon}`}>Generator</span>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          onClick={() => setShowMobileMenu(false)}
+          to="/blog"
+          className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
+        >
+          <span className="text-xl">🫠</span>
+          <span className={`${styles.icon}`}>Blog</span>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          onClick={() => setShowMobileMenu(false)}
+          to="/login"
+          className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
+        >
+          <span className="text-xl">🔓</span>
+          <span className={`${styles.icon}`}>Account</span>
+        </NavLink>
+      </li> */}
+      {/* These are the drop-down login/signup links */}
+      {/* <li>
+        <NavLink
+          onClick={() => setShowMobileMenu(false)}
+          to="/games"
+          className={`relative flex items-center justify-center  tracking-[0.1em] `}
+        >
+          <span className="text-xl">🗝️</span>
+          <span className={`${styles.icon}`}>Login</span>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          onClick={() => setShowMobileMenu(false)}
+          to="/games"
+          className={`relative flex items-center justify-center  tracking-[0.1em] `}
+        >
+          <span className="text-xl">✒️</span>
+          <span className={`${styles.icon}`}>Sign Up</span>
         </NavLink>
       </li> */}
     </ul>
@@ -95,18 +139,18 @@ export default function NavBar() {
 
   // Handles mobile nav bar menu order. Useful when modal is open and nav-bar needs to remain at the very top.
   useEffect(() => {
-    const navElement = document.getElementById("nav");
+    const bodyElement = document.getElementsByTagName("body");
 
-    if (showMobileMenu && navElement) {
-      navElement.style.zIndex = "1000";
-    } else if (navElement) {
-      navElement.style.zIndex = "0";
+    if (showMobileMenu && bodyElement) {
+      bodyElement[0].classList.add("overflow-y-hidden");
+    } else {
+      bodyElement[0].classList.remove("overflow-y-hidden");
     }
   }, [showMobileMenu]);
 
   return (
     <nav
-      className={`${styles.nav} relative left-0 right-0 top-0 bg-purple-800 font-nunito text-base tracking-widest text-white`}
+      className={`${styles.nav} relative left-0 right-0 top-0 bg-purple-800 font-nunito text-base tracking-widest z-20 text-white`}
     >
       <div
         className={`${styles["fade-in-nav"]} m-auto flex  max-w-[1400px] px-5 items-center justify-between`}
@@ -119,7 +163,7 @@ export default function NavBar() {
         {showMobileMenu && (
           <button
             onClick={() => setShowMobileMenu(false)}
-            className="absolute bottom-0 left-0 right-0 top-24 min-h-[100vh] min-w-[100vw] bg-sky-950 bg-opacity-30"
+            className="absolute bottom-0 left-0 right-0 top-[3.15em] min-h-[100vh] min-w-[100vw] bg-purple-950 bg-opacity-30"
           />
         )}
         <input
@@ -137,14 +181,14 @@ export default function NavBar() {
         >
           {showMobileMenu ? (
             <Icon
-              title="burger-closed-icon"
-              customStyle={`flex relative justify-center items-center w-[3.324em] h-[3.324em] scale-125 mr-2 ${styles["burger-open"]}`}
+              title="burger-open-icon"
+              customStyle={`flex relative fill-white justify-center items-center w-7 scale-125 mr-2 ${styles["burger-close"]}`}
               icon="burgerOpen"
             />
           ) : (
             <Icon
-              title="burger-open-icon"
-              customStyle={`flex relative justify-center items-center w-[3.324em] h-[3.324em] scale-125 mr-2 ${styles["burger-close"]}`}
+              title="burger-closed-icon"
+              customStyle={`flex fill-white relative justify-center items-center w-7 scale-125 mr-2 ${styles["burger-open"]}`}
               icon="burgerClosed"
             />
           )}

@@ -8,6 +8,8 @@ import {
 import Icon from "../client/components/utils/other/Icon";
 import { useMemo } from "react";
 import { Filename } from "./_index";
+import useSearch from "../client/hooks/useSearch";
+import SearchBar from "../client/components/ui/SearchBar";
 
 export const meta: MetaFunction = () => {
   return [
@@ -58,7 +60,7 @@ function Buttons({ filename }: { filename: Filename }) {
         className="col-span-2 mx-auto sm:col-span-1"
       >
         <Link
-          to={`/emojis/${
+          to={`/emoji-combos/${
             filename?.id +
             "_✨" +
             filename.keys.split("~")[0] +
@@ -92,30 +94,54 @@ export default function Emojis() {
     [matches]
   );
 
+  const { searchEmoji, setSearchEmoji } = useSearch();
+
   const pathname: string =
     useLocation().pathname?.split("/")?.at(-1)?.split("_")[0] || "";
 
   return (
     <>
-      <header className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito">
-        <h1 className="capitalize font-lora text-5xl mt-10 text-purple-700 flex justify-center items-center  gap-3">
-          {pathname === "emojis"
+      <header className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito mx-5">
+        <h1 className="capitalize font-lora text-3xl leading-relaxed text-center  md:text-4xl lg:text-5xl mt-10 text-purple-700 flex justify-center items-center  gap-3">
+          {pathname === "emoji-combos"
             ? "All Emojis With Combos"
             : filenames
                 ?.filter((filename) => filename.id === pathname)[0]
                 ?.keys.split("~")[1] + " Emoji"}{" "}
         </h1>
       </header>
-      <main className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito">
+      <main className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito mx-5">
         <Outlet />
-        <h2 className="text-sky-600 mt-10 hover:text-sky-500">
-          <Link to="/emojis">
+        <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center">
+          <Link to="/emoji-copy-and-paste">
             Click here to view a list of all copy and paste emojis!
           </Link>
         </h2>
-        <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-9 mt-14 w-full max-w-[1200px] px-5">
+        <SearchBar
+        uniqueId="combos"
+          setSearchEmoji={setSearchEmoji}
+          customStyle="mt-11 w-full max-w-[1200px]"
+          placeholder="search emojis"
+          customLabelStyle="pl-3"
+          searchEmoji={searchEmoji}
+        />
+        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto max-h-[9em] mt-3 sm:scrollbar-thin scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
+          {filenames?.map((filename) => (
+            <li key={filename?.id + "emoji-search-preview"}>
+              <button
+                onClick={() => setSearchEmoji(filename.keys.split("~")[0])}
+                className="text-2xl w-10 h-10 border-2 rounded-md border-purple-200 hover:border-purple-500 "
+              >
+                {filename.keys.split("~")[0]}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-9 mt-10 md:w-full max-w-[1150px]">
           {filenames?.map((filename) =>
-            filename.id !== pathname ? (
+            filename.id !== pathname &&
+            (searchEmoji === "" ||
+              filename?.keys?.includes(searchEmoji.trim())) ? (
               <li
                 key={filename?.id}
                 className="flex flex-col gap-5 justify-center items-center border-2 border-purple-200 p-5 rounded-lg w-full min-h-[15em] text-center"

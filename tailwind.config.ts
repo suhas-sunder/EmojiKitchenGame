@@ -9,6 +9,12 @@ export default {
   ],
   theme: {
     extend: {
+      gridTemplateColumns: {
+        // Simple 16 column grid
+        "24": "repeat(24, minmax(0, 1fr))",
+        "20": "repeat(20, minmax(0, 1fr))",
+        "16": "repeat(16, minmax(0, 1fr))",
+      },
       // prettier-ignore
       fontFamily: {
         'nunito': ['"Nunito"', 'sans-serif'],
@@ -30,6 +36,5 @@ export default {
   plugins: [
     // ...
     require("tailwind-scrollbar"),
-    
   ],
 } satisfies Config;

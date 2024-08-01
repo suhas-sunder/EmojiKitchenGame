@@ -24,12 +24,12 @@ function Logo({ setShowMobileMenu }: PropTypes) {
       />
       <div className="flex">
         <p
-          className={`font-overlock text-xl italic font-bold  ${styles["logo-long"]}`}
+          className={`font-overlock text-sm sm:text-xl italic font-bold  ${styles["logo-long"]}`}
         >
           EmojiKitchenGame
         </p>
         <p
-          className={`font-overlock text-xl italic font-bold ${styles["logo-com"]}`}
+          className={`font-overlock text-sm sm:text-xl italic font-bold ${styles["logo-com"]}`}
         >
           .com
         </p>

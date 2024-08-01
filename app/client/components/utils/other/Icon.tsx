@@ -59,6 +59,28 @@ const ViewPageIcon = () => (
   </svg>
 );
 
+const MenuRoundedIcon = () => (
+  <svg
+    focusable="false"
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    data-testid="MenuRoundedIcon"
+  >
+    <path d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1m0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1M3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1"></path>
+  </svg>
+);
+
+const MenuOpenRoundedIcon = () => (
+  <svg
+    focusable="false"
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    data-testid="MenuOpenRoundedIcon"
+  >
+    <path d="M4 18h11c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1m0-5h8c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1M3 7c0 .55.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1m17.3 7.88L17.42 12l2.88-2.88c.39-.39.39-1.02 0-1.41a.9959.9959 0 0 0-1.41 0L15.3 11.3c-.39.39-.39 1.02 0 1.41l3.59 3.59c.39.39 1.02.39 1.41 0 .38-.39.39-1.03 0-1.42"></path>
+  </svg>
+);
+
 // Define a mapping object for icon components
 const iconComponents = {
   copy: CopyIcon,
@@ -66,6 +88,8 @@ const iconComponents = {
   heart: FavoriteRoundedIcon,
   deselect: DoNotDisturbRounded,
   viewPage: ViewPageIcon,
+  burgerClosed: MenuRoundedIcon,
+  burgerOpen: MenuOpenRoundedIcon,
 };
 
 // Define the type for icon names

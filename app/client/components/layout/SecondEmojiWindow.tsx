@@ -1,5 +1,6 @@
-import { useState } from "react";
+import useSearch from "../../hooks/useSearch";
 import { emojiDataType } from "../../../routes/_index";
+import SearchBar from "../ui/SearchBar";
 
 interface PropType {
   isLoading: boolean;
@@ -10,24 +11,24 @@ interface PropType {
 }
 
 export default function SecondEmojiWindow({
-  isLoading,
   filenames,
   emojiData,
   firstEmoji,
   setSecondEmoji,
 }: PropType) {
-  const [searchSecondEmoji, setSearchSecondEmoji] = useState<string>("");
+  const { searchEmoji, setSearchEmoji } = useSearch();
 
   return (
     <div className="flex flex-col h-[17em] lg:h-[53em] border-l border-b sm:border-hidden ">
-      <input
-        type="search"
-        disabled={isLoading}
-        onChange={(e) => setSearchSecondEmoji(e.target.value)}
-        placeholder="🔍 Search Second Emoji"
-        className="flex  mx-5 border-2 border-purple-400 rounded-md py-1 my-2 px-5"
+      <SearchBar
+        uniqueId="second"
+        setSearchEmoji={setSearchEmoji}
+        customStyle="pr-5 mb-1 md:-translate-x-4 -translate-x-5"
+        placeholder="search second emoji"
+        customLabelStyle="pl-[1.45em] pr-[1em]"
+        searchEmoji={searchEmoji}
       />
-      <ul className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1  sm:scrollbar scrollbar-none scrollbar-thumb-purple-500 hover:scrollbar-thumb-purple-400 pb-[4em] lg:pb-[13em]">
+      <ul className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 sm:scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 pb-[4em] lg:pb-[13em]">
         {emojiData?.combos
           ? [
               ...new Set(
@@ -45,7 +46,7 @@ export default function SecondEmojiWindow({
               if (secondEmojiFilename === firstEmoji?.split("~")[0])
                 return null; //If the second emoji is the same as the first emoji, don't display it
 
-              return keywords?.includes(searchSecondEmoji.trim()) ? (
+              return keywords?.includes(searchEmoji.trim()) ? (
                 <li
                   title={keywords.split("~")[0] + " " + keywords.split("~")[1]}
                   aria-label={
@@ -86,8 +87,8 @@ export default function SecondEmojiWindow({
               ) : null;
             })
           : filenames?.map((filename: { id: string; keys: string }) => {
-              return filename?.keys?.includes(searchSecondEmoji.trim()) ||
-                searchSecondEmoji === "" ? (
+              return filename?.keys?.includes(searchEmoji.trim()) ||
+                searchEmoji === "" ? (
                 <li key={filename?.id}>
                   <button
                     disabled

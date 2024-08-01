@@ -1,13 +1,13 @@
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 import Icon from "../utils/other/Icon";
 import { emojiDataType } from "../../../routes/_index";
+import ComboImage from "./ComboImage";
 
 interface PropType {
   emojiData: emojiDataType | undefined;
   firstEmoji: string;
   setSecondEmoji: (value: string) => void;
   secondEmoji: string;
-  handleComboImage: () => ReactNode;
 }
 
 export default function ThirdEmojiWindow({
@@ -15,7 +15,6 @@ export default function ThirdEmojiWindow({
   firstEmoji,
   setSecondEmoji,
   secondEmoji,
-  handleComboImage,
 }: PropType) {
   useEffect(() => {
     console.log(firstEmoji, "spicy", secondEmoji, "third window");
@@ -27,7 +26,7 @@ export default function ThirdEmojiWindow({
     >
       {emojiData?.combos && (
         <div
-          className={`hidden lg:flex justify-center items-center border-dashed border-2 w-full border-rose-300 rounded-lg gap-2 py-1 my-2 text-md text-purple-800 font-nunito ${
+          className={`hidden lg:flex justify-center items-center border-dashed max-w-[30em] -translate-x-1 border-2 w-full border-rose-300 rounded-lg gap-2 py-1 my-2 text-md text-purple-800 font-nunito ${
             firstEmoji && secondEmoji && "!hidden"
           }`}
         >
@@ -70,7 +69,7 @@ export default function ThirdEmojiWindow({
           emojiData?.combos
             ? "grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5"
             : "flex h-full"
-        } justify-center items-center overflow-y-auto py-6 px-1 sm:scrollbar scrollbar-none scrollbar-thumb-rose-400 hover:scrollbar-thumb-rose-300 pb-[8em] ${
+        } justify-center items-center overflow-y-auto py-6 px-1 sm:scrollbar-thin scrollbar-thumb-rose-400 scrollbar-track-rose-100 pb-[8em] ${
           emojiData?.combos && "lg:pb-[13em]"
         } ${firstEmoji && secondEmoji && "!hidden"}`}
       >
@@ -124,12 +123,17 @@ export default function ThirdEmojiWindow({
         )}
       </ul>
       {firstEmoji && secondEmoji && (
-        <div className="flex absolute justify-center items-center top-32 p-12  scale-150">
-          <div className="scale-[2.1]  md:scale-150  lg:scale-[2.5]">
+        <div className="flex absolute justify-center items-center lg:top-32 p-12  scale-150">
+          <div className="scale-[2.1] pt-10 lg:pt-0  md:scale-150  lg:scale-[2.5]">
             {" "}
-            {handleComboImage()}
+            <ComboImage
+              firstEmoji={firstEmoji}
+              secondEmoji={secondEmoji}
+              emojiData={emojiData}
+              setSecondEmoji={setSecondEmoji}
+            />
           </div>
-          <div className="absolute top-[7.25em] sm:top-[9.25em]  lg:-bottom-[7.5em] scale-[.80] flex gap-5">
+          <div className="absolute top-11  lg:top-[12em] scale-[.80] flex gap-5">
             <button className="hover:scale-110">
               <Icon
                 icon="copy"

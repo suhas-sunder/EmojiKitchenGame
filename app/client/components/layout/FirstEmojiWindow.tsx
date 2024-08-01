@@ -1,31 +1,29 @@
-import { ReactNode } from "react";
 import { emojiDataType, Filename } from "../../../routes/_index";
 import cloudflareR2API from "../../../client/api/cloudflareR2API";
 import localforage from "localforage";
+import useSearch from "../../hooks/useSearch";
+import SearchBar from "../ui/SearchBar";
 
 interface PropType {
   isLoading: boolean;
   filenames?: Filename[];
-  searchEmoji: string;
-  setSearchEmoji: (value: string) => void;
   emojiData: emojiDataType | undefined;
   setEmojiData: (value: emojiDataType | undefined) => void;
   setFirstEmoji: (value: string) => void;
   firstEmoji: string;
   secondEmoji: string;
   setSecondEmoji: (value: string) => void;
-  handleComboImage: () => ReactNode;
 }
 
 export default function FirstEmojiWindow({
   isLoading,
   filenames,
-  searchEmoji,
-  setSearchEmoji,
   emojiData,
   setEmojiData,
   setFirstEmoji,
 }: PropType) {
+  const { searchEmoji, setSearchEmoji } = useSearch();
+
   /**
    * This function loads emoji filenames from the server or cache.
    * It first checks if the emoji filenames is already cached in local storage.
@@ -86,15 +84,17 @@ export default function FirstEmojiWindow({
 
   return (
     <div className="flex flex-col h-[17em] lg:h-[53em] border-r  border-b sm:border-hidden">
-      <input
-        type="search"
-        disabled={isLoading}
-        onChange={(e) => setSearchEmoji(e.target.value)}
-        placeholder={"🔍 Search First Emoji"}
-        className="flex  mx-5 border-2 border-purple-400 rounded-md py-1 my-2 px-5"
+      <SearchBar
+      
+        uniqueId="first"
+        setSearchEmoji={setSearchEmoji}
+        customStyle="md:-translate-x-8 md:pl-5 pr-8 md:pr-0 mb-1"
+        placeholder="search first emoji"
+        customLabelStyle="pl-[1.45em] pr-[1em]"
+        searchEmoji={searchEmoji}
       />
       <ul
-        className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 sm:scrollbar scrollbar-none scrollbar-thumb-purple-500 hover:scrollbar-thumb-purple-400 ${
+        className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 sm:scrollbar-thin scrollbar-none scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
           isLoading && "opacity-30"
         } pb-[4em] lg:pb-[13em]`}
       >
