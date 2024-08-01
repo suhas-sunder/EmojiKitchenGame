@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import useIsLoading from "../../hooks/useIsLoading";
+import useIsLoading from "../hooks/useIsLoading";
 
 interface PropType {
   setSearchEmoji: (value: string) => void;
@@ -8,6 +8,7 @@ interface PropType {
   customLabelStyle?: string;
   searchEmoji: string;
   uniqueId: string;
+  handleDiceRoll?: () => void;
 }
 
 function SearchBar({
@@ -17,6 +18,7 @@ function SearchBar({
   customLabelStyle,
   searchEmoji,
   uniqueId,
+  handleDiceRoll,
 }: PropType) {
   const { isLoading } = useIsLoading();
 
@@ -39,7 +41,12 @@ function SearchBar({
             </button>
           )}
           <span className="py-3">| </span>
-          <button className="flex p-3 hover:scale-[1.15]">🎲</button>
+          <button
+            onClick={handleDiceRoll}
+            className="flex p-3 hover:scale-[1.15]"
+          >
+            🎲
+          </button>
         </div>
       </label>
       <input

@@ -6,15 +6,41 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import localforage from "localforage";
-import cloudflareR2API from "../client/api/cloudflareR2API";
-import { Filename } from "./_index";
+import cloudflareR2API from "../client/components/api/cloudflareR2API";
 import { v4 as uuidv4 } from "uuid";
 import { Fragment } from "react/jsx-runtime";
 
-export const meta: MetaFunction = () => {
+interface EmojiDataType {
+  emojiData?: {
+    title: string;
+    description: string;
+    name: string;
+    keywords: string[];
+    languages: string[];
+    story: string;
+    unicode: string;
+    url: string;
+    combos: { code: string; baseUnicode: string; unicode: string }[];
+    meanings: string[];
+  };
+}
+
+export const meta: MetaFunction = ({ data }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const { emojiData }: EmojiDataType = data;
+
+  if (!emojiData)
+    return [
+      { title: "Emoji" },
+      { name: "description", content: "Welcome to Remix!" },
+    ];
+
   return [
-    { title: "Emoji" },
-    { name: "description", content: "Welcome to Remix!" },
+    {
+      title: `${emojiData.title} - Emoji Meaning: ${emojiData.name} - ${emojiData.unicode} `,
+    },
+    { name: "description", content: `${emojiData?.description}` },
   ];
 };
 
@@ -68,11 +94,11 @@ export async function clientLoader({
 
   try {
     // If the filenames are not cached, fetch them from the server and cache them
-    const { emojiData }: { emojiData: Filename[] } = await serverLoader();
+    const { emojiData }: { emojiData: EmojiDataType[] } = await serverLoader();
 
     // Check if the emojiData are already cached in local storage
     const cachedFilenames = await localforage.getItem<{
-      emojiData: Filename[];
+      emojiData: EmojiDataType[];
     }>(cacheKey);
 
     // If the emojiData are cached, return them

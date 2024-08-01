@@ -1,8 +1,8 @@
 import { emojiDataType, Filename } from "../../../routes/_index";
-import cloudflareR2API from "../../../client/api/cloudflareR2API";
-import localforage from "localforage";
-import useSearch from "../../hooks/useSearch";
+import useSearch from "../hooks/useSearch";
 import SearchBar from "../ui/SearchBar";
+import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
+import HandleCacheEmojiData from "../utils/requests/HandleCacheEmojiData";
 
 interface PropType {
   isLoading: boolean;
@@ -24,59 +24,13 @@ export default function FirstEmojiWindow({
 }: PropType) {
   const { searchEmoji, setSearchEmoji } = useSearch();
 
-  /**
-   * This function loads emoji filenames from the server or cache.
-   * It first checks if the emoji filenames is already cached in local storage.
-   * If it is, it returns the cached filenames.
-   * If it is not cached, it fetches the filenames from the server and caches it. *
-   * @param {string} emojiUnicode - The Unicode of the emoji to load.
-   * @returns {Promise<{ id: string, keys: string }[] | undefined>} - A promise that resolves to an array of emoji filenames objects, or undefined if there was an error.
-   */
-
-  const handleCacheEmojiData = async (emojiUnicode: string) => {
-    try {
-      // Check if the emoji filenames is already cached in local storage
-      const cachedEmojiData = await localforage.getItem<emojiDataType>(
-        emojiUnicode
-      );
-
-      // If the emoji filenames is cached, save it to state
-      if (cachedEmojiData) {
-        return cachedEmojiData;
-      } else {
-        // If the emoji filenames is not cached, fetch it from the server, cache it, and save it to state
-        const response = await cloudflareR2API
-          .get(
-            `/emojis/${
-              emojiUnicode.length < 9 ? emojiUnicode.slice(1) : emojiUnicode
-            }.json`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((response) => response.data);
-
-        if (response) {
-          await localforage.setItem(emojiUnicode, response);
-          return response;
-        }
-      }
-    } catch (error) {
-      // If there is an error fetching the emoji filenames, log the error
-      console.error("Error fetching emoji filenames:", error);
-    }
-  };
-
   const loadEmojiData = async (emojiUnicode: string) => {
     if (emojiData?.unicode === emojiUnicode) return;
-    handleCacheEmojiData(emojiUnicode);
+    HandleCacheEmojiData(emojiUnicode);
   };
 
   const handleDisplayCombos = async (emojiUnicode: string, emoji: string) => {
-    const emojiData = await handleCacheEmojiData(emojiUnicode);
+    const emojiData = await HandleCacheEmojiData(emojiUnicode);
     setFirstEmoji(emojiUnicode + "~" + emoji);
 
     setEmojiData(emojiData);
@@ -85,13 +39,15 @@ export default function FirstEmojiWindow({
   return (
     <div className="flex flex-col h-[17em] lg:h-[53em] border-r  border-b sm:border-hidden">
       <SearchBar
-      
         uniqueId="first"
         setSearchEmoji={setSearchEmoji}
         customStyle="md:-translate-x-8 md:pl-5 pr-8 md:pr-0 mb-1"
         placeholder="search first emoji"
         customLabelStyle="pl-[1.45em] pr-[1em]"
         searchEmoji={searchEmoji}
+        handleDiceRoll={() => {
+          filenames && setSearchEmoji(HandleDiceRoll({ filenames }));
+        }}
       />
       <ul
         className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 sm:scrollbar-thin scrollbar-none scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${

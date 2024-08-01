@@ -8,12 +8,16 @@ import {
 import Icon from "../client/components/utils/other/Icon";
 import { useMemo } from "react";
 import { Filename } from "./_index";
-import useSearch from "../client/hooks/useSearch";
+import useSearch from "../client/components/hooks/useSearch";
 import SearchBar from "../client/components/ui/SearchBar";
+import HandleDiceRoll from "../client/components/utils/generators/HandleDiceRoll";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Emoji Meanings 😊" },
+    {
+      title:
+        "😊 All emojis with combos - emoji copy and paste, emoji meanings, emoji combos, and more!",
+    },
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
@@ -30,30 +34,35 @@ function Buttons({ filename }: { filename: Filename }) {
   return (
     <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center items-center">
       <li
+        className="flex justify-center items-center"
         title={`Copy ${filename.keys.split("~")[0]} Image`}
-        className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400"
       >
-        <span>Copy</span>{" "}
-        <span className="flex">
-          <Icon
-            icon="copy"
-            title="Copy Paste Icon"
-            customStyle="fill-purple-500 w-5"
-          />
-        </span>
+        <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
+          {" "}
+          <span>Copy</span>{" "}
+          <span className="flex">
+            <Icon
+              icon="copy"
+              title="Copy Paste Icon"
+              customStyle="fill-purple-500 w-5 translate-y-[0.1rem]"
+            />
+          </span>
+        </button>
       </li>
       <li
         title={`Like ${filename.keys.split("~")[0]} emoji`}
-        className="flex justify-between border-2 gap-1 px-[0.9em] py-2 rounded-md border-rose-300 text-rose-500 cursor-pointer hover:border-rose-200 hover:text-rose-400"
+        className="flex justify-center items-center"
       >
-        <span>Like</span>{" "}
-        <span className="flex">
-          <Icon
-            icon="heart"
-            title="💖 Heart Icon (like)"
-            customStyle="fill-rose-500 w-5"
-          />
-        </span>
+        <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
+          <span>Like</span>{" "}
+          <span className="flex">
+            <Icon
+              icon="heart"
+              title="💖 Heart Icon (like)"
+              customStyle="fill-rose-500 w-5 translate-y-[0.1rem]"
+            />
+          </span>
+        </button>
       </li>
       <li
         title={`${filename.keys.split("~")[0]} Emoji meaning`}
@@ -76,7 +85,7 @@ function Buttons({ filename }: { filename: Filename }) {
             <Icon
               icon="viewPage"
               title="New Tab Icon"
-              customStyle="fill-purple-500 w-5"
+              customStyle="fill-purple-500 w-5 "
             />
           </span>
         </Link>
@@ -118,17 +127,21 @@ export default function Emojis() {
           </Link>
         </h2>
         <SearchBar
-        uniqueId="combos"
+          uniqueId="combos"
           setSearchEmoji={setSearchEmoji}
           customStyle="mt-11 w-full max-w-[1200px]"
           placeholder="search emojis"
           customLabelStyle="pl-3"
           searchEmoji={searchEmoji}
+          handleDiceRoll={() => {
+            filenames && setSearchEmoji(HandleDiceRoll({ filenames }));
+          }}
         />
         <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto max-h-[9em] mt-3 sm:scrollbar-thin scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
           {filenames?.map((filename) => (
             <li key={filename?.id + "emoji-search-preview"}>
               <button
+                tabIndex={-1}
                 onClick={() => setSearchEmoji(filename.keys.split("~")[0])}
                 className="text-2xl w-10 h-10 border-2 rounded-md border-purple-200 hover:border-purple-500 "
               >

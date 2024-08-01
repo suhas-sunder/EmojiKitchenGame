@@ -1,11 +1,12 @@
-import useSearch from "../../hooks/useSearch";
+import useSearch from "../hooks/useSearch";
 import { emojiDataType } from "../../../routes/_index";
 import SearchBar from "../ui/SearchBar";
+import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
 
 interface PropType {
   isLoading: boolean;
   filenames?: { id: string; keys: string }[];
-  emojiData: emojiDataType | undefined;
+  emojiData?: emojiDataType;
   firstEmoji: string;
   setSecondEmoji: (value: string) => void;
 }
@@ -18,6 +19,20 @@ export default function SecondEmojiWindow({
 }: PropType) {
   const { searchEmoji, setSearchEmoji } = useSearch();
 
+  const handleDiceRoll = () => {
+    {
+      if (!filenames) return;
+      const randEmoji = HandleDiceRoll({
+        filenames: filenames?.filter((filename) =>
+          emojiData?.combos
+            .map((combo) => combo.baseUnicode)
+            .includes(filename.id)
+        ),
+      });
+      randEmoji && setSearchEmoji(randEmoji);
+    }
+  };
+
   return (
     <div className="flex flex-col h-[17em] lg:h-[53em] border-l border-b sm:border-hidden ">
       <SearchBar
@@ -27,6 +42,7 @@ export default function SecondEmojiWindow({
         placeholder="search second emoji"
         customLabelStyle="pl-[1.45em] pr-[1em]"
         searchEmoji={searchEmoji}
+        handleDiceRoll={handleDiceRoll}
       />
       <ul className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 sm:scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 pb-[4em] lg:pb-[13em]">
         {emojiData?.combos

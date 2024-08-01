@@ -6,7 +6,9 @@ import SecondEmojiWindow from "../client/components/layout/SecondEmojiWindow";
 import ThirdEmojiWindow from "../client/components/layout/ThirdEmojiWindow";
 import Icon from "../client/components/utils/other/Icon";
 import ComboImage from "../client/components/layout/ComboImage";
-import useIsLoading from "../client/hooks/useIsLoading";
+import useIsLoading from "../client/components/hooks/useIsLoading";
+import HandleDiceRoll from "../client/components/utils/generators/HandleDiceRoll";
+import HandleCacheEmojiData from "../client/components/utils/requests/HandleCacheEmojiData";
 
 export type Filename = {
   id: string;
@@ -51,6 +53,9 @@ function EmojiDisplay({
   setSecondEmoji,
   setEmojiData,
   emojiData,
+  firstDiceRoll,
+  secondDiceRoll,
+  thirdDiceRoll,
 }: {
   firstEmoji: string;
   secondEmoji: string;
@@ -58,6 +63,9 @@ function EmojiDisplay({
   setSecondEmoji: (value: string) => void;
   setEmojiData: (value: emojiDataType | undefined) => void;
   emojiData: emojiDataType | undefined;
+  firstDiceRoll: () => void;
+  secondDiceRoll: ({ newEmojiData }: { newEmojiData: emojiDataType }) => void;
+  thirdDiceRoll: () => void;
 }) {
   return (
     <ul className="flex fixed bottom-6 justify-center items-center w-full h-[9em] sm:h-[12em] lg:h-[12.5em] gap-2 sm:gap-6 bg-white">
@@ -101,7 +109,11 @@ function EmojiDisplay({
               title="Deselect Emoji"
             />
           </button>
-          <button aria-label="Random Emoji" className="flex hover:scale-110">
+          <button
+            onClick={firstDiceRoll}
+            aria-label="Random Emoji"
+            className="flex hover:scale-110"
+          >
             <Icon
               icon="dice"
               customStyle="fill-purple-500 w-7"
@@ -147,7 +159,13 @@ function EmojiDisplay({
               title="Deselect Emoji"
             />
           </button>
-          <button aria-label="Random Emoji" className="flex hover:scale-110">
+          <button
+            onClick={() =>
+              emojiData && secondDiceRoll({ newEmojiData: emojiData })
+            }
+            aria-label="Random Emoji"
+            className="flex hover:scale-110"
+          >
             <Icon
               icon="dice"
               customStyle="fill-purple-500 w-7"
@@ -183,7 +201,11 @@ function EmojiDisplay({
               title="Deselect Emoji"
             />
           </button>
-          <button aria-label="Random Emoji" className="flex hover:scale-110">
+          <button
+            onClick={thirdDiceRoll}
+            aria-label="Random Emoji"
+            className="flex hover:scale-110"
+          >
             <Icon
               icon="dice"
               customStyle="fill-rose-400 w-7"
@@ -205,11 +227,84 @@ export default function Index() {
     [matches]
   );
 
-  const { isLoading } =  useIsLoading();
+  const { isLoading } = useIsLoading();
 
   const [emojiData, setEmojiData] = useState<emojiDataType>();
   const [firstEmoji, setFirstEmoji] = useState<string>("");
   const [secondEmoji, setSecondEmoji] = useState<string>("");
+
+  const handleDisplayCombos = async (emojiUnicode: string, emoji: string) => {
+    const emojiData = await HandleCacheEmojiData(emojiUnicode);
+    setFirstEmoji(emojiUnicode + "~" + emoji);
+
+    setEmojiData(emojiData);
+  };
+
+  const firstDiceRoll = () => {
+    if (!filenames) return;
+
+    // Call the HandleDiceRoll function, passing in the filenames array as an argument,
+    // and store the result in the randEmoji variable.
+    const randEmoji = HandleDiceRoll({
+      filenames,
+    });
+
+    // Filter the filenames array to get the filename that includes the randomly
+    // selected emoji. The result is stored in the filename variable.
+    const filename = filenames.filter((filename) =>
+      filename.keys.includes(randEmoji)
+    )[0];
+
+    // Call the handleDisplayCombos function, passing in the id of the selected filename
+    // and the concatenation of the first two values of the keys property of the selected
+    // filename. The result of this function call is not stored.
+    handleDisplayCombos(
+      filename.id,
+      filename.keys.split("~")[0] + "~" + filename.keys.split("~")[1]
+    );
+
+    return filename.id;
+  };
+
+  const secondDiceRoll = ({
+    newEmojiData,
+  }: {
+    newEmojiData: emojiDataType;
+  }) => {
+    // Check if the filenames array is not null or undefined
+    if (!filenames) return;
+
+    // Generate a random emoji by calling the HandleDiceRoll function
+    // with the filter parameter set to the filenames array filtered by
+    // the ids of the combos in the emojiData
+    const randEmoji = HandleDiceRoll({
+      filenames: filenames?.filter((filename) =>
+        newEmojiData?.combos
+          .map((combo) => combo.baseUnicode)
+          .includes(filename.id)
+      ),
+    });
+
+    // Filter the filenames array again to get the filename that includes
+    // the randomly selected emoji
+    const selectedFilename = filenames.filter((filename) =>
+      filename.keys.includes(randEmoji)
+    )[0];
+
+    // Set the secondEmoji state with the id of the selected emoji
+    setSecondEmoji(selectedFilename.id);
+  };
+
+  const thirdDiceRoll = async () => {
+    setFirstEmoji("");
+    setSecondEmoji("");
+    const unicode = firstDiceRoll();
+
+    if (!unicode) return;
+
+    const newEmojiData = await HandleCacheEmojiData(unicode);
+    secondDiceRoll({ newEmojiData });
+  };
 
   return (
     <>
@@ -242,6 +337,7 @@ export default function Index() {
             firstEmoji={firstEmoji}
             setSecondEmoji={setSecondEmoji}
             secondEmoji={secondEmoji}
+            thirdDiceRoll={thirdDiceRoll}
           />
         </div>
         <EmojiDisplay
@@ -251,6 +347,9 @@ export default function Index() {
           setFirstEmoji={setFirstEmoji}
           setSecondEmoji={setSecondEmoji}
           setEmojiData={setEmojiData}
+          firstDiceRoll={firstDiceRoll}
+          secondDiceRoll={secondDiceRoll}
+          thirdDiceRoll={thirdDiceRoll}
         />
       </main>
     </>

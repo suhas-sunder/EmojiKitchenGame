@@ -1,5 +1,5 @@
 import styles from "./styles/NavBar.module.css";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../hooks/useAuth";
 import loadable from "@loadable/component";
 import { useLayoutEffect } from "react";
 

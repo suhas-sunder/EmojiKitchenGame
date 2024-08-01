@@ -1,5 +1,4 @@
-
-import { emojiDataType } from '../../../routes/_index';
+import { emojiDataType } from "../../../routes/_index";
 
 //Displays the combos for the selected emojis
 function ComboImage({
@@ -29,18 +28,25 @@ function ComboImage({
   if (secondEmojiBaseUnicode.length >= 9)
     secondEmojiBaseUnicode = "u" + secondEmojiBaseUnicode.split("-").join("-u");
 
+  if (firstEmojiBaseUnicode === "u00a9") firstEmojiBaseUnicode = "ua9";
+
+  if (firstEmojiBaseUnicode === "u00ae") firstEmojiBaseUnicode = "uae";
+
   const filterComboSet = () => {
     // Filter the combos based on the selected emojis
     // The filter condition checks if the baseUnicode of the combo includes either of the baseUnicode of the selected emojis
     return emojiData?.combos?.filter(
       (combo) =>
-        (combo.baseUnicode.includes(firstEmojiBaseUnicode) &&
+        (combo.baseUnicode === firstEmojiBaseUnicode &&
           combo.unicode.endsWith(secondEmojiBaseUnicode)) ||
-        (combo.baseUnicode.includes(secondEmojiBaseUnicode) &&
+        (combo.baseUnicode === secondEmojiBaseUnicode &&
           combo.unicode.endsWith(firstEmojiBaseUnicode))
     );
   };
+
   let filteredCombos = filterComboSet();
+
+  console.log(firstEmojiBaseUnicode, secondEmojiBaseUnicode, filteredCombos);
 
   //Covers edge cases for wierdly formatted emojis codes
   if (filteredCombos?.length === 0) {
@@ -80,4 +86,4 @@ function ComboImage({
   );
 }
 
-export default ComboImage
+export default ComboImage;

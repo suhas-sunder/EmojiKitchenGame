@@ -12,7 +12,8 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import localforage from "localforage";
-import cloudflareR2API from "./client/api/cloudflareR2API";
+import cloudflareR2API from "./client/components/api/cloudflareR2API";
+import useLoadAnimation from "./client/components/hooks/useLoadAnimation";
 
 export const loader = async () => {
   let filenames: { id: string; keys: string }[] = [];
@@ -100,7 +101,12 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   }
 }
 
+
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  
+  const { fadeAnim } = useLoadAnimation();
+
   return (
     <html lang="en">
       <head>
@@ -109,7 +115,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className={`${fadeAnim}`}>
         <NavBar />
         {children}
         <ScrollRestoration />

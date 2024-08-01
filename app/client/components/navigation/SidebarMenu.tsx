@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useLayoutEffect } from "react";
 import styles from "./styles/SidebarMenu.module.css";
 import loadable from "@loadable/component";
-import useLoadAnimation from "../../hooks/useLoadAnimation";
+import useLoadAnimation from "../hooks/useLoadAnimation";
 
 const Icon = loadable(() => import("../../../utils/other/Icon"));
 function SidebarMenu({ displayMenuItem, setDisplayMenuItem, menuData }) {

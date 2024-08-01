@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Icon from "../utils/other/Icon";
 import { emojiDataType } from "../../../routes/_index";
 import ComboImage from "./ComboImage";
@@ -8,6 +7,7 @@ interface PropType {
   firstEmoji: string;
   setSecondEmoji: (value: string) => void;
   secondEmoji: string;
+  thirdDiceRoll?: () => void;
 }
 
 export default function ThirdEmojiWindow({
@@ -15,14 +15,11 @@ export default function ThirdEmojiWindow({
   firstEmoji,
   setSecondEmoji,
   secondEmoji,
+  thirdDiceRoll,
 }: PropType) {
-  useEffect(() => {
-    console.log(firstEmoji, "spicy", secondEmoji, "third window");
-  }, [firstEmoji, secondEmoji]);
-
   return (
     <div
-      className={`flex relative items-center flex-col h-[25em] col-span-2 lg:col-span-1 lg:h-[53em] border-l border-b sm:border-hidden`}
+      className={` flex relative items-center flex-col h-[25em] col-span-2 lg:col-span-1 lg:h-[53em] border-l border-b sm:border-hidden`}
     >
       {emojiData?.combos && (
         <div
@@ -151,7 +148,7 @@ export default function ThirdEmojiWindow({
                 title="Deselect Emoji"
               />
             </button>
-            <button className="hover:scale-110">
+            <button onClick={thirdDiceRoll} className="hover:scale-110">
               <Icon
                 icon="dice"
                 customStyle="fill-rose-400 w-7"
