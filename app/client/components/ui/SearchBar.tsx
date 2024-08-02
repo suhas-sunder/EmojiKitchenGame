@@ -24,6 +24,7 @@ function SearchBar({
 
   return (
     <div
+    id="search-bar"
       className={`${customStyle} relative flex w-full justify-center items-center font-nunito mx-5`}
     >
       <label
@@ -42,6 +43,7 @@ function SearchBar({
           )}
           <span className="py-3">| </span>
           <button
+          title="🎲 Add Random Emoji To Search"
             onClick={handleDiceRoll}
             className="flex p-3 hover:scale-[1.15]"
           >

@@ -59,6 +59,7 @@ font-family: 'Lora', serif;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {

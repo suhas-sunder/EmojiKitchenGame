@@ -66,7 +66,7 @@ function Buttons({ filename }: { filename: Filename }) {
       </li>
       <li
         title={`${filename.keys.split("~")[0]} Emoji meaning`}
-        className="col-span-2 mx-auto sm:col-span-1"
+        className="col-span-2 w-full justify-center items-center mx-auto sm:col-span-1"
       >
         <Link
           to={`/emoji-combos/${
@@ -77,7 +77,7 @@ function Buttons({ filename }: { filename: Filename }) {
             filename.keys.split("~")[1].split(" ").join("-") +
             "-emoji"
           }`}
-          className="flex justify-between border-2 px-3 gap-1 py-2 rounded-md  border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400"
+          className="flex justify-center sm:justify-between border-2 px-3 gap-1 py-2 rounded-md  border-rose-300 text-rose-500 cursor-pointer hover:border-rose-200 hover:text-rose-400"
         >
           {" "}
           <span>View</span>{" "}
@@ -85,10 +85,20 @@ function Buttons({ filename }: { filename: Filename }) {
             <Icon
               icon="viewPage"
               title="New Tab Icon"
-              customStyle="fill-purple-500 w-5 "
+              customStyle="fill-rose-500 w-5 "
             />
           </span>
         </Link>
+      </li>
+      <li
+        className="flex col-span-2 sm:col-span-3 justify-center items-center"
+        title={`Copy ${filename.keys.split("~")[0]} Emoji`}
+      >
+        <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
+          {" "}
+          <span>Copy Emoji</span>{" "}
+          <span className="flex">{filename.keys.split("~")[0]}</span>
+        </button>
       </li>
     </ul>
   );
@@ -110,37 +120,53 @@ export default function Emojis() {
 
   return (
     <>
-      <header className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito mx-5">
-        <h1 className="capitalize font-lora text-3xl leading-relaxed text-center  md:text-4xl lg:text-5xl mt-10 text-purple-700 flex justify-center items-center  gap-3">
+      <header id="#emoji-combo-header" className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito mx-5">
+        <h1 className="capitalize font-lora text-2xl leading-relaxed text-center  md:text-3xl lg:text-4xl mt-10 text-purple-700 flex justify-center items-center  gap-3">
           {pathname === "emoji-combos"
             ? "All Emojis With Combos"
             : filenames
                 ?.filter((filename) => filename.id === pathname)[0]
                 ?.keys.split("~")[1] + " Emoji"}{" "}
+          {pathname !== "emoji-combos" && (
+            <Link
+              title={"🔍 Scroll To Search Bar"}
+              to={"#search-bar"}
+              className="flex text-3xl hover:scale-110"
+            >
+              🔍
+            </Link>
+          )}
         </h1>
       </header>
-      <main className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito mx-5">
+      <main className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito ">
         <Outlet />
-        <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center">
+        <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center  mx-5">
           <Link to="/emoji-copy-and-paste">
             Click here to view a list of all copy and paste emojis!
           </Link>
         </h2>
-        <SearchBar
-          uniqueId="combos"
-          setSearchEmoji={setSearchEmoji}
-          customStyle="mt-11 w-full max-w-[1200px]"
-          placeholder="search emojis"
-          customLabelStyle="pl-3"
-          searchEmoji={searchEmoji}
-          handleDiceRoll={() => {
-            filenames && setSearchEmoji(HandleDiceRoll({ filenames }));
-          }}
-        />
-        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto max-h-[9em] mt-3 sm:scrollbar-thin scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
+        <div className="flex mx-5 w-full justify-center items-center">
+          <SearchBar
+            uniqueId="combos"
+            setSearchEmoji={setSearchEmoji}
+            customStyle="mt-11 w-full max-w-[1200px] "
+            placeholder="search emojis"
+            customLabelStyle="pl-3"
+            searchEmoji={searchEmoji}
+            handleDiceRoll={() => {
+              filenames && setSearchEmoji(HandleDiceRoll({ filenames }));
+            }}
+          />
+        </div>
+        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto  mx-5 max-h-[9em] mt-3 sm:scrollbar-thin scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
           {filenames?.map((filename) => (
             <li key={filename?.id + "emoji-search-preview"}>
               <button
+                title={
+                  filename.keys.split("~")[0] +
+                  " " +
+                  filename.keys.split("~")[1]
+                }
                 tabIndex={-1}
                 onClick={() => setSearchEmoji(filename.keys.split("~")[0])}
                 className="text-2xl w-10 h-10 border-2 rounded-md border-purple-200 hover:border-purple-500 "
@@ -150,7 +176,7 @@ export default function Emojis() {
             </li>
           ))}
         </ul>
-        <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-9 mt-10 md:w-full max-w-[1150px]">
+        <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-9 mt-10 md:w-full max-w-[1150px] px-5">
           {filenames?.map((filename) =>
             filename.id !== pathname &&
             (searchEmoji === "" ||
@@ -194,6 +220,13 @@ export default function Emojis() {
             ) : null
           )}
         </ul>
+        <Link
+          to={"#emoji-combo-header"}
+          className="font-nunito text-2xl translate-y-24 flex gap-4 justify-center items-center  text-sky-600 hover:text-sky-500"
+        >
+          <span className="scale-x-[-1]">☝️☝🏻☝🏼</span>Scroll To Top
+          <span>☝🏽☝🏾☝🏿</span>
+        </Link>
       </main>
     </>
   );

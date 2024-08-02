@@ -31,7 +31,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
           <span className={`${styles.icon}`}>Games</span>
         </NavLink>
       </li> */}
-      <li>
+      <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/emoji-combos"
@@ -42,7 +42,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
           <span className={`${styles.icon} xl:hidden`}>Combos</span>
         </NavLink>
       </li>
-      <li>
+      <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/text-faces"
@@ -51,7 +51,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
           <span className={`${styles.icon}`}>ಥ_ಥ Text Faces</span>
         </NavLink>
       </li>
-      <li>
+      <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/emoji-copy-and-paste"
@@ -65,7 +65,8 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
           <span className={`${styles.icon} xl:hidden`}>Copy & Paste</span>
         </NavLink>
       </li>
-      {/* <li>
+      {/* 
+      <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/emoji-generator"
@@ -75,7 +76,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
           <span className={`${styles.icon}`}>Generator</span>
         </NavLink>
       </li>
-      <li>
+      <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/blog"
@@ -85,7 +86,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
           <span className={`${styles.icon}`}>Blog</span>
         </NavLink>
       </li>
-      <li>
+      <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/login"
@@ -96,7 +97,8 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
         </NavLink>
       </li> */}
       {/* These are the drop-down login/signup links */}
-      {/* <li>
+      {/* 
+      <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/games"
@@ -106,7 +108,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
           <span className={`${styles.icon}`}>Login</span>
         </NavLink>
       </li>
-      <li>
+      <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
           to="/games"
