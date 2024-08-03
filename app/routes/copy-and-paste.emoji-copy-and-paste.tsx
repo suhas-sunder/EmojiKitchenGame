@@ -185,7 +185,11 @@ export default function EmojiCopyAndPaste() {
             </h2>
             <ul className="text-2xl grid font-nunito grid-cols-4 sm:grid-cols-7 px-5 lg:grid-cols-12 xl:grid-cols-14 gap-5 w-full justify-center items-center">
               {symbols[key].map((symbol, index) => (
-                <li title={symbol} key={symbol + index}>
+                <li
+                  title={symbol}
+                  key={symbol + index}
+                  className="flex justify-center items-center"
+                >
                   <button
                     aria-label={`Copy ${symbol} emoji to clipboard`}
                     onClick={() => {
@@ -194,7 +198,7 @@ export default function EmojiCopyAndPaste() {
                     }}
                     className={`${
                       isCopied === symbol ? "text-xs" : "text-4xl"
-                    } border-2 px-3 py-2 rounded-md max-w-[5.4em] hover:scale-110 border-rose-200 text-rose-500 cursor-pointer justify-center items-center flex w-full hover:border-rose-400 hover:text-rose-500`}
+                    } border-2 px-3 py-3 rounded-md max-w-[5.4em] hover:scale-110 border-rose-200 text-rose-500 cursor-pointer justify-center items-center flex w-full hover:border-rose-400 hover:text-rose-500`}
                   >
                     {isCopied === symbol ? "Copied!" : symbol}
                     <div

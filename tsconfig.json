@@ -6,7 +6,7 @@
     "**/.server/**/*.tsx",
     "**/.client/**/*.ts",
     "**/.client/**/*.tsx"
-, "app/routes/emoji-combos.tsx", "app/routes/emoji-combos.$emoji.tsx"  ],
+, "app/routes/emoji-combos.tsx", "app/routes/emoji-combos.$emoji.tsx", "app/routes/games.tsx"  ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@remix-run/node", "vite/client"],
