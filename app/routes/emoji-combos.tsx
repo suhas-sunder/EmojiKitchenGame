@@ -52,39 +52,10 @@ function Buttons({
   }, [isCopied]);
 
   return (
-    <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center items-center">
-      <li
-        className="flex justify-center items-center"
-        title={`Copy ${filename.keys.split("~")[0]} Image`}
-      >
-        <button
-          onClick={() => {
-            setIsCopied(filename?.keys?.split("~")[0] + "img");
-            navigator.clipboard.writeText(
-              filename?.keys?.split("~")[0]
-            );
-          }}
-          className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
-        >
-          {isCopied === filename?.keys?.split("~")[0] + "img" ? (
-            <span className="text-sm py-[0.14em]">Copied!</span>
-          ) : (
-            <div className="flex gap-1">
-              <span>Copy</span>{" "}
-              <span className="flex">
-                <Icon
-                  icon="copy"
-                  title="Copy Paste Icon"
-                  customStyle="fill-purple-500 w-5 translate-y-[0.1rem]"
-                />
-              </span>
-            </div>
-          )}
-        </button>
-      </li>
+    <ul className="grid grid-cols-4 sm:grid-cols-4 gap-x-4 gap-y-6 justify-center items-center">
       <li
         title={`Like ${filename.keys.split("~")[0]} emoji`}
-        className="flex justify-center items-center"
+        className="flex justify-center items-center col-span-2"
       >
         <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
           <span>Like</span>{" "}
@@ -99,7 +70,7 @@ function Buttons({
       </li>
       <li
         title={`${filename.keys.split("~")[0]} Emoji meaning`}
-        className="col-span-2 w-full justify-center items-center mx-auto sm:col-span-1"
+        className="col-span-2 w-full justify-center items-center mx-auto"
       >
         <Link
           to={`/emoji-combos/${
@@ -125,7 +96,7 @@ function Buttons({
         </Link>
       </li>
       <li
-        className="flex col-span-2 sm:col-span-3 justify-center items-center"
+        className="flex col-span-4 justify-center items-center"
         title={`Copy ${filename.keys.split("~")[0]} Emoji`}
       >
         <button

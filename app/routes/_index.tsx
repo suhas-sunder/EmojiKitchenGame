@@ -9,6 +9,7 @@ import ComboImage from "../client/components/layout/ComboImage";
 import useIsLoading from "../client/components/hooks/useIsLoading";
 import HandleDiceRoll from "../client/components/utils/generators/HandleDiceRoll";
 import HandleCacheEmojiData from "../client/components/utils/requests/HandleCacheEmojiData";
+import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
 
 export type Filename = {
   id: string;
@@ -64,6 +65,7 @@ function EmojiDisplay({
 }: {
   firstEmoji: string;
   secondEmoji: string;
+
   setFirstEmoji: (value: string) => void;
   setSecondEmoji: (value: string) => void;
   setEmojiData: (value: EmojiDataType | undefined) => void;
@@ -72,6 +74,8 @@ function EmojiDisplay({
   secondDiceRoll: ({ newEmojiData }: { newEmojiData: EmojiDataType }) => void;
   thirdDiceRoll: () => void;
 }) {
+  const { isCopied, setIsCopied } = useManageCopiedMsg();
+
   return (
     <ul className="flex fixed bottom-6 justify-center items-center w-full h-[9em] sm:h-[12em] lg:h-[12.5em] gap-2 sm:gap-6 bg-white">
       <li
@@ -80,7 +84,8 @@ function EmojiDisplay({
       >
         {firstEmoji && (
           <img
-            className="flex w-12 md:w-20"
+            loading="lazy"
+            className={`${isCopied === firstEmoji?.split("~")[1] ? "hidden" : "flex"} w-12 md:w-20`}
             alt={`Emoji of ${firstEmoji?.split("~")[1]} ${
               firstEmoji?.split("~")[2]
             }`}
@@ -91,12 +96,24 @@ function EmojiDisplay({
             }/emoji.svg`}
           />
         )}
+        {firstEmoji && isCopied === firstEmoji?.split("~")[1] && (
+          <h2 className="text-purple-600 font-nunito w-12 text-sm py-[1em]">
+            Copied!
+          </h2>
+        )}
         <div className="absolute -bottom-10 scale-[.80] flex gap-3">
-          <button aria-label="Copy Emoji" className="flex hover:scale-110">
+          <button
+            onClick={() => {
+              setIsCopied(firstEmoji?.split("~")[1]);
+              navigator.clipboard.writeText(`${firstEmoji?.split("~")[1]}`);
+            }}
+            aria-label="Copy First Emoji"
+            className="flex hover:scale-110"
+          >
             <Icon
               icon="copy"
               customStyle="fill-purple-500 w-7"
-              title="Copy Emoji"
+              title={`Copy ${firstEmoji?.split("~")[1]} Emoji`}
             />
           </button>
           <button
@@ -130,11 +147,12 @@ function EmojiDisplay({
       <li className="-translate-y-3">➕</li>
       <li
         title={secondEmoji?.split("~")[1] + " " + secondEmoji?.split("~")[2]}
-        className="flex relative border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-3"
+        className="flex relative border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-4 sm:-translate-y-5"
       >
         {secondEmoji && (
           <img
-            className="flex w-12 md:w-20"
+            loading="lazy"
+            className={`${isCopied === secondEmoji?.split("~")[1] ? "hidden" : "flex"} w-12 md:w-20`}
             alt={`Emoji of ${secondEmoji?.split("~")[1]} ${
               secondEmoji?.split("~")[2]
             }`}
@@ -145,12 +163,24 @@ function EmojiDisplay({
             }/emoji.svg`}
           />
         )}
+        {secondEmoji && isCopied === secondEmoji?.split("~")[1] && (
+          <h2 className="text-purple-600 font-nunito w-12 text-sm py-[1em]">
+            Copied!
+          </h2>
+        )}
         <div className="absolute -bottom-10 scale-[.80] flex gap-3">
-          <button aria-label="Copy Emoji" className="flex hover:scale-110">
+          <button
+            onClick={() => {
+              setIsCopied(secondEmoji?.split("~")[1]);
+              navigator.clipboard.writeText(`${secondEmoji?.split("~")[1]}`);
+            }}
+            aria-label="Copy Second Emoji"
+            className="flex hover:scale-110"
+          >
             <Icon
               icon="copy"
               customStyle="fill-purple-500 w-7"
-              title="Copy Emoji"
+              title={`Copy ${secondEmoji?.split("~")[1]} Emoji`}
             />
           </button>
           <button
@@ -180,44 +210,14 @@ function EmojiDisplay({
         </div>
       </li>
       <li className="-translate-y-3">🟰</li>
-      <li className="flex border-2 rounded-2xl justify-center items-center p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] -translate-y-3">
+      <li className="flex border-2 rounded-2xl justify-center items-center p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] -translate-y-4 sm:-translate-y-5">
         <ComboImage
           firstEmoji={firstEmoji}
           secondEmoji={secondEmoji}
           emojiData={emojiData}
           setSecondEmoji={setSecondEmoji}
+          thirdDiceRoll={thirdDiceRoll}
         />
-        <div className="absolute -bottom-10 scale-[.80] flex gap-3">
-          <button aria-label="Copy Emoji" className="flex hover:scale-110">
-            <Icon
-              icon="copy"
-              customStyle="fill-rose-400 w-7"
-              title="Copy Emoji"
-            />
-          </button>
-          <button
-            aria-label="Deselect Emoji"
-            className="flex hover:scale-110"
-            onClick={() => setSecondEmoji("")}
-          >
-            <Icon
-              icon="deselect"
-              customStyle="fill-rose-400 w-7"
-              title="Deselect Emoji"
-            />
-          </button>
-          <button
-            onClick={thirdDiceRoll}
-            aria-label="Random Emoji"
-            className="flex hover:scale-110"
-          >
-            <Icon
-              icon="dice"
-              customStyle="fill-rose-400 w-7"
-              title="Random Second Emoji"
-            />
-          </button>
-        </div>
       </li>
     </ul>
   );

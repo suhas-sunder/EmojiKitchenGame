@@ -8,8 +8,9 @@ import {
   useOutletContext,
 } from "@remix-run/react";
 import localforage from "localforage";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import SectionMenu from "../client/components/navigation/SectionMenu";
+import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
 
 export const meta: MetaFunction = () => {
   return [
@@ -95,8 +96,6 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 export default function EmojiCopyAndPaste() {
   const { symbols }: { symbols: TextFaces } = useLoaderData();
 
-  const [isCopied, setIsCopied] = useState<string>("");
-
   const {
     setCopyText,
     displayCopyText,
@@ -112,13 +111,7 @@ export default function EmojiCopyAndPaste() {
     setTextareaIsHidden: Dispatch<SetStateAction<boolean>>;
   }>();
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      isCopied && setIsCopied("");
-    }, 400);
-
-    return () => clearTimeout(timeout);
-  }, [isCopied]);
+  const { isCopied, setIsCopied } = useManageCopiedMsg();
 
   const symbolMenuObject = {
     Smileys: "",

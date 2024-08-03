@@ -1,4 +1,3 @@
-import Icon from "../utils/other/Icon";
 import { EmojiDataType } from "../../../routes/_index";
 import ComboImage from "./ComboImage";
 
@@ -128,33 +127,9 @@ export default function ThirdEmojiWindow({
               secondEmoji={secondEmoji}
               emojiData={emojiData}
               setSecondEmoji={setSecondEmoji}
+              menuStyle="scale-50 -translate-y-3"
+              thirdDiceRoll={thirdDiceRoll}
             />
-          </div>
-          <div className="absolute top-11  lg:top-[12em] scale-[.80] flex gap-5">
-            <button className="hover:scale-110">
-              <Icon
-                icon="copy"
-                customStyle="fill-rose-400 w-7"
-                title="Copy Emoji"
-              />
-            </button>
-            <button
-              className="hover:scale-110"
-              onClick={() => setSecondEmoji("")}
-            >
-              <Icon
-                icon="deselect"
-                customStyle="fill-rose-400 w-7"
-                title="Deselect Emoji"
-              />
-            </button>
-            <button onClick={thirdDiceRoll} className="hover:scale-110">
-              <Icon
-                icon="dice"
-                customStyle="fill-rose-400 w-7"
-                title="Random Second Emoji"
-              />
-            </button>
           </div>
         </div>
       )}

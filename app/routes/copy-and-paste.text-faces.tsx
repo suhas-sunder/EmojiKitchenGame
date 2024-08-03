@@ -10,9 +10,10 @@ import {
 import cloudflareR2API from "../client/components/api/cloudflareR2API";
 import localforage from "localforage";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import CopyPaste from "../client/components/ui/CopyPasteTextbox";
 import SectionMenu from "../client/components/navigation/SectionMenu";
+import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
 
 export const meta: MetaFunction = () => {
   return [
@@ -130,7 +131,10 @@ export default function TextFaces() {
     facesInfo,
   }: { textFaces: TextFaces; facesInfo: TextFaces } = useLoaderData();
 
-  const [isCopied, setIsCopied] = useState<string>("");
+  const {
+    isCopied,
+    setIsCopied,
+  } = useManageCopiedMsg();
 
   const {
     setCopyText,
@@ -146,14 +150,6 @@ export default function TextFaces() {
     textareaIsHidden: boolean;
     setTextareaIsHidden: Dispatch<SetStateAction<boolean>>;
   }>();
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      isCopied && setIsCopied("");
-    }, 400);
-
-    return () => clearTimeout(timeout);
-  }, [isCopied]);
 
   return (
     <div className="flex flex-col gap-5  justify-center items-center">
