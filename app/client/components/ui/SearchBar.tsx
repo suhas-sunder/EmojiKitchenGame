@@ -24,15 +24,18 @@ function SearchBar({
 
   return (
     <div
-    
-      className={`${customStyle} relative flex w-full justify-center items-center font-nunito mx-5`}
+      className={`${customStyle} relative flex w-full justify-center items-center font-nunito mx-2`}
     >
-      <div id="search-bar" aria-label="scroll offset for anchor link navigation" className="-translate-y-24"></div>
+      <div
+        id="search-bar"
+        aria-label="scroll offset for anchor link navigation"
+        className="-translate-y-24"
+      ></div>
       <label
         htmlFor={"search" + uniqueId}
-        className={`flex absolute justify-between w-full cursor-text text-purple-400 ${customLabelStyle}`}
+        className={`flex absolute justify-end sm:justify-between w-full cursor-text text-purple-400 ${customLabelStyle}`}
       >
-        <span className="flex  py-3">🔍</span>
+        <span className="hidden sm:flex py-3 pl-4">🔍</span>
         <div className="flex ">
           {searchEmoji && (
             <button
@@ -44,9 +47,9 @@ function SearchBar({
           )}
           <span className="py-3">| </span>
           <button
-          title="🎲 Add Random Emoji To Search"
+            title="🎲 Add Random Emoji To Search"
             onClick={handleDiceRoll}
-            className="flex p-3 hover:scale-[1.15]"
+            className="flex ml-2 py-3 sm:p-3 hover:scale-[1.15]"
           >
             🎲
           </button>
@@ -60,7 +63,7 @@ function SearchBar({
         onChange={(e) => setSearchEmoji(e.target.value.toLowerCase())}
         value={searchEmoji || ""}
         placeholder={placeholder || "Search"}
-        className={`flex [&::-webkit-search-cancel-button]:hidden border-2 border-purple-300 rounded-md pl-10 w-full my-2 text-lg py-[0.3em] text-purple-600 px-5 focus:border-purple-700 outline-none placeholder:text-purple-300`}
+        className={`flex [&::-webkit-search-cancel-button]:hidden  placeholder:text-sm border-2 border-purple-300 rounded-md sm:pl-7 w-full my-2 text-sm sm:text-lg py-[0.5em] sm:py-[0.3em] text-purple-600 pl-2 sm:px-5 focus:border-purple-700 outline-none placeholder:text-purple-300`}
       />
     </div>
   );

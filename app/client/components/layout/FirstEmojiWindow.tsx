@@ -42,9 +42,9 @@ export default function FirstEmojiWindow({
       <SearchBar
         uniqueId="first"
         setSearchEmoji={setSearchEmoji}
-        customStyle="md:-translate-x-8 md:pl-5 pr-8 md:pr-0 mb-1"
-        placeholder="search first emoji"
-        customLabelStyle="pl-[1.45em] pr-[1em]"
+        customStyle="md:-translate-x-6 md:pl-5 pr-3 md:pr-0 mb-1"
+        placeholder="Search first emoji"
+        customLabelStyle="pr-[0.55em] pl-0"
         searchEmoji={searchEmoji}
         handleDiceRoll={() => {
           filenames && setSearchEmoji(HandleDiceRoll({ filenames }));

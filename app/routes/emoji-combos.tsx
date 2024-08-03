@@ -52,12 +52,12 @@ function Buttons({
   }, [isCopied]);
 
   return (
-    <ul className="grid grid-cols-4 sm:grid-cols-4 gap-x-4 gap-y-6 justify-center items-center">
+    <ul className="grid grid-cols-4 gap-x-10 w-full gap-y-6">
       <li
         title={`Like ${filename.keys.split("~")[0]} emoji`}
         className="flex justify-center items-center col-span-2"
       >
-        <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
+        <button className="flex gap-2 ml-auto col-span-2 justify-center border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
           <span>Like</span>{" "}
           <span className="flex">
             <Icon
@@ -70,7 +70,7 @@ function Buttons({
       </li>
       <li
         title={`${filename.keys.split("~")[0]} Emoji meaning`}
-        className="col-span-2 w-full justify-center items-center mx-auto"
+        className="col-span-2  gap-4 mr-auto justify-center flex  items-center"
       >
         <Link
           to={`/emoji-combos/${
@@ -82,7 +82,7 @@ function Buttons({
             "-emoji"
           }`}
           onClick={() => setTimeout(() => setSearchEmoji(""), 1000)}
-          className="flex justify-center sm:justify-between border-2 px-3 gap-1 py-2 hover:scale-110 rounded-md  border-rose-300 text-rose-500 cursor-pointer hover:border-rose-500 hover:text-rose-600"
+          className="flex justify-center  sm:justify-between border-2 px-3 gap-1 py-2 hover:scale-105 rounded-md border-rose-300 text-rose-500 cursor-pointer hover:border-rose-500 hover:text-rose-600"
         >
           {" "}
           <span>View</span>{" "}
@@ -104,7 +104,7 @@ function Buttons({
             setIsCopied(filename?.keys?.split("~")[0]);
             navigator.clipboard.writeText(filename?.keys?.split("~")[0]);
           }}
-          className="flex justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
+          className="flex justify-center items-center border-2 px-3 py-2 w-40 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
         >
           {isCopied === filename?.keys?.split("~")[0] ? (
             <span className="text-sm py-[0.14em]">Copied!</span>

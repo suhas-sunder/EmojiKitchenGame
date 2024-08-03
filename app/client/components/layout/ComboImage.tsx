@@ -115,14 +115,16 @@ function ComboImage({
         Object.values(filteredCombos[0]).length > 0 && (
           <>
             <img
-              className={`${isCopied ? "hidden" : "flex"} w-12 md:w-20`}
+              className={`${
+                isCopied ? "opacity-0" : "opacity-1"
+              } flex w-12 md:w-20`}
               key={`${filteredCombos[0]?.unicode}-${filteredCombos[0]?.baseUnicode}-${filteredCombos[0]?.code}-combo-img`}
               loading="lazy"
               alt={`Combination of two emojis ${filteredCombos[0]?.unicode}`}
               src={`https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`}
             />
             {isCopied && (
-              <h2 className="text-rose-500 font-nunito w-12 text-sm py-[1em]">
+              <h2 className="text-rose-500 absolute font-nunito text-lg py-[1em]">
                 Copied!
               </h2>
             )}
@@ -130,10 +132,12 @@ function ComboImage({
         )}
 
       <div
-        className={`absolute -bottom-10 scale-[.80] flex gap-3 ${menuStyle}`}
+        className={`absolute -bottom-10 scale-[.80] flex gap-5 sm:gap-6 ${menuStyle}`}
       >
         <button
           onClick={() => {
+            filteredCombos &&
+            filteredCombos[0] &&
             Object.values(filteredCombos[0]).length > 0
               ? copyImgToClipboard({
                   url: `https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`,

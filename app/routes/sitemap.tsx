@@ -28,19 +28,19 @@ export default function Sitemap() {
   );
 
   return (
-    <div className="flex justify-center gap-10 flex-col items-center mx-10">
+    <div className="flex justify-center gap-10  leading-loose tracking-widest flex-col items-center mx-10">
       <header>
-        <h1 className=" font-lora text-center leading-loose text-purple-700 translate-y-10 text-2xl mx-5 sm:text-3xl">
+        <h1 className=" font-lora text-center text-purple-700 translate-y-10 text-2xl mx-5 sm:text-3xl">
           Sitemap
         </h1>
       </header>
-      <main className="max-w-[1200px]  my-10 text-sky-600 text-lg flex tracking-widest leading-loose gap-16 flex-col mb-64 w-full">
+      <main className="max-w-[1200px]  my-10 text-sky-600 text-lg flex gap-16 flex-col mb-64 w-full">
         <ol className="flex  flex-col list-decimal font-nunito mr-auto">
-          <li>
+          {/* <li>
             <Link to="/about" className="hover: hover:text-sky-400">
               About
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/" className=" hover:text-sky-400 pb-4 flex mr-auto">
               Emoji Kitchen Game (Home)

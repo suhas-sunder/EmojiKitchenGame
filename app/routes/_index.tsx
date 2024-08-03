@@ -76,6 +76,10 @@ function EmojiDisplay({
 }) {
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
+  // useEffect(() => {
+  //   console.log(isCopied);
+  // }, [isCopied]);
+
   return (
     <ul className="flex fixed bottom-6 justify-center items-center w-full h-[9em] sm:h-[12em] lg:h-[12.5em] gap-2 sm:gap-6 bg-white">
       <li
@@ -85,7 +89,11 @@ function EmojiDisplay({
         {firstEmoji && (
           <img
             loading="lazy"
-            className={`${isCopied === firstEmoji?.split("~")[1] ? "hidden" : "flex"} w-12 md:w-20`}
+            className={`${
+              isCopied && isCopied === firstEmoji?.split("~")[1]
+                ? "opacity-0"
+                : "opacity-1"
+            } flex w-12 md:w-20`}
             alt={`Emoji of ${firstEmoji?.split("~")[1]} ${
               firstEmoji?.split("~")[2]
             }`}
@@ -96,12 +104,12 @@ function EmojiDisplay({
             }/emoji.svg`}
           />
         )}
-        {firstEmoji && isCopied === firstEmoji?.split("~")[1] && (
-          <h2 className="text-purple-600 font-nunito w-12 text-sm py-[1em]">
+        {firstEmoji && isCopied && isCopied === firstEmoji?.split("~")[1] && (
+          <h2 className="text-purple-600 absolute  font-nunito text-lg py-[1em]">
             Copied!
           </h2>
         )}
-        <div className="absolute -bottom-10 scale-[.80] flex gap-3">
+        <div className="absolute -bottom-10 scale-[.80] flex gap-5 sm:gap-6">
           <button
             onClick={() => {
               setIsCopied(firstEmoji?.split("~")[1]);
@@ -152,7 +160,11 @@ function EmojiDisplay({
         {secondEmoji && (
           <img
             loading="lazy"
-            className={`${isCopied === secondEmoji?.split("~")[1] ? "hidden" : "flex"} w-12 md:w-20`}
+            className={`${
+              isCopied && isCopied === secondEmoji?.split("~")[1]
+                ? "opacity-0"
+                : "opacity-1"
+            } w-12 md:w-20 flex`}
             alt={`Emoji of ${secondEmoji?.split("~")[1]} ${
               secondEmoji?.split("~")[2]
             }`}
@@ -163,12 +175,12 @@ function EmojiDisplay({
             }/emoji.svg`}
           />
         )}
-        {secondEmoji && isCopied === secondEmoji?.split("~")[1] && (
-          <h2 className="text-purple-600 font-nunito w-12 text-sm py-[1em]">
+        {secondEmoji && isCopied && isCopied === secondEmoji?.split("~")[1] && (
+          <h2 className="text-purple-600 absolute font-nunito text-lg py-[1em]">
             Copied!
           </h2>
         )}
-        <div className="absolute -bottom-10 scale-[.80] flex gap-3">
+        <div className="absolute -bottom-10 scale-[.80] flex  gap-5 sm:gap-6">
           <button
             onClick={() => {
               setIsCopied(secondEmoji?.split("~")[1]);

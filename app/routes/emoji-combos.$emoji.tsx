@@ -121,12 +121,12 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
 
   return (
     <div className="max-w-[1200px] mx-5 flex sm:block flex-col sm:flex-row gap-12 sm:gap-0 text-center sm:text-left">
-      <div className="float-left border-2 border-purple-200 pb-12 pt-6 -translate-y-2  px-10 mr-8  flex flex-col rounded-lg ">
+      <div className="float-left border-2 bg-purple-50 border-purple-200 pb-12 pt-6 -translate-y-2  px-10 mr-8  flex flex-col rounded-lg ">
         <h2 className="tracking-widest leading-relaxed uppercase font-lora flex justify-center items-center gap-2">
           <span className="text-2xl">{emoji.title}</span>(U+
           {emoji.unicode.slice(1)})
         </h2>
-        <div className="flex flex-col justify-center mt-5 items-center gap-3">
+        <div className="flex flex-col  justify-center mt-5 items-center gap-3">
           <img
             loading="lazy"
             title={emoji?.title + " " + emoji?.unicode}
@@ -140,42 +140,12 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
                 : emoji?.unicode.split("-").join("_")
             }/emoji.svg`}
           />
-          <ul className="grid grid-cols-2 mt-3 gap-x-12 gap-y-8 text-base font-nunito justify-center items-center">
-            <li
-              className="flex justify-center items-center"
-              title={`Copy ${emoji?.title} Image`}
-            >
-              <button
-                onClick={() => {
-                  setIsCopied(emoji?.title + "img");
-                  navigator.clipboard.writeText(emoji?.title);
-                }}
-                className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
-              >
-                {isCopied === emoji?.title + "img" ? (
-                  <span className="text-sm py-[0.14em] min-w-[4.9em] flex text-center justify-center items-center">
-                    {" "}
-                    Copied!
-                  </span>
-                ) : (
-                  <div className="flex gap-1">
-                    <span>Copy</span>{" "}
-                    <span className="flex">
-                      <Icon
-                        icon="copy"
-                        title="Copy Paste Icon"
-                        customStyle="fill-purple-500 w-5 translate-y-[0.1rem]"
-                      />
-                    </span>
-                  </div>
-                )}
-              </button>
-            </li>
+          <ul className="grid grid-cols-2 mt-5 gap-x-12 gap-y-6 text-lg font-nunito justify-center items-center">
             <li
               title={`Like ${emoji?.title} emoji`}
-              className="flex justify-center items-center"
+              className="flex justify-center items-center col-span-2"
             >
-              <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
+              <button className="flex gap-1 bg-white justify-between border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
                 <span>Like</span>{" "}
                 <span className="flex">
                   <Icon
@@ -195,7 +165,7 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
                   setIsCopied(emoji?.title);
                   navigator.clipboard.writeText(emoji?.title);
                 }}
-                className="flex justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
+                className="flex bg-white w-40 justify-center items-center border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
               >
                 {isCopied === emoji?.title ? (
                   <span className="text-sm py-[0.14em] min-w-[4.9em] flex text-center justify-center items-center">
@@ -222,7 +192,7 @@ function ComboTable({ emoji }: { emoji: EmojiDataType }) {
   return (
     <table className="flex flex-col w-full sm:gap-8 text-center items-center max-h-[40em] overflow-auto scrollbar-thin scrollbar-thumb-rose-700 scrollbar-track-rose-300">
       <thead className="flex w-full mb-10 sm:mb-none">
-        <tr className="gap-2 sm:gap-10 grid grid-cols-8 text-base text-center sm:text-xl underline decoration-[#fda4af] underline-offset-3 w-full justify-center items-center">
+        <tr className="gap-2 sm:gap-10 grid grid-cols-8 text-lg text-center sm:text-xl underline decoration-[#fda4af] underline-offset-3 w-full justify-center items-center">
           <th className="text-rose-500 col-span-2 font-nunito flex justify-center items-center w-full">
             First Emoji
           </th>
@@ -243,7 +213,7 @@ function ComboTable({ emoji }: { emoji: EmojiDataType }) {
               key={uuidv4()}
               className="grid w-full gap-2 sm:gap-10 grid-cols-8 justify-center items-center"
             >
-              <td className="flex col-span-2 justify-center items-center w-full text-base font-nunito text-rose-500  py-1 px-1 rounded-lg text-center capitalize">
+              <td className="flex col-span-2 justify-center items-center w-full text-lg font-nunito text-rose-500  py-1 px-1 rounded-lg text-center capitalize">
                 <img
                   loading="lazy"
                   className="flex w-12"
@@ -256,7 +226,7 @@ function ComboTable({ emoji }: { emoji: EmojiDataType }) {
                 />
               </td>
               <td className="col-span-1 text-4xl text-rose-200">+</td>
-              <td className="flex justify-center col-span-2 items-center w-full text-base font-nunito text-rose-500  py-1 px-1 rounded-lg text-center capitalize">
+              <td className="flex justify-center col-span-2 items-center w-full text-lg font-nunito text-rose-500  py-1 px-1 rounded-lg text-center capitalize">
                 <img
                   loading="lazy"
                   className="flex w-12"
@@ -269,7 +239,7 @@ function ComboTable({ emoji }: { emoji: EmojiDataType }) {
                 />
               </td>
               <td className="col-span-1 text-4xl text-rose-200">=</td>
-              <td className="flex justify-center col-span-2 items-center w-full text-base font-nunito text-rose-500  py-1 px-1 rounded-lg text-center capitalize">
+              <td className="flex justify-center col-span-2 items-center w-full text-lg font-nunito text-rose-500  py-1 px-1 rounded-lg text-center capitalize">
                 <div className="w-12">
                   <ComboImage
                     firstEmoji={
@@ -294,7 +264,7 @@ function ComboTable({ emoji }: { emoji: EmojiDataType }) {
 
 function EmojiDetails({ emoji }: { emoji: EmojiDataType }) {
   return (
-    <div className="max-w-[1200px] my-10 flex gap-10 flex-col  text-base leading-loose tracking-widest bg-white bg-opacity-[0.8] p-16 rounded-lg">
+    <div className="max-w-[1200px] my-10 flex gap-10 flex-col  text-lg leading-loose tracking-widest bg-white bg-opacity-[0.8] p-16 rounded-lg">
       <h2 className="tracking-widest leading-relaxed  font-lora capitalize text-2xl text-center">
         Learn the meaning of {emoji.title} emoji{" "}
         <span className="text-rose-500">(Includes synonyms)</span>
@@ -358,7 +328,7 @@ function EmojiDetails({ emoji }: { emoji: EmojiDataType }) {
         {emoji?.keywords?.map((keywords: string) => (
           <li
             key={uuidv4()}
-            className="flex justify-center items-center text-base font-nunito text-rose-500  py-1 px-1 rounded-lg text-center capitalize"
+            className="flex justify-center items-center text-lg font-nunito text-rose-500  py-1 px-1 rounded-lg text-center capitalize"
           >
             {keywords}
           </li>

@@ -40,9 +40,9 @@ export default function SecondEmojiWindow({
       <SearchBar
         uniqueId="second"
         setSearchEmoji={setSearchEmoji}
-        customStyle="pr-5 mb-1 md:-translate-x-4 -translate-x-5"
-        placeholder="search second emoji"
-        customLabelStyle="pl-[1.45em] pr-[1em]"
+        customStyle="pr-2 mb-1 md:-translate-x-4 sm:pl-3 -translate-x-2"
+        placeholder="Search second emoji"
+        customLabelStyle="pr-[0.55em]"
         searchEmoji={searchEmoji}
         handleDiceRoll={handleDiceRoll}
       />
