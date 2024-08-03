@@ -127,17 +127,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   const [copyText, setCopyText] = useState<string>("");
   const [displayCopyText, setDisplayCopyText] = useState<string>("");
+  const [textareaIsHidden, setTextareaIsHidden] = useState<boolean>(false);
 
   useEffect(() => {
     if (copyText) {
-      setDisplayCopyText(displayCopyText + " " + copyText);
+      navigator.clipboard.writeText(copyText.replace(/\s*\n\s*/g, ""));
+      setDisplayCopyText(
+        displayCopyText + " " + copyText.replace(/\s*\n\s*/g, "")
+      );
       setCopyText("");
     }
   }, [copyText, displayCopyText]);
 
   return (
     <Outlet
-      context={{ copyText, setCopyText, displayCopyText, setDisplayCopyText }}
+      context={{
+        copyText,
+        setCopyText,
+        displayCopyText,
+        setDisplayCopyText,
+        textareaIsHidden,
+        setTextareaIsHidden,
+      }}
     />
   );
 }

@@ -132,13 +132,20 @@ export default function TextFaces() {
 
   const [isCopied, setIsCopied] = useState<string>("");
 
-  const { setCopyText, displayCopyText, setDisplayCopyText } =
-    useOutletContext<{
-      copyText: string;
-      setCopyText: Dispatch<SetStateAction<string>>;
-      displayCopyText: string;
-      setDisplayCopyText: Dispatch<SetStateAction<string>>;
-    }>();
+  const {
+    setCopyText,
+    displayCopyText,
+    setDisplayCopyText,
+    textareaIsHidden,
+    setTextareaIsHidden,
+  } = useOutletContext<{
+    copyText: string;
+    setCopyText: Dispatch<SetStateAction<string>>;
+    displayCopyText: string;
+    setDisplayCopyText: Dispatch<SetStateAction<string>>;
+    textareaIsHidden: boolean;
+    setTextareaIsHidden: Dispatch<SetStateAction<boolean>>;
+  }>();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -176,6 +183,7 @@ export default function TextFaces() {
                     key={key + face + index + "face"}
                   >
                     <button
+                      aria-label={`Copy ${face} face to clipboard`}
                       onClick={() => {
                         setIsCopied(face);
                         setCopyText(face);
@@ -191,6 +199,7 @@ export default function TextFaces() {
                 <li className="sm:col-span-2 md:col-span-3 xl:col-span-5 w-full justify-center items-center flex mt-10 mb-20 text-xl">
                   {" "}
                   <Link
+                    aria-label="Scroll To Menu"
                     className=" text-sky-600 translate-y-8 text-center hover:text-sky-500 flex gap-1 sm:gap-5"
                     to="#text-faces"
                   >
@@ -228,6 +237,8 @@ export default function TextFaces() {
           </li>
         </ul>
         <CopyPaste
+          isHidden={textareaIsHidden}
+          setIsHidden={setTextareaIsHidden}
           displayCopyText={displayCopyText}
           setDisplayCopyText={setDisplayCopyText}
         />

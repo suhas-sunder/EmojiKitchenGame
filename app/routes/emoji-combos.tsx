@@ -6,7 +6,7 @@ import {
   useMatches,
 } from "@remix-run/react";
 import Icon from "../client/components/utils/other/Icon";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Filename } from "./_index";
 import useSearch from "../client/components/hooks/useSearch";
 import SearchBar from "../client/components/ui/SearchBar";
@@ -41,22 +41,45 @@ function Buttons({
   filename: Filename;
   setSearchEmoji: (searchEmoji: string) => void;
 }) {
+  const [isCopied, setIsCopied] = useState<string>("");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      isCopied && setIsCopied("");
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [isCopied]);
+
   return (
     <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center items-center">
       <li
         className="flex justify-center items-center"
         title={`Copy ${filename.keys.split("~")[0]} Image`}
       >
-        <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
-          {" "}
-          <span>Copy</span>{" "}
-          <span className="flex">
-            <Icon
-              icon="copy"
-              title="Copy Paste Icon"
-              customStyle="fill-purple-500 w-5 translate-y-[0.1rem]"
-            />
-          </span>
+        <button
+          onClick={() => {
+            setIsCopied(filename?.keys?.split("~")[0] + "img");
+            navigator.clipboard.writeText(
+              filename?.keys?.split("~")[0]
+            );
+          }}
+          className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
+        >
+          {isCopied === filename?.keys?.split("~")[0] + "img" ? (
+            <span className="text-sm py-[0.14em]">Copied!</span>
+          ) : (
+            <div className="flex gap-1">
+              <span>Copy</span>{" "}
+              <span className="flex">
+                <Icon
+                  icon="copy"
+                  title="Copy Paste Icon"
+                  customStyle="fill-purple-500 w-5 translate-y-[0.1rem]"
+                />
+              </span>
+            </div>
+          )}
         </button>
       </li>
       <li
@@ -105,10 +128,21 @@ function Buttons({
         className="flex col-span-2 sm:col-span-3 justify-center items-center"
         title={`Copy ${filename.keys.split("~")[0]} Emoji`}
       >
-        <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
-          {" "}
-          <span>Copy Emoji</span>{" "}
-          <span className="flex">{filename.keys.split("~")[0]}</span>
+        <button
+          onClick={() => {
+            setIsCopied(filename?.keys?.split("~")[0]);
+            navigator.clipboard.writeText(filename?.keys?.split("~")[0]);
+          }}
+          className="flex justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
+        >
+          {isCopied === filename?.keys?.split("~")[0] ? (
+            <span className="text-sm py-[0.14em]">Copied!</span>
+          ) : (
+            <div className="flex gap-1">
+              <span>Copy Emoji</span>{" "}
+              <span className="flex">{filename.keys.split("~")[0]}</span>
+            </div>
+          )}
         </button>
       </li>
     </ul>
@@ -172,7 +206,7 @@ export default function EmojiCombos() {
             }}
           />
         </div>
-        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto  mx-5 max-h-[9em] mt-3  scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
+        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto pt-2 rounded-md  mx-5 max-h-[9em] mt-3 bg-purple-50 scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
           {filenames?.map((filename) => (
             <li key={filename?.id + "emoji-search-preview"}>
               <button
@@ -183,7 +217,7 @@ export default function EmojiCombos() {
                 }
                 tabIndex={-1}
                 onClick={() => setSearchEmoji(filename.keys.split("~")[0])}
-                className="text-2xl w-10 h-10 border-2 rounded-md hover:scale-110 border-purple-200 hover:border-purple-500 "
+                className="text-2xl w-10 h-10 border-2 rounded-md hover:scale-110 bg-white border-purple-200 hover:border-purple-500 "
               >
                 {filename.keys.split("~")[0]}
               </button>

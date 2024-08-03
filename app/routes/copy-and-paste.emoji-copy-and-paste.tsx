@@ -97,13 +97,20 @@ export default function EmojiCopyAndPaste() {
 
   const [isCopied, setIsCopied] = useState<string>("");
 
-  const { setCopyText, displayCopyText, setDisplayCopyText } =
-    useOutletContext<{
-      copyText: string;
-      setCopyText: Dispatch<SetStateAction<string>>;
-      displayCopyText: string;
-      setDisplayCopyText: Dispatch<SetStateAction<string>>;
-    }>();
+  const {
+    setCopyText,
+    displayCopyText,
+    setDisplayCopyText,
+    textareaIsHidden,
+    setTextareaIsHidden,
+  } = useOutletContext<{
+    copyText: string;
+    setCopyText: Dispatch<SetStateAction<string>>;
+    displayCopyText: string;
+    setDisplayCopyText: Dispatch<SetStateAction<string>>;
+    textareaIsHidden: boolean;
+    setTextareaIsHidden: Dispatch<SetStateAction<boolean>>;
+  }>();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -113,6 +120,51 @@ export default function EmojiCopyAndPaste() {
     return () => clearTimeout(timeout);
   }, [isCopied]);
 
+  const symbolMenuObject = {
+    Smileys: "",
+    People: "",
+    Objects: "",
+    Nature: "",
+    Symbols: "",
+    Food: "",
+    Transportation: "",
+    Animals: "",
+    Hands: "",
+    Arrows: "",
+    Buildings: "",
+    Sports: "",
+    Flags: "",
+    Stars: "",
+    Legal: "",
+    Money: "",
+    Brackets: "",
+    "Chess & Cards": "",
+    Music: "",
+    Weather: "",
+    "Arrow Lines": "",
+    Astrology: "",
+    Hearts: "",
+    "Check mark": "",
+    "People & Smiley": "",
+    Punctuation: "",
+    Math: "",
+    Numbers: "",
+    Fractions: "",
+    Comparisons: "",
+    Technical: "",
+    "Rectangle & Square": "",
+    Triangles: "",
+    Lines: "",
+    Corners: "",
+    Circles: "",
+    Phonetics: "",
+    "Latin Letters": "",
+    "Greek Letters": "",
+    "Chinese Symbols": "",
+    "Japanese Symbols": "",
+    "Korean Symbols": "",
+  };
+
   return (
     <div className="flex flex-col gap-10 justify-center leading-loose tracking-widest items-center">
       <header>
@@ -121,9 +173,9 @@ export default function EmojiCopyAndPaste() {
           <div id="symbols" className="-translate-y-[100em]"></div>
         </h1>
       </header>
-      <main className="max-w-[1200px] my-10 flex gap-16 flex-col mb-52 justify-center items-center">
-        <SectionMenu object={symbols} />
-        {Object.keys(symbols).map((key) => (
+      <main className="max-w-[1200px] my-10 flex gap-16 flex-col mb-64 justify-center items-center">
+        <SectionMenu object={symbolMenuObject} />
+        {Object.keys(symbols).map((key, mainIndex) => (
           <section
             key={key}
             className="overflow-auto lg:overflow-hidden  pt-10 sm:px-10 scrollbar-thin border-2 rounded-lg border-rose-100 scrollbar-thumb-rose-700 scrollbar-track-rose-300 "
@@ -135,6 +187,7 @@ export default function EmojiCopyAndPaste() {
               {symbols[key].map((symbol, index) => (
                 <li title={symbol} key={symbol + index}>
                   <button
+                    aria-label={`Copy ${symbol} emoji to clipboard`}
                     onClick={() => {
                       setCopyText(symbol);
                       setIsCopied(symbol);
@@ -144,13 +197,17 @@ export default function EmojiCopyAndPaste() {
                     } border-2 px-3 py-2 rounded-md max-w-[5.4em] hover:scale-110 border-rose-200 text-rose-500 cursor-pointer justify-center items-center flex w-full hover:border-rose-400 hover:text-rose-500`}
                   >
                     {isCopied === symbol ? "Copied!" : symbol}
-                    <div id={key} className="-translate-y-64"></div>
+                    <div
+                      id={Object.keys(symbolMenuObject)[mainIndex]}
+                      className="-translate-y-64"
+                    ></div>
                   </button>
                 </li>
               ))}
               <li className="col-span-4 sm:col-span-7 lg:col-span-12 xl:col-span-14 w-full justify-center items-center flex mt-20 mb-10 text-xl">
                 {" "}
                 <Link
+                  area-label="Scroll To Menu"
                   className=" text-sky-600 text-center hover:text-sky-500 flex gap-1 sm:gap-5"
                   to="#symbols"
                 >
@@ -162,6 +219,8 @@ export default function EmojiCopyAndPaste() {
           </section>
         ))}
         <CopyPaste
+          isHidden={textareaIsHidden}
+          setIsHidden={setTextareaIsHidden}
           displayCopyText={displayCopyText}
           setDisplayCopyText={setDisplayCopyText}
         />

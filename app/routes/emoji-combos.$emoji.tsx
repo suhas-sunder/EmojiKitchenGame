@@ -13,6 +13,7 @@ import { Fragment } from "react/jsx-runtime";
 import Icon from "../client/components/utils/other/Icon";
 import ComboImage from "../client/components/layout/ComboImage";
 import { EmojiDataType } from "./_index";
+import { useEffect, useState } from "react";
 
 export const meta: MetaFunction = ({ data }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -108,6 +109,16 @@ export async function clientLoader({
 }
 
 function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
+  const [isCopied, setIsCopied] = useState<string>("");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      isCopied && setIsCopied("");
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [isCopied]);
+
   return (
     <div className="max-w-[1200px] mx-5 flex sm:block flex-col sm:flex-row gap-12 sm:gap-0 text-center sm:text-left">
       <div className="float-left border-2 border-purple-200 pb-12 pt-6 -translate-y-2  px-10 mr-8  flex flex-col rounded-lg ">
@@ -134,23 +145,37 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
               className="flex justify-center items-center"
               title={`Copy ${emoji?.title} Image`}
             >
-              <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
-                {" "}
-                <span>Copy</span>{" "}
-                <span className="flex">
-                  <Icon
-                    icon="copy"
-                    title="Copy Paste Icon"
-                    customStyle="fill-purple-500 w-5 translate-y-[0.1rem]"
-                  />
-                </span>
+              <button
+                onClick={() => {
+                  setIsCopied(emoji?.title + "img");
+                  navigator.clipboard.writeText(emoji?.title);
+                }}
+                className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
+              >
+                {isCopied === emoji?.title + "img" ? (
+                  <span className="text-sm py-[0.14em] min-w-[4.9em] flex text-center justify-center items-center">
+                    {" "}
+                    Copied!
+                  </span>
+                ) : (
+                  <div className="flex gap-1">
+                    <span>Copy</span>{" "}
+                    <span className="flex">
+                      <Icon
+                        icon="copy"
+                        title="Copy Paste Icon"
+                        customStyle="fill-purple-500 w-5 translate-y-[0.1rem]"
+                      />
+                    </span>
+                  </div>
+                )}
               </button>
             </li>
             <li
               title={`Like ${emoji?.title} emoji`}
               className="flex justify-center items-center"
             >
-              <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
+              <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
                 <span>Like</span>{" "}
                 <span className="flex">
                   <Icon
@@ -165,10 +190,24 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
               className="flex col-span-2 justify-center items-center"
               title={`Copy ${emoji?.title} Emoji`}
             >
-              <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
-                {" "}
-                <span>Copy Emoji</span>{" "}
-                <span className="flex">{emoji?.title}</span>
+              <button
+                onClick={() => {
+                  setIsCopied(emoji?.title);
+                  navigator.clipboard.writeText(emoji?.title);
+                }}
+                className="flex justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
+              >
+                {isCopied === emoji?.title ? (
+                  <span className="text-sm py-[0.14em] min-w-[4.9em] flex text-center justify-center items-center">
+                    {" "}
+                    Copied!
+                  </span>
+                ) : (
+                  <div className="flex gap-1">
+                    <span>Copy Emoji</span>{" "}
+                    <span className="flex">{emoji?.title}</span>
+                  </div>
+                )}
               </button>
             </li>
           </ul>
