@@ -1,104 +1,61 @@
-import { ReactNode } from "react";
-import { emojiDataType } from "../../../routes/_index";
-import cloudflareR2API from "../../../client/api/cloudflareR2API";
-import localforage from "localforage";
+import { EmojiDataType, Filename } from "../../../routes/_index";
+import useSearch from "../hooks/useSearch";
+import SearchBar from "../ui/SearchBar";
+import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
+import HandleCacheEmojiData from "../utils/requests/HandleCacheEmojiData";
 
 interface PropType {
   isLoading: boolean;
-  filenames: { id: string; keys: string }[];
-  searchEmoji: string;
-  setSearchEmoji: (value: string) => void;
-  emojiData: emojiDataType | undefined;
-  setEmojiData: (value: emojiDataType | undefined) => void;
+  filenames?: Filename[];
+  emojiData: EmojiDataType | undefined;
+  setEmojiData: (value: EmojiDataType | undefined) => void;
   setFirstEmoji: (value: string) => void;
   firstEmoji: string;
   secondEmoji: string;
   setSecondEmoji: (value: string) => void;
-  handleComboImage: () => ReactNode;
 }
 
 export default function FirstEmojiWindow({
   isLoading,
   filenames,
-  searchEmoji,
-  setSearchEmoji,
   emojiData,
+  firstEmoji,
   setEmojiData,
   setFirstEmoji,
 }: PropType) {
-  /**
-   * This function loads emoji filenames from the server or cache.
-   * It first checks if the emoji filenames is already cached in local storage.
-   * If it is, it returns the cached filenames.
-   * If it is not cached, it fetches the filenames from the server and caches it. *
-   * @param {string} emojiUnicode - The Unicode of the emoji to load.
-   * @returns {Promise<{ id: string, keys: string }[] | undefined>} - A promise that resolves to an array of emoji filenames objects, or undefined if there was an error.
-   */
-
-  const handleCacheEmojiData = async (emojiUnicode: string) => {
-    try {
-      // Check if the emoji filenames is already cached in local storage
-      const cachedEmojiData = await localforage.getItem<emojiDataType>(
-        emojiUnicode
-      );
-
-      // If the emoji filenames is cached, save it to state
-      if (cachedEmojiData) {
-        return cachedEmojiData;
-      } else {
-        // If the emoji filenames is not cached, fetch it from the server, cache it, and save it to state
-        const response = await cloudflareR2API
-          .get(
-            `/emojis/${
-              emojiUnicode.length < 9 ? emojiUnicode.slice(1) : emojiUnicode
-            }.json`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((response) => response.data);
-
-        if (response) {
-          await localforage.setItem(emojiUnicode, response);
-          return response;
-        }
-      }
-    } catch (error) {
-      // If there is an error fetching the emoji filenames, log the error
-      console.error("Error fetching emoji filenames:", error);
-    }
-  };
+  const { searchEmoji, setSearchEmoji } = useSearch();
 
   const loadEmojiData = async (emojiUnicode: string) => {
     if (emojiData?.unicode === emojiUnicode) return;
-    handleCacheEmojiData(emojiUnicode);
+    HandleCacheEmojiData(emojiUnicode);
   };
 
   const handleDisplayCombos = async (emojiUnicode: string, emoji: string) => {
-    const emojiData = await handleCacheEmojiData(emojiUnicode);
+    const emojiData = await HandleCacheEmojiData(emojiUnicode);
     setFirstEmoji(emojiUnicode + "~" + emoji);
 
     setEmojiData(emojiData);
   };
 
   return (
-    <div className="flex flex-col h-[17em] lg:h-[53em] border-r  border-b sm:border-hidden">
-      <input
-        type="search"
-        disabled={isLoading}
-        onChange={(e) => setSearchEmoji(e.target.value)}
-        placeholder={"🔍 Search First Emoji"}
-        className="flex  mx-5 border-2 border-purple-400 rounded-md py-1 my-2 px-5"
+    <div className="flex flex-col h-[61vh] md:h-[66vh] lg:h-[70.5vh]">
+      <SearchBar
+        uniqueId="first"
+        setSearchEmoji={setSearchEmoji}
+        customStyle="md:-translate-x-6 md:pl-5 pr-3 md:pr-0 mb-1"
+        placeholder="Search first emoji"
+        customLabelStyle="pr-[0.55em] pl-0"
+        searchEmoji={searchEmoji}
+        handleDiceRoll={() => {
+          filenames && setSearchEmoji(HandleDiceRoll({ filenames }));
+        }}
       />
       <ul
-        className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 sm:scrollbar scrollbar-none scrollbar-thumb-purple-500 hover:scrollbar-thumb-purple-400 ${
+        className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
           isLoading && "opacity-30"
         } pb-[4em] lg:pb-[13em]`}
       >
-        {filenames.map((filename: { id: string; keys: string }) => {
+        {filenames?.map((filename: Filename) => {
           return filename?.keys?.includes(searchEmoji.trim()) ||
             searchEmoji === "" ? (
             <li
@@ -122,10 +79,13 @@ export default function FirstEmojiWindow({
                   )
                 }
                 disabled={isLoading}
-                className="flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400"
+                className={`${
+                  filename.id === firstEmoji.split("~")[0] &&
+                  "border-purple-400 bg-purple-100"
+                } flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400`}
               >
                 <img
-                  loading="lazy"
+                  loading="eager"
                   alt={`Emoji of ${filename?.keys?.split("~")[0]} ${
                     filename?.id
                   }`}

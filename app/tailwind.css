@@ -1,4 +1,4 @@
-/* @import url("https://fonts.googleapis.com/css2?family=Karla:wght@700&family=Lato&family=Lora:wght@700&family=Nunito:ital,wght@1,700&family=Overlock:ital,wght@1,900&family=Roboto+Serif:ital,opsz,wght@1,8..144,500&display=swap"); */
+/* @import url('https://fonts.googleapis.com/css2?family=Karla:wght@700&family=Lato&family=Lora:wght@700&family=Nunito:ital,wght@1,700&family=Overlock:ital,wght@1,900&family=Roboto+Serif:ital,opsz,wght@1,8..144,500&display=swap'); */
 
 /* 
 Roboto Serif: 500 Italic (So Medium font)
@@ -23,28 +23,28 @@ font-family: 'Lora', serif;
 @font-face {
   font-family: "Nunito";
   font-weight: bold;
-  src: local("nunito"), url("fonts/Nunito-Bold.woff2") format("woff2");
+  src: local("nunito"), url("/fonts/Nunito-Bold.woff2") format("woff2");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Lato";
   font-weight: regular;
-  src: local("lato"), url("fonts/Lato-Regular.woff2") format("woff2");
+  src: local("lato"), url("/fonts/Lato-Regular.woff2") format("woff2");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Lora";
   font-weight: regular;
-  src: local("lora"), url("fonts/Lora-Bold.woff2") format("woff2");
+  src: local("lora"), url("/fonts/Lora-Bold.woff2") format("woff2");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Overlock";
   font-weight: bold;
-  src: local("lora"), url("fonts/Overlock-BlackItalic.woff2") format("woff2");
+  src: local("lora"), url("/fonts/Overlock-BlackItalic.woff2") format("woff2");
   font-display: swap;
 }
 
@@ -59,6 +59,7 @@ font-family: 'Lora', serif;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {
