@@ -24,9 +24,10 @@ function SearchBar({
 
   return (
     <div
-    id="search-bar"
+    
       className={`${customStyle} relative flex w-full justify-center items-center font-nunito mx-5`}
     >
+      <div id="search-bar" aria-label="scroll offset for anchor link navigation" className="-translate-y-24"></div>
       <label
         htmlFor={"search" + uniqueId}
         className={`flex absolute justify-between w-full cursor-text text-purple-400 ${customLabelStyle}`}

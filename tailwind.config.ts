@@ -14,6 +14,16 @@ export default {
         "24": "repeat(24, minmax(0, 1fr))",
         "20": "repeat(20, minmax(0, 1fr))",
         "16": "repeat(16, minmax(0, 1fr))",
+        "15": "repeat(15, minmax(0, 1fr))",
+        "18": "repeat(18, minmax(0, 1fr))",
+      },
+      gridColumn: {
+        // Custom column spans
+        "span-16": "span 16 / span 16",
+        "span-20": "span 20 / span 20",
+        "span-24": "span 24 / span 24",
+        "span-15": "span 15 / span 15",
+        "span-18": "span 18 / span 18",
       },
       // prettier-ignore
       fontFamily: {

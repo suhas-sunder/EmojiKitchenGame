@@ -23,25 +23,30 @@ function isRouteData(data: unknown): data is RouteData {
   return typeof data === "object" && data !== null && "filenames" in data;
 }
 
-export type emojiDataType = {
+export type EmojiDataType = {
   title: string;
+  description: string;
   name: string;
   keywords: string[];
-  languages: string[];
+  languages: { countryAbb: string; country: string; name: string }[];
   story: string;
   unicode: string;
   url: string;
   combos: { code: string; baseUnicode: string; unicode: string }[];
   meanings: string[];
+  sentences: string[];
 };
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Emoji Kitchen Game" },
+    {
+      title:
+        "Emoji Kitchen Game 🥘👨‍🍳 Mix, Match, and Create Fun and Unique Emoji Combos for Creative Messaging! 🎉✨",
+    },
     {
       name: "description",
       content:
-        "Explore thousands of unique emoji combinations based on google's emoji kitchen game!",
+        "Get creative with our Emoji Kitchen Game! 🍳👩‍🍳 Explore thousands of unique emoji combinations based on Google Gboard's emoji kitchen. Mix and match emojis to craft fun and unique combinations. Click and combine to discover endless emoji possibilities for your messages and social media posts. Start creating and share your favorite emoji combos today! 🎉📲",
     },
   ];
 };
@@ -61,10 +66,10 @@ function EmojiDisplay({
   secondEmoji: string;
   setFirstEmoji: (value: string) => void;
   setSecondEmoji: (value: string) => void;
-  setEmojiData: (value: emojiDataType | undefined) => void;
-  emojiData: emojiDataType | undefined;
+  setEmojiData: (value: EmojiDataType | undefined) => void;
+  emojiData: EmojiDataType | undefined;
   firstDiceRoll: () => void;
-  secondDiceRoll: ({ newEmojiData }: { newEmojiData: emojiDataType }) => void;
+  secondDiceRoll: ({ newEmojiData }: { newEmojiData: EmojiDataType }) => void;
   thirdDiceRoll: () => void;
 }) {
   return (
@@ -229,7 +234,7 @@ export default function Index() {
 
   const { isLoading } = useIsLoading();
 
-  const [emojiData, setEmojiData] = useState<emojiDataType>();
+  const [emojiData, setEmojiData] = useState<EmojiDataType>();
   const [firstEmoji, setFirstEmoji] = useState<string>("");
   const [secondEmoji, setSecondEmoji] = useState<string>("");
 
@@ -269,7 +274,7 @@ export default function Index() {
   const secondDiceRoll = ({
     newEmojiData,
   }: {
-    newEmojiData: emojiDataType;
+    newEmojiData: EmojiDataType;
   }) => {
     // Check if the filenames array is not null or undefined
     if (!filenames) return;
@@ -330,6 +335,7 @@ export default function Index() {
             isLoading={isLoading}
             filenames={filenames}
             firstEmoji={firstEmoji}
+            secondEmoji={secondEmoji}
             setSecondEmoji={setSecondEmoji}
           />
           <ThirdEmojiWindow

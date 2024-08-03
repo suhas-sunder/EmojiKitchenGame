@@ -1,4 +1,4 @@
-import { emojiDataType, Filename } from "../../../routes/_index";
+import { EmojiDataType, Filename } from "../../../routes/_index";
 import useSearch from "../hooks/useSearch";
 import SearchBar from "../ui/SearchBar";
 import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
@@ -7,8 +7,8 @@ import HandleCacheEmojiData from "../utils/requests/HandleCacheEmojiData";
 interface PropType {
   isLoading: boolean;
   filenames?: Filename[];
-  emojiData: emojiDataType | undefined;
-  setEmojiData: (value: emojiDataType | undefined) => void;
+  emojiData: EmojiDataType | undefined;
+  setEmojiData: (value: EmojiDataType | undefined) => void;
   setFirstEmoji: (value: string) => void;
   firstEmoji: string;
   secondEmoji: string;
@@ -19,6 +19,7 @@ export default function FirstEmojiWindow({
   isLoading,
   filenames,
   emojiData,
+  firstEmoji,
   setEmojiData,
   setFirstEmoji,
 }: PropType) {
@@ -37,7 +38,7 @@ export default function FirstEmojiWindow({
   };
 
   return (
-    <div className="flex flex-col h-[17em] lg:h-[53em] border-r  border-b sm:border-hidden">
+    <div className="flex flex-col h-[61vh] md:h-[66vh] lg:h-[70.5vh]">
       <SearchBar
         uniqueId="first"
         setSearchEmoji={setSearchEmoji}
@@ -50,7 +51,7 @@ export default function FirstEmojiWindow({
         }}
       />
       <ul
-        className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 sm:scrollbar-thin scrollbar-none scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
+        className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
           isLoading && "opacity-30"
         } pb-[4em] lg:pb-[13em]`}
       >
@@ -78,7 +79,10 @@ export default function FirstEmojiWindow({
                   )
                 }
                 disabled={isLoading}
-                className="flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400"
+                className={`${
+                  filename.id === firstEmoji.split("~")[0] &&
+                  "border-purple-400 bg-purple-100"
+                } flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400`}
               >
                 <img
                   loading="lazy"

@@ -14,6 +14,7 @@ import {
 import localforage from "localforage";
 import cloudflareR2API from "./client/components/api/cloudflareR2API";
 import useLoadAnimation from "./client/components/hooks/useLoadAnimation";
+import { useEffect, useState } from "react";
 
 export const loader = async () => {
   let filenames: { id: string; keys: string }[] = [];
@@ -76,19 +77,19 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   const cacheKey = "filenames";
 
   try {
-    // If the filenames are not cached, fetch them from the server and cache them
-    const { filenames }: { filenames: { id: string; keys: string }[] } =
-      await serverLoader();
-
     // Check if the filenames are already cached in local storage
     const cachedFilenames = await localforage.getItem<{
       filenames: { id: string; keys: string }[];
     }>(cacheKey);
 
     // If the filenames are cached, return them
-    if (cachedFilenames && (filenames.length === 0 || !filenames)) {
+    if (cachedFilenames) {
       return { filenames: cachedFilenames };
     } else {
+      // If the filenames are not cached, fetch them from the server and cache them
+      const { filenames }: { filenames: { id: string; keys: string }[] } =
+        await serverLoader();
+
       // Cache the filenames in local storage
       await localforage.setItem(cacheKey, filenames);
 
@@ -101,10 +102,7 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   }
 }
 
-
-
 export function Layout({ children }: { children: React.ReactNode }) {
-  
   const { fadeAnim } = useLoadAnimation();
 
   return (
@@ -115,9 +113,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={`${fadeAnim}`}>
+      <body className={`${fadeAnim} pt-14`}>
         <NavBar />
-        {children}
+        <div className="min-h-svh">{children}</div>
         <ScrollRestoration />
         <Scripts />
         <Footer />
@@ -127,5 +125,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const [copyText, setCopyText] = useState<string>("");
+  const [displayCopyText, setDisplayCopyText] = useState<string>("");
+
+  useEffect(() => {
+    if (copyText) {
+      setDisplayCopyText(displayCopyText + " " + copyText);
+      setCopyText("");
+    }
+  }, [copyText, displayCopyText]);
+
+  return (
+    <Outlet
+      context={{ copyText, setCopyText, displayCopyText, setDisplayCopyText }}
+    />
+  );
 }

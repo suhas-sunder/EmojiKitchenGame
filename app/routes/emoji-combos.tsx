@@ -16,9 +16,13 @@ export const meta: MetaFunction = () => {
   return [
     {
       title:
-        "😊 All emojis with combos - emoji copy and paste, emoji meanings, emoji combos, and more!",
+        "🥘😋 All emojis with combos - emoji kitchen, emoji copy and paste, emoji meanings, emoji combos, and more!",
     },
-    { name: "description", content: "Welcome to Remix!" },
+    {
+      name: "description",
+      content:
+        "Explore the emojipedia of emoji kitchen combinations! Discover endless emoji combos like 🥘😋, copy and paste your favorites, explore detailed emoji meanings, and find unique combinations for every occasion. Perfect for social media, messaging, and creative expression!",
+    },
   ];
 };
 
@@ -30,14 +34,20 @@ function isRouteData(data: unknown): data is RouteData {
   return typeof data === "object" && data !== null && "filenames" in data;
 }
 
-function Buttons({ filename }: { filename: Filename }) {
+function Buttons({
+  filename,
+  setSearchEmoji,
+}: {
+  filename: Filename;
+  setSearchEmoji: (searchEmoji: string) => void;
+}) {
   return (
     <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center items-center">
       <li
         className="flex justify-center items-center"
         title={`Copy ${filename.keys.split("~")[0]} Image`}
       >
-        <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
+        <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
           {" "}
           <span>Copy</span>{" "}
           <span className="flex">
@@ -53,7 +63,7 @@ function Buttons({ filename }: { filename: Filename }) {
         title={`Like ${filename.keys.split("~")[0]} emoji`}
         className="flex justify-center items-center"
       >
-        <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
+        <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
           <span>Like</span>{" "}
           <span className="flex">
             <Icon
@@ -77,7 +87,8 @@ function Buttons({ filename }: { filename: Filename }) {
             filename.keys.split("~")[1].split(" ").join("-") +
             "-emoji"
           }`}
-          className="flex justify-center sm:justify-between border-2 px-3 gap-1 py-2 rounded-md  border-rose-300 text-rose-500 cursor-pointer hover:border-rose-200 hover:text-rose-400"
+          onClick={() => setTimeout(() => setSearchEmoji(""), 1000)}
+          className="flex justify-center sm:justify-between border-2 px-3 gap-1 py-2 hover:scale-110 rounded-md  border-rose-300 text-rose-500 cursor-pointer hover:border-rose-500 hover:text-rose-600"
         >
           {" "}
           <span>View</span>{" "}
@@ -94,7 +105,7 @@ function Buttons({ filename }: { filename: Filename }) {
         className="flex col-span-2 sm:col-span-3 justify-center items-center"
         title={`Copy ${filename.keys.split("~")[0]} Emoji`}
       >
-        <button className="flex gap-1 justify-between border-2 px-3 py-2 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-200 hover:text-purple-400">
+        <button className="flex gap-1 justify-between border-2 px-3 py-2 hover:scale-110 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
           {" "}
           <span>Copy Emoji</span>{" "}
           <span className="flex">{filename.keys.split("~")[0]}</span>
@@ -104,7 +115,7 @@ function Buttons({ filename }: { filename: Filename }) {
   );
 }
 
-export default function Emojis() {
+export default function EmojiCombos() {
   const matches = useMatches();
 
   // Use type guard to check if the data is of the expected type
@@ -120,10 +131,13 @@ export default function Emojis() {
 
   return (
     <>
-      <header id="#emoji-combo-header" className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito mx-5">
+      <header
+        id="#emoji-combo-header"
+        className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito mx-5"
+      >
         <h1 className="capitalize font-lora text-2xl leading-relaxed text-center  md:text-3xl lg:text-4xl mt-10 text-purple-700 flex justify-center items-center  gap-3">
           {pathname === "emoji-combos"
-            ? "All Emojis With Combos"
+            ? "🥘 All Emojis With Combos 😋"
             : filenames
                 ?.filter((filename) => filename.id === pathname)[0]
                 ?.keys.split("~")[1] + " Emoji"}{" "}
@@ -141,7 +155,7 @@ export default function Emojis() {
       <main className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito ">
         <Outlet />
         <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center  mx-5">
-          <Link to="/emoji-copy-and-paste">
+          <Link to="/copy-and-paste/emoji-copy-and-paste">
             Click here to view a list of all copy and paste emojis!
           </Link>
         </h2>
@@ -158,7 +172,7 @@ export default function Emojis() {
             }}
           />
         </div>
-        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto  mx-5 max-h-[9em] mt-3 sm:scrollbar-thin scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
+        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto  mx-5 max-h-[9em] mt-3  scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
           {filenames?.map((filename) => (
             <li key={filename?.id + "emoji-search-preview"}>
               <button
@@ -169,7 +183,7 @@ export default function Emojis() {
                 }
                 tabIndex={-1}
                 onClick={() => setSearchEmoji(filename.keys.split("~")[0])}
-                className="text-2xl w-10 h-10 border-2 rounded-md border-purple-200 hover:border-purple-500 "
+                className="text-2xl w-10 h-10 border-2 rounded-md hover:scale-110 border-purple-200 hover:border-purple-500 "
               >
                 {filename.keys.split("~")[0]}
               </button>
@@ -215,7 +229,7 @@ export default function Emojis() {
                   {" "}
                   {filename.keys.split("~")[1]}
                 </p>
-                <Buttons filename={filename} />
+                <Buttons filename={filename} setSearchEmoji={setSearchEmoji} />
               </li>
             ) : null
           )}

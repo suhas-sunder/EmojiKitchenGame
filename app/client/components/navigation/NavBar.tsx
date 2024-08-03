@@ -45,7 +45,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
       <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
-          to="/text-faces"
+          to="/copy-and-paste/text-faces"
           className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
         >
           <span className={`${styles.icon}`}>ಥ_ಥ Text Faces</span>
@@ -54,7 +54,7 @@ function MainLinks({ showMobileMenu, setShowMobileMenu }: PropType) {
       <li className="flex w-full lg:w-auto">
         <NavLink
           onClick={() => setShowMobileMenu(false)}
-          to="/emoji-copy-and-paste"
+          to="/copy-and-paste/emoji-copy-and-paste"
           className={`relative flex items-center justify-center w-full lg:w-auto py-4 hover:bg-purple-500 lg:hover:bg-transparent lg:py-3 tracking-[0.1em] `}
         >
           <span className="text-xl">✂️</span>
@@ -152,7 +152,7 @@ export default function NavBar() {
 
   return (
     <nav
-      className={`${styles.nav} relative left-0 right-0 top-0 bg-purple-800 font-nunito text-base tracking-widest z-20 text-white`}
+      className={`${styles.nav} fixed left-0 right-0 top-0 bg-purple-800 font-nunito text-base tracking-widest z-20 text-white`}
     >
       <div
         className={`${styles["fade-in-nav"]} m-auto flex  max-w-[1400px] px-5 items-center justify-between`}

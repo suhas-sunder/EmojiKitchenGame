@@ -8,7 +8,7 @@ function Footer() {
 
   return (
     <nav
-      className={`${styles.nav} w-full ${ pathname === "/" && "fixed"} mt-[16em] bottom-0 flex gap-5 sm:gap-20 justify-center items-center py-1 sm:py-2 text-xs font-nunito  bg-purple-500 `}
+      className={`${styles.nav} w-full ${ (pathname === "/" || pathname === "/copy-and-paste/text-faces" || pathname === "/copy-and-paste/emoji-copy-and-paste") && "fixed"} mt-[16em] bottom-0 flex gap-5 sm:gap-20 justify-center items-center py-1 sm:py-2 text-xs font-nunito  bg-purple-500 `}
     >
       <div className="flex text-purple-200 gap-1 font-bold tracking-widest">
         <span>&copy; 2024</span> <span className="hidden md:flex"> | </span>

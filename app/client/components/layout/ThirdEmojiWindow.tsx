@@ -1,9 +1,9 @@
 import Icon from "../utils/other/Icon";
-import { emojiDataType } from "../../../routes/_index";
+import { EmojiDataType } from "../../../routes/_index";
 import ComboImage from "./ComboImage";
 
 interface PropType {
-  emojiData: emojiDataType | undefined;
+  emojiData: EmojiDataType | undefined;
   firstEmoji: string;
   setSecondEmoji: (value: string) => void;
   secondEmoji: string;
@@ -19,7 +19,7 @@ export default function ThirdEmojiWindow({
 }: PropType) {
   return (
     <div
-      className={` flex relative items-center flex-col h-[25em] col-span-2 lg:col-span-1 lg:h-[53em] border-l border-b sm:border-hidden`}
+      className={` flex relative items-center flex-col col-span-2 lg:col-span-1 min-w-20 h-[61vh] md:h-[66vh] lg:h-[70.5vh] border-l border-b sm:border-hidden`}
     >
       {emojiData?.combos && (
         <div
@@ -66,7 +66,7 @@ export default function ThirdEmojiWindow({
           emojiData?.combos
             ? "grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5"
             : "flex h-full"
-        } justify-center items-center overflow-y-auto py-6 px-1 sm:scrollbar-thin scrollbar-thumb-rose-400 scrollbar-track-rose-100 pb-[8em] ${
+        } justify-center items-center overflow-y-auto py-6 px-1 scrollbar-thin scrollbar-thumb-rose-400 scrollbar-track-rose-100 pb-[8em] ${
           emojiData?.combos && "lg:pb-[13em]"
         } ${firstEmoji && secondEmoji && "!hidden"}`}
       >

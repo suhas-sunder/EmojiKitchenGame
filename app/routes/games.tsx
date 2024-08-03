@@ -1,6 +1,5 @@
 import { MetaFunction } from "@remix-run/react";
 
-
 export const meta: MetaFunction = () => {
   return [
     { title: "Emoji Games 🎲🎮👾🎴🎰" },
@@ -9,7 +8,5 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Games() {
-  return (
-    <div>games</div>
-  )
+  return <div>games</div>;
 }

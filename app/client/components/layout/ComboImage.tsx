@@ -1,4 +1,4 @@
-import { emojiDataType } from "../../../routes/_index";
+import { EmojiDataType } from "../../../routes/_index";
 
 //Displays the combos for the selected emojis
 function ComboImage({
@@ -9,7 +9,7 @@ function ComboImage({
 }: {
   firstEmoji: string;
   secondEmoji: string;
-  emojiData: emojiDataType | undefined;
+  emojiData: EmojiDataType | undefined;
   setSecondEmoji: (value: string) => void;
 }) {
   // If either of the selected emojis is not available, return an empty array
@@ -46,8 +46,6 @@ function ComboImage({
 
   let filteredCombos = filterComboSet();
 
-  console.log(firstEmojiBaseUnicode, secondEmojiBaseUnicode, filteredCombos);
-
   //Covers edge cases for wierdly formatted emojis codes
   if (filteredCombos?.length === 0) {
     firstEmojiBaseUnicode = firstEmojiBaseUnicode + "-ufe0f";
@@ -67,7 +65,7 @@ function ComboImage({
     (filteredCombos && filteredCombos?.length > 2) ||
     filteredCombos?.length === 0
   ) {
-    setSecondEmoji("");
+    setTimeout(() => setSecondEmoji(""), 500); //Prevents bad state call error where state is being updated while null ComboImage is being rendered
     return null;
   }
 
