@@ -22,5 +22,6 @@ export default ({ mode }: { mode: string }) => {
       }),
       tsconfigPaths(),
     ],
+    base: "/", // Ensure base path is set correctly
   });
 };

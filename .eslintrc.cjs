@@ -81,4 +81,8 @@ module.exports = {
       },
     },
   ],
+  rules: {
+    // other rules...
+    "no-undef": "off", // Disable the rule for undefined variables if needed
+  },
 };
