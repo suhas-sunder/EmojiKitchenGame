@@ -14,42 +14,35 @@ import {
 import localforage from "localforage";
 import cloudflareR2API from "./client/components/api/cloudflareR2API";
 import { useEffect, useState } from "react";
+import pako from "pako";
 
 export const loader = async () => {
   let filenames: { id: string; keys: string }[] = [];
 
   try {
-    const response = await cloudflareR2API
-      .get("/emojis/filenames.json", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        console.log(err, "Failed to fetch filenames for emoji!");
-      });
+    // Fetch the response with Axios
+    const response = await cloudflareR2API.get("/emojis/filenames.json", {
+      method: "GET",
+      headers: {
+        "Accept-Encoding": "gzip",
+        "Content-Type": "application/json",
+      },
+      responseType: "arraybuffer", // Ensure the response is treated as binary data
+    });
 
-    const parseRes = await response;
+    // Access headers safely using bracket notation
+    const contentEncoding = response.headers['content-encoding'] || '';
 
-    if (parseRes) {
-      filenames = parseRes;
+    if (contentEncoding.includes('gzip')) {
+      // Decompress the gzip data
+      const decompressedData = pako.ungzip(new Uint8Array(response.data), { to: 'string' });
+      filenames = JSON.parse(decompressedData);
     } else {
-      console.log("Failed to fetch filenames for emoji!");
+      // Directly parse the JSON if not compressed
+      filenames = JSON.parse(new TextDecoder().decode(response.data));
     }
   } catch (err) {
-    let message: string;
-
-    if (err instanceof Error) {
-      message = err.message;
-    } else {
-      message = String(err);
-    }
-
-    console.error(message);
+    console.error("Failed to fetch filenames for emoji!", err);
   }
 
   return json(
