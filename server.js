@@ -14,6 +14,9 @@ const app = express();
 // Serve static files from 'build/client'
 app.use(express.static(join(__dirname, "build/client")));
 
+// Handle JSON payloads if necessary
+app.use(express.json());
+
 // Handle all routes using the Remix request handler
 app.all("*", createRequestHandler({ build }));
 
