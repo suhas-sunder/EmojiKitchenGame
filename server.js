@@ -15,7 +15,7 @@ const app = express();
 app.use(express.static(join(__dirname, "build/client")));
 
 // Log all incoming requests
-app.use((req,  next) => {
+app.use((req, res, next) => {
   console.log(`Received ${req.method} request to ${req.url}`);
   next();
 });
@@ -27,7 +27,7 @@ app.use(express.json());
 app.all("*", createRequestHandler({ build }));
 
 // Error handling middleware
-app.use((err, res) => {
+app.use((err, req, res) => {
   console.error("Server error:", err);
   res.status(500).send("Internal Server Error");
 });
