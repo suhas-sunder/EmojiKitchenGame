@@ -15,9 +15,9 @@ const app = express();
 app.use(express.static(join(__dirname, "build/client")));
 
 // Log all incoming requests
-app.use((req,  next) => {
+app.use((req, res, next) => {
   console.log(`Received ${req.method} request to ${req.url}`);
-  next();
+  next(); // Pass control to the next middleware
 });
 
 // Handle JSON payloads if necessary
