@@ -14,23 +14,31 @@ import {
 import localforage from "localforage";
 import cloudflareR2API from "./client/components/api/cloudflareR2API";
 import { useEffect, useState } from "react";
+import { Filename } from "./routes/_index";
+import pako from "pako";
 
+// Server loader to fetch gzipped JSON data
 export const loader = async () => {
-  let filenames: { id: string; keys: string }[] = [];
+  let filenames = [];
 
   try {
     const response = await cloudflareR2API
-      .get("/emojis/filenames.json", {
+      .get("/emojis/filenames.json.gz", {
         method: "GET",
+        responseType: "arraybuffer",
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((response) => {
-        return response.data;
+        // Decompress the gzipped response
+        const decompressedData = pako.ungzip(new Uint8Array(response.data), {
+          to: "string",
+        });
+        return JSON.parse(decompressedData);
       })
       .catch((err) => {
-        console.log(err, "Failed to fetch filenames for emoji!");
+        console.log(err, "Failed to fetch and decompress filenames for emoji!");
       });
 
     const parseRes = await response;
@@ -41,7 +49,7 @@ export const loader = async () => {
       console.log("Failed to fetch filenames for emoji!");
     }
   } catch (err) {
-    let message: string;
+    let message;
 
     if (err instanceof Error) {
       message = err.message;
@@ -72,31 +80,21 @@ export const loader = async () => {
  * @throws {Error} - If there is an error fetching the filenames from the server or caching them in local storage.
  */
 export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
-  // Define the cache key for the filenames
   const cacheKey = "filenames";
 
   try {
-    // Check if the filenames are already cached in local storage
-    const cachedFilenames = await localforage.getItem<{
-      filenames: { id: string; keys: string }[];
-    }>(cacheKey);
+    const cachedFilenames = await localforage.getItem(cacheKey);
 
-    // If the filenames are cached, return them
     if (cachedFilenames) {
       return { filenames: cachedFilenames };
     } else {
-      // If the filenames are not cached, fetch them from the server and cache them
-      const { filenames }: { filenames: { id: string; keys: string }[] } =
-        await serverLoader();
+      const { filenames }: { filenames: Filename[] } = await serverLoader();
 
-      // Cache the filenames in local storage
       await localforage.setItem(cacheKey, filenames);
 
-      // Return the cached filenames
       return { filenames };
     }
   } catch (error) {
-    // If there is an error fetching the cached filenames, log the error and continue to fetch the filenames from the server
     console.error("Error fetching cached filenames:", error);
   }
 }
