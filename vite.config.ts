@@ -5,7 +5,8 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default ({ mode }: { mode: string }) => {
   const env = loadEnv(mode, process.cwd(), "");
   process.env = { ...process.env, ...env };
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3200;
+  // const port = process.env.PORT ? parseInt(process.env.PORT) : 3200;
+  const port = 3200;
 
   return defineConfig({
     server: {
