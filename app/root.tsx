@@ -16,6 +16,7 @@ import cloudflareR2API from "./client/components/api/cloudflareR2API";
 import { useEffect, useState } from "react";
 import { Filename } from "./routes/_index";
 import pako from "pako";
+import ErrorBoundary from "./client/components/utils/errors/ErrorBoundary";
 
 // Server loader to fetch gzipped JSON data
 export const loader = async () => {
@@ -70,15 +71,7 @@ export const loader = async () => {
   );
 };
 
-/**
- * This function is responsible for fetching filenames (static json data) from the server and caching them in the browser.
- * It first checks if the filenames are already cached in local storage. If they are, it returns the cached filenames.
- * If they are not cached, it fetches the filenames from the server and caches them.
- *
- * @param {ClientLoaderFunctionArgs} args - An object containing the serverLoader function.
- * @returns {Promise<{ filenames: { id: string, keys: string }[] }>} - A promise that resolves to an object containing the filenames.
- * @throws {Error} - If there is an error fetching the filenames from the server or caching them in local storage.
- */
+// Function for client-side caching of filenames
 export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   const cacheKey = "filenames";
 
@@ -99,6 +92,7 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   }
 }
 
+// Layout component to define the HTML structure and include layout components
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -108,7 +102,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={` pt-14`}>
+      <body className="pt-14">
         <NavBar />
         <div className="min-h-svh">{children}</div>
         <ScrollRestoration />
@@ -119,6 +113,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Main App component that provides context to child components
 export default function App() {
   const [copyText, setCopyText] = useState<string>("");
   const [displayCopyText, setDisplayCopyText] = useState<string>("");
@@ -135,15 +130,17 @@ export default function App() {
   }, [copyText, displayCopyText]);
 
   return (
-    <Outlet
-      context={{
-        copyText,
-        setCopyText,
-        displayCopyText,
-        setDisplayCopyText,
-        textareaIsHidden,
-        setTextareaIsHidden,
-      }}
-    />
+    <ErrorBoundary>
+      <Outlet
+        context={{
+          copyText,
+          setCopyText,
+          displayCopyText,
+          setDisplayCopyText,
+          textareaIsHidden,
+          setTextareaIsHidden,
+        }}
+      />
+    </ErrorBoundary>
   );
 }
