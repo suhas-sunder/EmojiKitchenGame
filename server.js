@@ -14,6 +14,12 @@ const app = express();
 // Serve static files from 'build/client'
 app.use(express.static(join(__dirname, "build/client")));
 
+// Log all incoming requests
+app.use((req,  next) => {
+  console.log(`Received ${req.method} request to ${req.url}`);
+  next();
+});
+
 // Handle JSON payloads if necessary
 app.use(express.json());
 
