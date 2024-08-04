@@ -1,6 +1,8 @@
 #Emoji Kitchen Game!
 
-This game is based on Google's emoji combination feature where selecting two emojis results in a new combined emoji.
+Live now on http://emojikitchengame.com/
+
+This website game/app is based on Google's Gboard (the Google Keyboard) emoji combination feature where selecting two emojis results in a new combined emoji.
 
 Built using Remix, utilizing React, Express, Tailwind CSS, TypeScript, & more.
 
