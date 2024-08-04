@@ -30,18 +30,28 @@ export const loader = async () => {
       responseType: "arraybuffer", // Ensure the response is treated as binary data
     });
 
+    // Log headers and response status for debugging
+    console.log("Response Headers:", response.headers);
+    console.log("Response Status:", response.status);
+
     // Access headers safely using bracket notation
     const contentEncoding = response.headers["content-encoding"] || "";
 
     if (contentEncoding.includes("gzip")) {
+      // Convert ArrayBuffer to Uint8Array
+      const compressedData = new Uint8Array(response.data);
+
       // Decompress the gzip data
-      const decompressedData = pako.ungzip(new Uint8Array(response.data), {
-        to: "string",
-      });
+      const decompressedData = pako.ungzip(compressedData, { to: "string" });
+      console.log("Decompressed Data:", decompressedData); // Log decompressed data for debugging
+
+      // Parse JSON
       filenames = JSON.parse(decompressedData);
     } else {
       // Directly parse the JSON if not compressed
-      filenames = JSON.parse(new TextDecoder().decode(response.data));
+      const textData = new TextDecoder().decode(response.data);
+      console.log("Text Data:", textData); // Log text data for debugging
+      filenames = JSON.parse(textData);
     }
   } catch (err) {
     console.error("Failed to fetch filenames for emoji!", err);
