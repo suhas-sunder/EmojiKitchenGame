@@ -21,7 +21,7 @@ export const loader = async () => {
 
   try {
     // Fetch the response with Axios
-    const response = await cloudflareR2API.get("/emojis/filenames.json", {
+    const response = await cloudflareR2API.get("/emojis/filenames.json.gz", {
       method: "GET",
       headers: {
         "Accept-Encoding": "gzip",
@@ -31,11 +31,13 @@ export const loader = async () => {
     });
 
     // Access headers safely using bracket notation
-    const contentEncoding = response.headers['content-encoding'] || '';
+    const contentEncoding = response.headers["content-encoding"] || "";
 
-    if (contentEncoding.includes('gzip')) {
+    if (contentEncoding.includes("gzip")) {
       // Decompress the gzip data
-      const decompressedData = pako.ungzip(new Uint8Array(response.data), { to: 'string' });
+      const decompressedData = pako.ungzip(new Uint8Array(response.data), {
+        to: "string",
+      });
       filenames = JSON.parse(decompressedData);
     } else {
       // Directly parse the JSON if not compressed
