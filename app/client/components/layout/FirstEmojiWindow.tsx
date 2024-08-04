@@ -85,7 +85,7 @@ export default function FirstEmojiWindow({
                 } flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400`}
               >
                 <img
-                  loading="eager"
+                  loading="lazy"
                   alt={`Emoji of ${filename?.keys?.split("~")[0]} ${
                     filename?.id
                   }`}
