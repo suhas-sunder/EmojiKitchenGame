@@ -16,45 +16,31 @@ import cloudflareR2API from "./client/components/api/cloudflareR2API";
 import { useEffect, useState } from "react";
 import pako from "pako";
 
+// Loader function to fetch and decompress the data
 export const loader = async () => {
   let filenames: { id: string; keys: string }[] = [];
 
   try {
-    // Fetch the response with Axios
+    // Fetch the response
     const response = await cloudflareR2API.get("/emojis/filenames.json.gz", {
       method: "GET",
-      headers: {
-        "Accept-Encoding": "gzip",
-        "Content-Type": "application/json",
-      },
       responseType: "arraybuffer", // Ensure the response is treated as binary data
     });
 
-    // Log headers and response status for debugging
-    console.log("Response Headers:", response.headers);
-    console.log("Response Status:", response.status);
+    // Check for gzip magic number
+    const isGzip = response.data[0] === 0x1f && response.data[1] === 0x8b;
 
-    // Access headers safely using bracket notation
-    const contentEncoding = response.headers["content-encoding"] || "";
-
-    if (contentEncoding.includes("gzip")) {
-      // Convert ArrayBuffer to Uint8Array
-      const compressedData = new Uint8Array(response.data);
-
+    if (isGzip) {
       // Decompress the gzip data
-      const decompressedData = pako.ungzip(compressedData, { to: "string" });
-      console.log("Decompressed Data:", decompressedData); // Log decompressed data for debugging
-
-      // Parse JSON
+      const decompressedData = pako.ungzip(new Uint8Array(response.data), { to: "string" });
       filenames = JSON.parse(decompressedData);
     } else {
       // Directly parse the JSON if not compressed
       const textData = new TextDecoder().decode(response.data);
-      console.log("Text Data:", textData); // Log text data for debugging
       filenames = JSON.parse(textData);
     }
   } catch (err) {
-    console.error("Failed to fetch filenames for emoji!", err);
+    console.error("Failed to fetch or decompress filenames for emoji!", err);
   }
 
   return json(
@@ -67,45 +53,31 @@ export const loader = async () => {
   );
 };
 
-/**
- * This function is responsible for fetching filenames (static json data) from the server and caching them in the browser.
- * It first checks if the filenames are already cached in local storage. If they are, it returns the cached filenames.
- * If they are not cached, it fetches the filenames from the server and caches them.
- *
- * @param {ClientLoaderFunctionArgs} args - An object containing the serverLoader function.
- * @returns {Promise<{ filenames: { id: string, keys: string }[] }>} - A promise that resolves to an object containing the filenames.
- * @throws {Error} - If there is an error fetching the filenames from the server or caching them in local storage.
- */
+// Client Loader Function to handle caching
 export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
-  // Define the cache key for the filenames
   const cacheKey = "filenames";
 
   try {
-    // Check if the filenames are already cached in local storage
     const cachedFilenames = await localforage.getItem<{
       filenames: { id: string; keys: string }[];
     }>(cacheKey);
 
-    // If the filenames are cached, return them
     if (cachedFilenames) {
       return { filenames: cachedFilenames };
     } else {
-      // If the filenames are not cached, fetch them from the server and cache them
       const { filenames }: { filenames: { id: string; keys: string }[] } =
         await serverLoader();
 
-      // Cache the filenames in local storage
       await localforage.setItem(cacheKey, filenames);
-
-      // Return the cached filenames
       return { filenames };
     }
   } catch (error) {
-    // If there is an error fetching the cached filenames, log the error and continue to fetch the filenames from the server
     console.error("Error fetching cached filenames:", error);
+    return { filenames: [] }; // Return empty array if error occurs
   }
 }
 
+// Layout Component for rendering HTML structure
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -115,7 +87,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={` pt-14`}>
+      <body className={`pt-14`}>
         <NavBar />
         <div className="min-h-svh">{children}</div>
         <ScrollRestoration />
@@ -126,6 +98,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// App Component for managing application state
 export default function App() {
   const [copyText, setCopyText] = useState<string>("");
   const [displayCopyText, setDisplayCopyText] = useState<string>("");
