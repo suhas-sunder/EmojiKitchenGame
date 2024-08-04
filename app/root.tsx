@@ -1,6 +1,7 @@
 import "./tailwind.css";
 import NavBar from "./client/components/navigation/NavBar";
 import Footer from "./client/components/navigation/Footer";
+
 import {
   ClientLoaderFunctionArgs,
   json,
@@ -17,26 +18,57 @@ import { Filename } from "./routes/_index";
 import pako from "pako";
 import ErrorBoundary from "./client/components/utils/errors/ErrorBoundary";
 
-// Server loader to fetch and decompress gzipped JSON data
+// Server loader to fetch gzipped JSON data
 export const loader = async () => {
   let filenames = [];
 
   try {
-    const response = await cloudflareR2API.get("/emojis/filenames.json.gz", {
-      method: "GET",
-      responseType: "arraybuffer",
-    });
+    const response = await cloudflareR2API
+      .get("/emojis/filenames.json.gz", {
+        method: "GET",
+        responseType: "arraybuffer",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        // Decompress the gzipped response
+        const decompressedData = pako.ungzip(new Uint8Array(response.data), {
+          to: "string",
+        });
+        return JSON.parse(decompressedData);
+      })
+      .catch((err) => {
+        console.log(err, "Failed to fetch and decompress filenames for emoji!");
+      });
 
-    // Decompress the gzipped response
-    const decompressedData = pako.ungzip(new Uint8Array(response.data), { to: "string" });
-    filenames = JSON.parse(decompressedData);
+    const parseRes = await response;
+
+    if (parseRes) {
+      filenames = parseRes;
+    } else {
+      console.log("Failed to fetch filenames for emoji!");
+    }
   } catch (err) {
-    console.error("Failed to fetch and decompress filenames for emoji:", err);
+    let message;
+
+    if (err instanceof Error) {
+      message = err.message;
+    } else {
+      message = String(err);
+    }
+
+    console.error(message);
   }
 
-  return json({ filenames }, {
-    headers: { "Cache-Control": "max-age=3600, public" }
-  });
+  return json(
+    { filenames },
+    {
+      headers: {
+        "Cache-Control": "max-age=3600, public",
+      },
+    }
+  );
 };
 
 // Function for client-side caching of filenames
@@ -50,12 +82,13 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
       return { filenames: cachedFilenames };
     } else {
       const { filenames }: { filenames: Filename[] } = await serverLoader();
+
       await localforage.setItem(cacheKey, filenames);
+
       return { filenames };
     }
   } catch (error) {
     console.error("Error fetching cached filenames:", error);
-    return { filenames: [] }; // Ensure fallback in case of error
   }
 }
 

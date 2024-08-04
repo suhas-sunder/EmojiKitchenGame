@@ -14,20 +14,11 @@ const app = express();
 // Serve static files from 'build/client'
 app.use(express.static(join(__dirname, "build/client")));
 
-// Log all incoming requests
-app.use((req, res, next) => {
-  console.log(`Received ${req.method} request to ${req.url}`);
-  next();
-});
-
-// Handle JSON payloads if necessary
-app.use(express.json());
-
 // Handle all routes using the Remix request handler
 app.all("*", createRequestHandler({ build }));
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   console.error("Server error:", err);
   res.status(500).send("Internal Server Error");
 });
