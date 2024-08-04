@@ -27,7 +27,7 @@ app.use(express.json());
 app.all("*", createRequestHandler({ build }));
 
 // Error handling middleware
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error("Server error:", err);
   res.status(500).send("Internal Server Error");
 });
