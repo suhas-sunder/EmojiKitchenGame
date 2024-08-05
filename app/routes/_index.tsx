@@ -76,10 +76,6 @@ function EmojiDisplay({
 }) {
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
-  // useEffect(() => {
-  //   console.log(isCopied);
-  // }, [isCopied]);
-
   return (
     <ul className="flex fixed bottom-6 justify-center items-center w-full h-[9em] sm:h-[12em] lg:h-[12.5em] gap-2 sm:gap-6 bg-white">
       <li
@@ -243,6 +239,7 @@ export default function Index() {
     () => (isRouteData(matches[0]?.data) ? matches[0].data.filenames : []),
     [matches]
   );
+  
 
   const { isLoading } = useIsLoading();
 
@@ -309,7 +306,7 @@ export default function Index() {
     )[0];
 
     // Set the secondEmoji state with the id of the selected emoji
-    setSecondEmoji(selectedFilename.id);
+    setSecondEmoji(selectedFilename.id + "~" + selectedFilename.keys.split("~")[0]);
   };
 
   const thirdDiceRoll = async () => {
@@ -356,6 +353,7 @@ export default function Index() {
             setSecondEmoji={setSecondEmoji}
             secondEmoji={secondEmoji}
             thirdDiceRoll={thirdDiceRoll}
+            filenames={filenames}
           />
         </div>
         <EmojiDisplay
