@@ -32,13 +32,16 @@ export const loader = async () => {
 
     if (isGzip) {
       // Decompress the gzip data
-      const decompressedData = pako.ungzip(new Uint8Array(response.data), { to: "string" });
+      const decompressedData = pako.ungzip(new Uint8Array(response.data), {
+        to: "string",
+      });
       filenames = JSON.parse(decompressedData);
     } else {
       // Directly parse the JSON if not compressed
       const textData = new TextDecoder().decode(response.data);
       filenames = JSON.parse(textData);
     }
+    
   } catch (err) {
     console.error("Failed to fetch or decompress filenames for emoji!", err);
   }
