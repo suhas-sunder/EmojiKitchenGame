@@ -3,16 +3,44 @@ import { EmojiDataType } from "../../../routes/_index";
 import Icon from "../utils/other/Icon";
 import useManageCopiedMsg from "../hooks/useManageCopiedMsg";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let copyImageToClipboard: any;
+// Function to copy an image URL to clipboard using native APIs
+const copyImgToClipboard = async (
+  url: string,
+  setIsCopied: (value: string) => void
+) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
 
-if (typeof window !== "undefined") {
-  import("copy-image-clipboard").then((module) => {
-    copyImageToClipboard = module.copyImageToClipboard;
-  });
-}
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
-//Displays the combos for the selected emojis
+    const img = new Image();
+    img.src = URL.createObjectURL(blob);
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      if (context) {
+        context.drawImage(img, 0, 0);
+        canvas.toBlob(async (blob) => {
+          if (blob) {
+            await navigator.clipboard.write([
+              new ClipboardItem({ "image/png": blob }),
+            ]);
+            setIsCopied("true");
+            setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
+          }
+        }, "image/png");
+      }
+    };
+  } catch (error) {
+    console.error("Failed to copy image to clipboard:", error);
+    setIsCopied("");
+  }
+};
+
+// Displays the combos for the selected emojis
 function ComboImage({
   firstEmoji,
   secondEmoji,
@@ -33,29 +61,15 @@ function ComboImage({
   );
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
-  const copyImgToClipboard = async ({ url }: { url: string }) => {
-    // Can be an URL too, but be careful because this may cause CORS errors
-    copyImageToClipboard(url)
-      .then(() => {
-        setIsCopied("true");
-      })
-      .catch((e: { message: string }) => {
-        setIsCopied("");
-        console.log("Error: ", e.message);
-      });
-  };
-
   useEffect(() => {
     if (!firstEmoji || !secondEmoji) {
       setFilteredCombos([]);
       return;
     }
 
-    // Extract the baseUnicode from the first and second emojis
     let firstEmojiBaseUnicode = firstEmoji.split("~")[0];
     let secondEmojiBaseUnicode = secondEmoji.split("~")[0];
 
-    //Adjust for special images that have a uniquely long unicode value
     if (firstEmojiBaseUnicode.length >= 9)
       firstEmojiBaseUnicode = "u" + firstEmojiBaseUnicode.split("-").join("-u");
 
@@ -68,8 +82,6 @@ function ComboImage({
     if (firstEmojiBaseUnicode === "u00ae") firstEmojiBaseUnicode = "uae";
 
     const filterComboSet = () => {
-      // Filter the combos based on the selected emojis
-      // The filter condition checks if the baseUnicode of the combo includes either of the baseUnicode of the selected emojis
       return emojiData?.combos?.filter(
         (combo) =>
           (combo.baseUnicode === firstEmojiBaseUnicode &&
@@ -80,35 +92,26 @@ function ComboImage({
     };
 
     setFilteredCombos([...new Set(filterComboSet())]);
-    if (filterComboSet()?.length !== 0) return;
 
-    //Covers edge cases for wierdly formatted emojis codes
     if (filterComboSet()?.length === 0) {
       firstEmojiBaseUnicode = firstEmojiBaseUnicode + "-ufe0f";
       setFilteredCombos([...new Set(filterComboSet())]);
-      if (filterComboSet()?.length !== 0) return;
     }
 
-    //Covers edge cases for wierdly formatted emojis codes
     if (filterComboSet()?.length === 0) {
       firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
       secondEmojiBaseUnicode = secondEmojiBaseUnicode + "-ufe0f";
       setFilteredCombos([...new Set(filterComboSet())]);
-      if (filterComboSet()?.length !== 0) return;
     }
 
     const finalCombo = filterComboSet();
 
-    //If no combo image exists, it means the first image was changed while a stale second image (not a combo of first) remains in state so clear second image from state.
-    //Also, if combos exceed 2, clear second image because it's likely not a proper combo. It can be 2 because of the edge case where the same Id can exist for the special unicode string that is longer than 9 chars.
     if ((finalCombo && finalCombo?.length > 2) || finalCombo?.length === 0) {
-      setTimeout(() => setSecondEmoji(""), 500); //Prevents bad state call error where state is being updated while null ComboImage is being rendered
+      setTimeout(() => setSecondEmoji(""), 500);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstEmoji, secondEmoji, emojiData, setSecondEmoji]);
 
-  // The map function creates an image element for each combo
-  // The key of each image element is a combination of the combo's unicode, baseUnicode, and code
   return (
     <div className="flex justify-center items-center">
       {filteredCombos.length > 0 &&
@@ -139,9 +142,10 @@ function ComboImage({
             filteredCombos &&
             filteredCombos[0] &&
             Object.values(filteredCombos[0]).length > 0
-              ? copyImgToClipboard({
-                  url: `https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`,
-                })
+              ? copyImgToClipboard(
+                  `https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`,
+                  setIsCopied
+                )
               : null;
           }}
           aria-label="Copy Emoji Combo"
