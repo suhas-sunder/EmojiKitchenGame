@@ -14,36 +14,21 @@ import {
 import localforage from "localforage";
 import cloudflareR2API from "./client/components/api/cloudflareR2API";
 import { useEffect, useState } from "react";
-import pako from "pako";
+import { Filename } from "./routes/_index";
 
-// Loader function to fetch and decompress the data
+// Loader function to fetch the data
 export const loader = async () => {
-  let filenames: { id: string; keys: string }[] = [];
+  let filenames = [];
 
   try {
-    // Fetch the response
-    const response = await cloudflareR2API.get("/emojis/filenames.json.gz", {
+    const response = await cloudflareR2API.get("/emojis/filenames.json", {
       method: "GET",
-      responseType: "arraybuffer", // Ensure the response is treated as binary data
+      responseType: "json",
     });
 
-    // Check for gzip magic number
-    const isGzip = response.data[0] === 0x1f && response.data[1] === 0x8b;
-
-    if (isGzip) {
-      // Decompress the gzip data
-      const decompressedData = pako.ungzip(new Uint8Array(response.data), {
-        to: "string",
-      });
-      filenames = JSON.parse(decompressedData);
-    } else {
-      // Directly parse the JSON if not compressed
-      const textData = new TextDecoder().decode(response.data);
-      filenames = JSON.parse(textData);
-    }
-    
+    filenames = response.data;
   } catch (err) {
-    console.error("Failed to fetch or decompress filenames for emoji!", err);
+    console.error("Failed to fetch filenames for emoji!", err);
   }
 
   return json(
@@ -61,22 +46,18 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   const cacheKey = "filenames";
 
   try {
-    const cachedFilenames = await localforage.getItem<{
-      filenames: { id: string; keys: string }[];
-    }>(cacheKey);
+    const cachedFilenames = await localforage.getItem(cacheKey);
 
     if (cachedFilenames) {
       return { filenames: cachedFilenames };
     } else {
-      const { filenames }: { filenames: { id: string; keys: string }[] } =
-        await serverLoader();
-
+      const { filenames }: { filenames: Filename[] } = await serverLoader();
       await localforage.setItem(cacheKey, filenames);
       return { filenames };
     }
   } catch (error) {
     console.error("Error fetching cached filenames:", error);
-    return { filenames: [] }; // Return empty array if error occurs
+    return { filenames: [] };
   }
 }
 
@@ -90,7 +71,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={`pt-14`}>
+      <body className="pt-14">
         <NavBar />
         <div className="min-h-svh">{children}</div>
         <ScrollRestoration />
@@ -103,9 +84,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // App Component for managing application state
 export default function App() {
-  const [copyText, setCopyText] = useState<string>("");
-  const [displayCopyText, setDisplayCopyText] = useState<string>("");
-  const [textareaIsHidden, setTextareaIsHidden] = useState<boolean>(false);
+  const [copyText, setCopyText] = useState("");
+  const [displayCopyText, setDisplayCopyText] = useState("");
+  const [textareaIsHidden, setTextareaIsHidden] = useState(false);
 
   useEffect(() => {
     if (copyText) {
