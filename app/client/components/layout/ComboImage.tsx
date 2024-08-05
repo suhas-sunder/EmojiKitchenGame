@@ -3,7 +3,6 @@ import { EmojiDataType } from "../../../routes/_index";
 import Icon from "../utils/other/Icon";
 import useManageCopiedMsg from "../hooks/useManageCopiedMsg";
 
-// Function to copy an image URL to clipboard using canvas and Clipboard API
 const copyImgToClipboard = async (
   url: string,
   setIsCopied: (value: string) => void
@@ -62,7 +61,11 @@ const copyImgToClipboard = async (
               throw new Error("Clipboard API or ClipboardItem is not supported");
             }
           } catch (clipboardError) {
-            console.error("Failed to write to clipboard:", clipboardError);
+            if (clipboardError instanceof Error) {
+              console.error("Failed to write to clipboard:", clipboardError.message);
+            } else {
+              console.error("Failed to write to clipboard: Unknown error");
+            }
             setIsCopied("");
           }
         } else {
@@ -80,10 +83,15 @@ const copyImgToClipboard = async (
       setIsCopied("");
     };
   } catch (error) {
-    console.error("Failed to copy image to clipboard:", error);
+    if (error instanceof Error) {
+      console.error("Failed to copy image to clipboard:", error.message);
+    } else {
+      console.error("Failed to copy image to clipboard: Unknown error");
+    }
     setIsCopied("");
   }
 };
+
 
 // Displays the combos for the selected emojis
 function ComboImage({
