@@ -68,8 +68,7 @@ const copyImgToClipboard = async (
               console.error("Failed to write to clipboard: Unknown error");
             }
             // Fallback to default image URL
-            downloadImage("https://www.honeycombartist.com/defaults%2Fsingle-robot-typing-2.png");
-            setIsCopied("");
+            copyFallbackImage("https://www.honeycombartist.com/defaults/single-robot-typing-2.png", setIsCopied);
           }
         } else {
           console.error("Failed to create blob from canvas");
@@ -92,19 +91,27 @@ const copyImgToClipboard = async (
       console.error("Failed to copy image to clipboard: Unknown error");
     }
     // Fallback to default image URL
-    downloadImage("https://www.honeycombartist.com/defaults%2Fsingle-robot-typing-2.png");
-    setIsCopied("");
+    copyFallbackImage("https://www.honeycombartist.com/defaults/single-robot-typing-2.png", setIsCopied);
   }
 };
 
-// Function to provide a fallback for image download
-const downloadImage = (url: string) => {
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "emoji-combo.png";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+// Function to copy a fallback image to clipboard
+const copyFallbackImage = async (url: string, setIsCopied: (value: string) => void) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const clipboardItem = new ClipboardItem({
+      "image/png": blob
+    });
+
+    await navigator.clipboard.write([clipboardItem]);
+    console.log("Fallback image copied to clipboard");
+    setIsCopied("true");
+    setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
+  } catch (error) {
+    console.error("Failed to copy fallback image to clipboard:", error);
+    setIsCopied("");
+  }
 };
 
 // Displays the combos for the selected emojis
@@ -218,7 +225,7 @@ function ComboImage({
             } else {
               console.log("No combo available to copy");
               // Fallback to default image URL
-              downloadImage("https://www.honeycombartist.com/defaults%2Fsingle-robot-typing-2.png");
+              copyFallbackImage("https://www.honeycombartist.com/defaults/single-robot-typing-2.png", setIsCopied);
             }
           }}
           aria-label="Copy Emoji Combo"
