@@ -3,43 +3,67 @@ import { EmojiDataType } from "../../../routes/_index";
 import Icon from "../utils/other/Icon";
 import useManageCopiedMsg from "../hooks/useManageCopiedMsg";
 
-// Function to copy an image URL to clipboard using native APIs
+// Function to copy an image URL to clipboard using canvas and Clipboard API
 const copyImgToClipboard = async (
   url: string,
   setIsCopied: (value: string) => void
 ) => {
+  console.log("Starting copyImgToClipboard function");
   try {
+    console.log("Fetching image from URL:", url);
     const response = await fetch(url);
+    console.log("Image fetched, creating blob");
     const blob = await response.blob();
-
+    console.log("Blob created, setting image source");
+    
     const img = new Image();
     img.src = URL.createObjectURL(blob);
+    console.log("Image source set:", img.src);
 
     img.onload = async () => {
+      console.log("Image loaded, creating canvas");
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
 
-      canvas.width = img.width;
-      canvas.height = img.height;
-
       if (context) {
+        canvas.width = img.width;
+        canvas.height = img.height;
         context.drawImage(img, 0, 0);
+        console.log("Image drawn on canvas");
 
-        // Wrap toBlob in a promise to use with await
-        const blobPromise = new Promise<Blob | null>((resolve) => {
+        const imgBlob = await new Promise<Blob | null>((resolve) => {
           canvas.toBlob((blob) => resolve(blob), "image/png");
         });
 
-        const imgBlob = await blobPromise;
+        console.log("Blob from canvas created");
 
         if (imgBlob) {
-          await navigator.clipboard.write([
-            new ClipboardItem({ "image/png": imgBlob }),
-          ]);
-          setIsCopied("true");
-          setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
+          try {
+            const clipboardItem = new ClipboardItem({
+              "image/png": imgBlob
+            });
+
+            console.log("ClipboardItem created");
+            await navigator.clipboard.write([clipboardItem]);
+            console.log("Image copied to clipboard");
+            setIsCopied("true");
+            setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
+          } catch (clipboardError) {
+            console.error("Failed to write to clipboard:", clipboardError);
+            setIsCopied("");
+          }
+        } else {
+          console.error("Failed to create blob from canvas");
+          setIsCopied("");
         }
+      } else {
+        console.error("Failed to get canvas context");
+        setIsCopied("");
       }
+    };
+
+    img.onerror = (error) => {
+      console.error("Failed to load image:", error);
     };
   } catch (error) {
     console.error("Failed to copy image to clipboard:", error);
@@ -67,7 +91,10 @@ function ComboImage({
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
   useEffect(() => {
+    console.log("Effect triggered with:", { firstEmoji, secondEmoji, emojiData });
+    
     if (!firstEmoji || !secondEmoji) {
+      console.log("No emojis selected, clearing combos");
       setFilteredCombos([]);
       return;
     }
@@ -94,20 +121,24 @@ function ComboImage({
       );
     };
 
-    setFilteredCombos([...new Set(filterComboSet())]);
+    const combos = filterComboSet();
+    console.log("Filtered combos:", combos);
 
-    if (filterComboSet()?.length === 0) {
+    setFilteredCombos([...new Set(combos)]);
+
+    if (combos?.length === 0) {
       firstEmojiBaseUnicode += "-ufe0f";
       setFilteredCombos([...new Set(filterComboSet())]);
     }
 
-    if (filterComboSet()?.length === 0) {
+    if (combos?.length === 0) {
       firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
       secondEmojiBaseUnicode += "-ufe0f";
       setFilteredCombos([...new Set(filterComboSet())]);
     }
 
     const finalCombo = filterComboSet();
+    console.log("Final combos:", finalCombo);
 
     if ((finalCombo && finalCombo?.length > 2) || finalCombo?.length === 0) {
       setTimeout(() => setSecondEmoji(""), 500);
@@ -142,6 +173,7 @@ function ComboImage({
       >
         <button
           onClick={() => {
+            console.log("Copy button clicked");
             filteredCombos &&
             filteredCombos[0] &&
             Object.values(filteredCombos[0]).length > 0
@@ -149,7 +181,7 @@ function ComboImage({
                   `https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`,
                   setIsCopied
                 )
-              : null;
+              : console.log("No combo available to copy");
           }}
           aria-label="Copy Emoji Combo"
           className="flex hover:scale-110"
