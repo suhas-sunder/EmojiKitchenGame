@@ -169,6 +169,17 @@ function ComboImage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstEmoji, secondEmoji, emojiData, setSecondEmoji]);
 
+  // Handler for copy button click
+  const handleCopyClick = async () => {
+    console.log("Copy button clicked");
+    if (filteredCombos.length > 0 && Object.values(filteredCombos[0]).length > 0) {
+      const imageUrl = `https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`;
+      await copyImgToClipboard(imageUrl, setIsCopied);
+    } else {
+      console.log("No combo available to copy");
+    }
+  };
+
   return (
     <div className="flex justify-center items-center">
       {filteredCombos.length > 0 &&
@@ -195,17 +206,7 @@ function ComboImage({
         className={`absolute -bottom-10 scale-[.80] flex gap-5 sm:gap-6 ${menuStyle}`}
       >
         <button
-          onClick={() => {
-            console.log("Copy button clicked");
-            if (filteredCombos && filteredCombos[0] && Object.values(filteredCombos[0]).length > 0) {
-              copyImgToClipboard(
-                `https://www.honeycombartist.com/defaults%2Fsingle-robot-typing-2.png`,
-                setIsCopied
-              );
-            } else {
-              console.log("No combo available to copy");
-            }
-          }}
+          onClick={handleCopyClick}
           aria-label="Copy Emoji Combo"
           className="flex hover:scale-110"
         >
