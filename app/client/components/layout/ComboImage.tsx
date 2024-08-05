@@ -12,13 +12,19 @@ const copyImgToClipboard = async (
   try {
     console.log("Fetching image from URL:", url);
     const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
     console.log("Image fetched, creating blob");
     const blob = await response.blob();
-    console.log("Blob created, setting image source");
+    if (!blob) {
+      throw new Error("Failed to create blob from response");
+    }
 
+    console.log("Blob created, setting image source");
     const img = new Image();
     img.src = URL.createObjectURL(blob);
-    console.log("Image source set:", img.src);
 
     img.onload = async () => {
       console.log("Image loaded, creating canvas");
@@ -29,6 +35,7 @@ const copyImgToClipboard = async (
         canvas.width = img.width;
         canvas.height = img.height;
         context.drawImage(img, 0, 0);
+
         console.log("Image drawn on canvas");
 
         const imgBlob = await new Promise<Blob | null>((resolve) => {
