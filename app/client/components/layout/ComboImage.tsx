@@ -3,13 +3,12 @@ import { EmojiDataType } from "../../../routes/_index";
 import Icon from "../utils/other/Icon";
 import useManageCopiedMsg from "../hooks/useManageCopiedMsg";
 
-// Function to copy an image URL to clipboard using canvas and Clipboard API
+// Function to copy an image URL to clipboard using Clipboard API
 const copyImgToClipboard = async (
   url: string,
   setIsCopied: (value: string) => void
 ) => {
   console.log("Starting copyImgToClipboard function");
-
   try {
     console.log("Fetching image from URL:", url);
     const response = await fetch(url);
@@ -23,73 +22,18 @@ const copyImgToClipboard = async (
       throw new Error("Failed to create blob from response");
     }
 
-    console.log("Blob created, setting image source");
-    const img = new Image();
-    img.src = URL.createObjectURL(blob);
+    console.log("Creating ClipboardItem");
+    const clipboardItem = new ClipboardItem({
+      "image/png": blob
+    });
 
-    img.onload = async () => {
-      console.log("Image loaded, creating canvas");
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
-
-      if (context) {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        context.drawImage(img, 0, 0);
-
-        console.log("Image drawn on canvas");
-
-        const imgBlob = await new Promise<Blob | null>((resolve) => {
-          canvas.toBlob((blob) => {
-            console.log("Blob from canvas created");
-            resolve(blob);
-          }, "image/png");
-        });
-
-        if (imgBlob) {
-          try {
-            // Ensure Clipboard API is supported
-            if (navigator.clipboard && ClipboardItem) {
-              const clipboardItem = new ClipboardItem({
-                "image/png": imgBlob
-              });
-
-              // Use promise directly with ClipboardItem
-              await navigator.clipboard.write([clipboardItem]);
-              console.log("Image copied to clipboard");
-              setIsCopied("true");
-              setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
-            } else {
-              throw new Error("Clipboard API or ClipboardItem is not supported");
-            }
-          } catch (clipboardError) {
-            if (clipboardError instanceof Error) {
-              console.error("Failed to write to clipboard:", clipboardError.message);
-            } else {
-              console.error("Failed to write to clipboard: Unknown error");
-            }
-            setIsCopied("");
-          }
-        } else {
-          console.error("Failed to create blob from canvas");
-          setIsCopied("");
-        }
-      } else {
-        console.error("Failed to get canvas context");
-        setIsCopied("");
-      }
-    };
-
-    img.onerror = (error) => {
-      console.error("Failed to load image:", error);
-      setIsCopied("");
-    };
+    // Directly pass the promise to ClipboardItem
+    await navigator.clipboard.write([clipboardItem]);
+    console.log("Image copied to clipboard");
+    setIsCopied("true");
+    setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Failed to copy image to clipboard:", error.message);
-    } else {
-      console.error("Failed to copy image to clipboard: Unknown error");
-    }
+    console.error("Failed to copy image to clipboard:", error);
     setIsCopied("");
   }
 };
