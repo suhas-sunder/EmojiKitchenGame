@@ -3,92 +3,28 @@ import { EmojiDataType } from "../../../routes/_index";
 import Icon from "../utils/other/Icon";
 import useManageCopiedMsg from "../hooks/useManageCopiedMsg";
 
-// Function to copy an image URL to clipboard using canvas and Clipboard API
-const copyImgToClipboard = async (
-  url: string,
-  setIsCopied: (value: string) => void
-) => {
+// Function to copy an image Blob to clipboard using Clipboard API
+const copyImgToClipboard = async (imageBlob: Blob, setIsCopied: (value: string) => void) => {
   console.log("Starting copyImgToClipboard function");
 
   try {
-    console.log("Fetching image from URL:", url);
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
+    if (navigator.clipboard && ClipboardItem) {
+      const clipboardItem = new ClipboardItem({
+        "image/png": imageBlob
+      });
 
-    console.log("Image fetched, creating blob");
-    const blob = await response.blob();
-    if (!blob) {
-      throw new Error("Failed to create blob from response");
-    }
-
-    console.log("Blob created, setting image source");
-    const img = new Image();
-    img.src = URL.createObjectURL(blob);
-
-    img.onload = async () => {
-      console.log("Image loaded, creating canvas");
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
-
-      if (context) {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        context.drawImage(img, 0, 0);
-
-        console.log("Image drawn on canvas");
-
-        const imgBlob = await new Promise<Blob | null>((resolve) => {
-          canvas.toBlob((blob) => {
-            console.log("Blob from canvas created");
-            resolve(blob);
-          }, "image/png");
-        });
-
-        if (imgBlob) {
-          try {
-            // Ensure Clipboard API is supported
-            if (navigator.clipboard && ClipboardItem) {
-              const clipboardItem = new ClipboardItem({
-                "image/png": imgBlob
-              });
-
-              // Use promise directly with ClipboardItem
-              await navigator.clipboard.write([clipboardItem]);
-              console.log("Image copied to clipboard");
-              setIsCopied("true");
-              setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
-            } else {
-              throw new Error("Clipboard API or ClipboardItem is not supported");
-            }
-          } catch (clipboardError) {
-            if (clipboardError instanceof Error) {
-              console.error("Failed to write to clipboard:", clipboardError.message);
-            } else {
-              console.error("Failed to write to clipboard: Unknown error");
-            }
-            setIsCopied("");
-          }
-        } else {
-          console.error("Failed to create blob from canvas");
-          setIsCopied("");
-        }
-      } else {
-        console.error("Failed to get canvas context");
-        setIsCopied("");
-      }
-    };
-
-    img.onerror = (error) => {
-      console.error("Failed to load image:", error);
-      setIsCopied("");
-    };
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error("Failed to copy image to clipboard:", error.message);
+      await navigator.clipboard.write([clipboardItem]);
+      console.log("Image copied to clipboard");
+      setIsCopied("true");
+      setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
     } else {
-      console.error("Failed to copy image to clipboard: Unknown error");
+      throw new Error("Clipboard API or ClipboardItem is not supported");
+    }
+  } catch (clipboardError) {
+    if (clipboardError instanceof Error) {
+      console.error("Failed to write to clipboard:", clipboardError.message);
+    } else {
+      console.error("Failed to write to clipboard: Unknown error");
     }
     setIsCopied("");
   }
@@ -111,6 +47,7 @@ function ComboImage({
   menuStyle?: string;
 }) {
   const [filteredCombos, setFilteredCombos] = useState<EmojiDataType["combos"]>([]);
+  const [imageBlobs, setImageBlobs] = useState<Map<string, Blob>>(new Map());
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
   useEffect(() => {
@@ -119,8 +56,37 @@ function ComboImage({
     if (!firstEmoji || !secondEmoji) {
       console.log("No emojis selected, clearing combos");
       setFilteredCombos([]);
+      setImageBlobs(new Map()); // Clear image blobs
       return;
     }
+
+    const fetchAndStoreImage = async (url: string) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const blob = await response.blob();
+        if (blob) {
+          setImageBlobs(prev => new Map(prev).set(url, blob));
+        } else {
+          console.error("Failed to create blob from response");
+        }
+      } catch (error) {
+        console.error("Failed to fetch image:", error);
+      }
+    };
+
+    const filterComboSet = () => {
+      return emojiData?.combos?.filter(
+        (combo) =>
+          (combo.baseUnicode === firstEmojiBaseUnicode &&
+            combo.unicode.endsWith(secondEmojiBaseUnicode)) ||
+          (combo.baseUnicode === secondEmojiBaseUnicode &&
+            combo.unicode.endsWith(firstEmojiBaseUnicode))
+      );
+    };
 
     let firstEmojiBaseUnicode = firstEmoji.split("~")[0];
     let secondEmojiBaseUnicode = secondEmoji.split("~")[0];
@@ -133,16 +99,6 @@ function ComboImage({
 
     if (firstEmojiBaseUnicode === "u00a9") firstEmojiBaseUnicode = "ua9";
     if (firstEmojiBaseUnicode === "u00ae") firstEmojiBaseUnicode = "uae";
-
-    const filterComboSet = () => {
-      return emojiData?.combos?.filter(
-        (combo) =>
-          (combo.baseUnicode === firstEmojiBaseUnicode &&
-            combo.unicode.endsWith(secondEmojiBaseUnicode)) ||
-          (combo.baseUnicode === secondEmojiBaseUnicode &&
-            combo.unicode.endsWith(firstEmojiBaseUnicode))
-      );
-    };
 
     const combos = filterComboSet();
     console.log("Filtered combos:", combos);
@@ -163,18 +119,29 @@ function ComboImage({
     const finalCombo = filterComboSet();
     console.log("Final combos:", finalCombo);
 
-    if ((finalCombo && finalCombo?.length > 2) || finalCombo?.length === 0) {
+    if (finalCombo && finalCombo.length > 0) {
+      const imageUrl = `https://www.gstatic.com/android/keyboard/emojikitchen/${finalCombo[0]?.code}/${finalCombo[0]?.baseUnicode}/${finalCombo[0]?.unicode}.png`;
+      fetchAndStoreImage(imageUrl);
+    }
+
+    if ((finalCombo && finalCombo.length > 2) || finalCombo?.length === 0) {
       setTimeout(() => setSecondEmoji(""), 500);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstEmoji, secondEmoji, emojiData, setSecondEmoji]);
 
-  // Handler for copy button click
   const handleCopyClick = async () => {
     console.log("Copy button clicked");
     if (filteredCombos.length > 0 && Object.values(filteredCombos[0]).length > 0) {
       const imageUrl = `https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`;
-      await copyImgToClipboard(imageUrl, setIsCopied);
+      const blob = imageBlobs.get(imageUrl);
+
+      if (blob) {
+        await copyImgToClipboard(blob, setIsCopied);
+      } else {
+        console.log("Image blob not found");
+      }
     } else {
       console.log("No combo available to copy");
     }
