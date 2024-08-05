@@ -14,21 +14,32 @@ import {
 import localforage from "localforage";
 import cloudflareR2API from "./client/components/api/cloudflareR2API";
 import { useEffect, useState } from "react";
+import pako from "pako";
 import { Filename } from "./routes/_index";
 
-// Loader function to fetch the data
+// Loader function to fetch and decompress the data
 export const loader = async () => {
   let filenames = [];
 
   try {
-    const response = await cloudflareR2API.get("/emojis/filenames.json", {
+    const response = await cloudflareR2API.get("/emojis/filenames.json.gz", {
       method: "GET",
-      responseType: "json",
+      responseType: "arraybuffer",
     });
 
-    filenames = response.data;
+    const isGzip = response.data[0] === 0x1f && response.data[1] === 0x8b;
+
+    if (isGzip) {
+      const decompressedData = pako.ungzip(new Uint8Array(response.data), {
+        to: "string",
+      });
+      filenames = JSON.parse(decompressedData);
+    } else {
+      const textData = new TextDecoder().decode(response.data);
+      filenames = JSON.parse(textData);
+    }
   } catch (err) {
-    console.error("Failed to fetch filenames for emoji!", err);
+    console.error("Failed to fetch or decompress filenames for emoji!", err);
   }
 
   return json(
