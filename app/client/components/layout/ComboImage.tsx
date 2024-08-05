@@ -12,15 +12,16 @@ const copyImgToClipboard = async (
     const response = await fetch(url);
     const blob = await response.blob();
 
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-
     const img = new Image();
     img.src = URL.createObjectURL(blob);
 
     img.onload = async () => {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
       canvas.width = img.width;
       canvas.height = img.height;
+
       if (context) {
         context.drawImage(img, 0, 0);
 
@@ -62,9 +63,7 @@ function ComboImage({
   thirdDiceRoll?: () => void;
   menuStyle?: string;
 }) {
-  const [filteredCombos, setFilteredCombos] = useState<EmojiDataType["combos"]>(
-    []
-  );
+  const [filteredCombos, setFilteredCombos] = useState<EmojiDataType["combos"]>([]);
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
   useEffect(() => {
@@ -80,11 +79,9 @@ function ComboImage({
       firstEmojiBaseUnicode = "u" + firstEmojiBaseUnicode.split("-").join("-u");
 
     if (secondEmojiBaseUnicode.length >= 9)
-      secondEmojiBaseUnicode =
-        "u" + secondEmojiBaseUnicode.split("-").join("-u");
+      secondEmojiBaseUnicode = "u" + secondEmojiBaseUnicode.split("-").join("-u");
 
     if (firstEmojiBaseUnicode === "u00a9") firstEmojiBaseUnicode = "ua9";
-
     if (firstEmojiBaseUnicode === "u00ae") firstEmojiBaseUnicode = "uae";
 
     const filterComboSet = () => {
@@ -100,13 +97,13 @@ function ComboImage({
     setFilteredCombos([...new Set(filterComboSet())]);
 
     if (filterComboSet()?.length === 0) {
-      firstEmojiBaseUnicode = firstEmojiBaseUnicode + "-ufe0f";
+      firstEmojiBaseUnicode += "-ufe0f";
       setFilteredCombos([...new Set(filterComboSet())]);
     }
 
     if (filterComboSet()?.length === 0) {
       firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
-      secondEmojiBaseUnicode = secondEmojiBaseUnicode + "-ufe0f";
+      secondEmojiBaseUnicode += "-ufe0f";
       setFilteredCombos([...new Set(filterComboSet())]);
     }
 
