@@ -47,15 +47,20 @@ const copyImgToClipboard = async (
 
         if (imgBlob) {
           try {
-            const clipboardItem = new ClipboardItem({
-              "image/png": imgBlob
-            });
+            // Ensure Clipboard API is supported
+            if (navigator.clipboard && ClipboardItem) {
+              const clipboardItem = new ClipboardItem({
+                "image/png": imgBlob
+              });
 
-            console.log("ClipboardItem created");
-            await navigator.clipboard.write([clipboardItem]);
-            console.log("Image copied to clipboard");
-            setIsCopied("true");
-            setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
+              console.log("ClipboardItem created");
+              await navigator.clipboard.write([clipboardItem]);
+              console.log("Image copied to clipboard");
+              setIsCopied("true");
+              setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
+            } else {
+              throw new Error("Clipboard API or ClipboardItem is not supported");
+            }
           } catch (clipboardError) {
             console.error("Failed to write to clipboard:", clipboardError);
             setIsCopied("");
@@ -72,6 +77,7 @@ const copyImgToClipboard = async (
 
     img.onerror = (error) => {
       console.error("Failed to load image:", error);
+      setIsCopied("");
     };
   } catch (error) {
     console.error("Failed to copy image to clipboard:", error);
