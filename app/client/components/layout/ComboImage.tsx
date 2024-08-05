@@ -18,20 +18,26 @@ const copyImgToClipboard = async (
     const img = new Image();
     img.src = URL.createObjectURL(blob);
 
-    img.onload = () => {
+    img.onload = async () => {
       canvas.width = img.width;
       canvas.height = img.height;
       if (context) {
         context.drawImage(img, 0, 0);
-        canvas.toBlob(async (blob) => {
-          if (blob) {
-            await navigator.clipboard.write([
-              new ClipboardItem({ "image/png": blob }),
-            ]);
-            setIsCopied("true");
-            setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
-          }
-        }, "image/png");
+
+        // Wrap toBlob in a promise to use with await
+        const blobPromise = new Promise<Blob | null>((resolve) => {
+          canvas.toBlob((blob) => resolve(blob), "image/png");
+        });
+
+        const imgBlob = await blobPromise;
+
+        if (imgBlob) {
+          await navigator.clipboard.write([
+            new ClipboardItem({ "image/png": imgBlob }),
+          ]);
+          setIsCopied("true");
+          setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
+        }
       }
     };
   } catch (error) {
