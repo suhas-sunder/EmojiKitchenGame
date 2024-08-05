@@ -1,4 +1,4 @@
-import { EmojiDataType } from "../../../routes/_index";
+import { EmojiDataType, Filename } from "../../../routes/_index";
 import ComboImage from "./ComboImage";
 
 interface PropType {
@@ -7,6 +7,7 @@ interface PropType {
   setSecondEmoji: (value: string) => void;
   secondEmoji: string;
   thirdDiceRoll?: () => void;
+  filenames?: Filename[];
 }
 
 export default function ThirdEmojiWindow({
@@ -15,7 +16,10 @@ export default function ThirdEmojiWindow({
   setSecondEmoji,
   secondEmoji,
   thirdDiceRoll,
+  filenames,
 }: PropType) {
+  if(!filenames) return null
+
   return (
     <div
       className={` flex relative items-center flex-col col-span-2 lg:col-span-1 min-w-20 h-[61vh] md:h-[66vh] lg:h-[70.5vh] border-l border-b sm:border-hidden`}
@@ -71,24 +75,46 @@ export default function ThirdEmojiWindow({
       >
         {emojiData?.combos ? (
           emojiData?.combos?.map(
-            (filename: {
+            (comboCodes: {
               code: string;
               baseUnicode: string;
               unicode: string;
             }) => (
               <li
-                key={filename?.code + filename?.baseUnicode + filename?.unicode}
+                key={
+                  comboCodes?.code +
+                  comboCodes?.baseUnicode +
+                  comboCodes?.unicode
+                }
               >
                 <button
                   tabIndex={-1}
                   disabled={firstEmoji && secondEmoji ? true : false}
                   onClick={() => {
-                    filename.baseUnicode.split("-")[0] ===
+                    comboCodes.baseUnicode.split("-")[0] ===
                     firstEmoji?.split("~")[0]
                       ? setSecondEmoji(
-                          filename.unicode.split("_")[1].split("-")[0]
+                          comboCodes.unicode.split("_")[1].split("-")[0] +
+                            "~" +
+                            filenames
+                              .filter(
+                                (filename) =>
+                                  filename.id ===
+                                  comboCodes.unicode.split("_")[1].split("-")[0]
+                              )[0]
+                              .keys.split("~")[0]
                         )
-                      : setSecondEmoji(filename.baseUnicode.split("-")[0]);
+                      : setSecondEmoji(
+                          comboCodes.baseUnicode.split("-")[0] +
+                            "~" +
+                            filenames
+                              .filter(
+                                (filename) =>
+                                  filename.id ===
+                                  comboCodes.baseUnicode.split("-")[0]
+                              )[0]
+                              .keys.split("~")[0]
+                        );
                   }}
                   className={`hover:scale-110 p-1 m-1 border-2 rounded-lg border-transparent  ${
                     !(firstEmoji && secondEmoji) && "hover:border-rose-400"
@@ -96,8 +122,8 @@ export default function ThirdEmojiWindow({
                 >
                   <img
                     loading="lazy"
-                    alt={`Combination of two emojis ${filename?.unicode}`}
-                    src={`https://www.gstatic.com/android/keyboard/emojikitchen/${filename?.code}/${filename?.baseUnicode}/${filename?.unicode}.png`}
+                    alt={`Combination of two emojis ${comboCodes?.unicode}`}
+                    src={`https://www.gstatic.com/android/keyboard/emojikitchen/${comboCodes?.code}/${comboCodes?.baseUnicode}/${comboCodes?.unicode}.png`}
                   />
                 </button>
               </li>
