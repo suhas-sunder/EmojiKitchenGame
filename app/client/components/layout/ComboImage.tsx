@@ -15,7 +15,7 @@ const copyImgToClipboard = async (
     console.log("Image fetched, creating blob");
     const blob = await response.blob();
     console.log("Blob created, setting image source");
-    
+
     const img = new Image();
     img.src = URL.createObjectURL(blob);
     console.log("Image source set:", img.src);
@@ -32,10 +32,11 @@ const copyImgToClipboard = async (
         console.log("Image drawn on canvas");
 
         const imgBlob = await new Promise<Blob | null>((resolve) => {
-          canvas.toBlob((blob) => resolve(blob), "image/png");
+          canvas.toBlob((blob) => {
+            console.log("Blob from canvas created");
+            resolve(blob);
+          }, "image/png");
         });
-
-        console.log("Blob from canvas created");
 
         if (imgBlob) {
           try {
@@ -92,7 +93,7 @@ function ComboImage({
 
   useEffect(() => {
     console.log("Effect triggered with:", { firstEmoji, secondEmoji, emojiData });
-    
+
     if (!firstEmoji || !secondEmoji) {
       console.log("No emojis selected, clearing combos");
       setFilteredCombos([]);
