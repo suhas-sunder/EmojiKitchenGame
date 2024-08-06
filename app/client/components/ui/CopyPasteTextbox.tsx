@@ -41,7 +41,7 @@ export default function CopyPasteTextbox({
         value={displayCopyText.trim()}
         onChange={(e) => setDisplayCopyText(e.target.value)}
         id="copy-paste"
-        className="flex w-full placeholder:text-sm resize-none placeholder:sm:text-lg  placeholder:tracking-widest  placeholder:leading-loose placeholder:text-center  placeholder:-translate-y-1 placeholder:sm:translate-y-2 max-w-[1200px] text-xl border-2 tracking-widest h-full mt-3 mb-5 leading-loose rounded-md scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 px-4 pt-1 border-purple-300 text-purple-600 focus:border-purple-700 outline-none placeholder:text-purple-300"
+        className="flex w-full placeholder:text-sm resize-none placeholder:sm:text-lg  placeholder:tracking-widest  placeholder:leading-loose placeholder:text-center  placeholder:-translate-y-1 placeholder:sm:translate-y-2 max-w-[1200px] text-xl border-2 tracking-widest h-full mt-3 mb-5 leading-loose rounded-md scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 px-1 sm:px-3 pt-1 border-purple-300 text-purple-600 focus:border-purple-700 outline-none placeholder:text-purple-300"
       />
     </section>
   );
