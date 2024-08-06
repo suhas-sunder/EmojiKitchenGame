@@ -17,7 +17,7 @@ export default function CopyPasteTextbox({
     <section
       className={`${
         isHidden ? "h-0 touch-none translate-y-[1.7em] sm:translate-y-[1.2em]" : "h-40"
-      } flex flex-col fixed bottom-4 sm:bottom-6 font-nunito px-5 w-full bg-white justify-center border-t-2 border-t-purple-200 items-center`}
+      } flex flex-col fixed bottom-6 font-nunito px-5 w-full bg-white justify-center border-t-2 border-t-purple-200 items-center`}
     >
       <div className="flex w-full relative  max-w-[1200px]">
         <button

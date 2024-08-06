@@ -184,7 +184,7 @@ export default function TextFaces() {
                       className={`hover:text-slate-800 max-w-[13em] sm:max-w-auto flex text-center hover:scale-110 sm:overflow-visible text-slate-600 border-slate-300 hover:border-slate-400  w-full justify-center items-center border-2 sm:px-5 py-4 rounded-md`}
                     >
                       <span className="flex">
-                        {isCopied === face
+                        {isCopied === face.replace(/\s*\n\s*/g, "")
                           ? "✧･ﾟ Copied! ･ﾟ✧"
                           : face.split("  ").join("")}
                       </span>
