@@ -83,6 +83,7 @@ function ComboImage({
       }
     };
 
+    //Based on the code combination sent in, find a combo set that matches
     const filterComboSet = () => {
       return emojiData?.combos?.filter(
         (combo) =>
@@ -93,6 +94,7 @@ function ComboImage({
       );
     };
 
+    //Figure out which code combination exists for the selected emojis and cover all of the strange edge cases.
     let firstEmojiBaseUnicode = firstEmoji.split("~")[0];
     let secondEmojiBaseUnicode = secondEmoji.split("~")[0];
 
@@ -130,13 +132,13 @@ function ComboImage({
     if (combos?.length === 0) {
       firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
       const temp = secondEmojiBaseUnicode.split("-")[0];
-      secondEmojiBaseUnicode =
-      temp + "_" + firstEmojiBaseUnicode + "-ufe0f";
+      secondEmojiBaseUnicode = temp + "_" + firstEmojiBaseUnicode + "-ufe0f";
       firstEmojiBaseUnicode = temp;
       console.log(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
       setFilteredCombos([...new Set(filterComboSet())]);
     }
 
+    //State has been set, but the variable isn't updated yet, so I'm saving the combo here again and using it to update url if a combo exists
     const finalCombo = filterComboSet();
 
     if (finalCombo && finalCombo.length > 0) {
@@ -144,6 +146,7 @@ function ComboImage({
       fetchAndStoreImage(imageUrl);
     }
 
+    //If there's no combo, clear the second emoji with a delay to prevent bad state management.
     if ((finalCombo && finalCombo.length > 2) || finalCombo?.length === 0) {
       setTimeout(() => setSecondEmoji(""), 500);
     }
