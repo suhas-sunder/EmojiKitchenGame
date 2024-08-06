@@ -22,11 +22,11 @@ export default function ThirdEmojiWindow({
 
   return (
     <div
-      className={` flex relative items-center flex-col col-span-2 lg:col-span-1 min-w-20 h-[100vh] md:h-[66vh] lg:h-[70.5vh] border-l border-b sm:border-hidden`}
+      className={` flex relative items-center flex-col col-span-2 lg:col-span-1 min-w-20 h-[100vh]  md:h-[66vh] lg:h-[70.5vh] border-l border-b sm:border-hidden`}
     >
       {emojiData?.combos && (
         <div
-          className={`hidden lg:flex justify-center items-center border-dashed max-w-[30em] -translate-x-1 border-2 w-full border-rose-300 rounded-lg gap-2 py-1 my-2 text-md text-purple-800 font-nunito ${
+          className={`hidden lg:flex justify-center items-center max-w-[30em] -translate-x-1  w-full  rounded-lg gap-2 py-1 my-2 text-md text-purple-800 font-nunito ${
             firstEmoji && secondEmoji && "!hidden"
           }`}
         >
@@ -132,10 +132,12 @@ export default function ThirdEmojiWindow({
         ) : (
           <li className="flex flex-col lg:pt-64 py-1 justify-start items-center w-full gap-2 sm:gap-12 font-nunito text-xl sm:text-2xl px-5 text-center tracking-widest leading-loose text-rose-500">
             <span className="hidden lg:flex gap-6 scale-[3] md:scale-[2.5]">
-              <span>👈🏼</span><span>🧑🏼‍🍳</span>
+              <span>👈🏼</span>
+              <span>🧑🏼‍🍳</span>
             </span>
             <span className="lg:hidden flex gap-10 scale-[3] md:scale-[2.5]">
-              <span>☝🏼</span><span>🧑🏼‍🍳</span>
+              <span>☝🏼</span>
+              <span>🧑🏼‍🍳</span>
             </span>
             <span>
               {/* eslint-disable-next-line react/no-unescaped-entities */}
