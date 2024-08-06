@@ -181,11 +181,15 @@ export default function TextFaces() {
                         setIsCopied(face);
                         setCopyText(face);
                       }}
-                      className={`hover:text-slate-800 flex whitespace-nowrap text-center hover:scale-110 text-slate-600 border-slate-300 hover:border-slate-400  w-full justify-center items-center border-2 sm:px-5 py-4 rounded-md`}
+                      className={`hover:text-slate-800 max-w-[13em] sm:max-w-auto flex text-center hover:scale-110 sm:overflow-visible text-slate-600 border-slate-300 hover:border-slate-400  w-full justify-center items-center border-2 sm:px-5 py-4 rounded-md`}
                     >
-                      {isCopied === face ? "✧･ﾟ Copied! ･ﾟ✧" : face}
-                      <div id={key} className="-translate-y-44"></div>
+                      <span className="flex">
+                        {isCopied === face
+                          ? "✧･ﾟ Copied! ･ﾟ✧"
+                          : face.split("  ").join("")}
+                      </span>
                     </button>
+                    <div id={key} className="-translate-y-44"></div>
                   </li>
                 ))}
 
