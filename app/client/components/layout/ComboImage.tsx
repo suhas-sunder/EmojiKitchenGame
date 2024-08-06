@@ -4,17 +4,18 @@ import Icon from "../utils/other/Icon";
 import useManageCopiedMsg from "../hooks/useManageCopiedMsg";
 
 // Function to copy an image Blob to clipboard using Clipboard API
-const copyImgToClipboard = async (imageBlob: Blob, setIsCopied: (value: string) => void) => {
-  console.log("Starting copyImgToClipboard function");
-
+const copyImgToClipboard = async (
+  imageBlob: Blob,
+  setIsCopied: (value: string) => void
+) => {
   try {
     if (navigator.clipboard && ClipboardItem) {
       const clipboardItem = new ClipboardItem({
-        "image/png": imageBlob
+        "image/png": imageBlob,
       });
 
       await navigator.clipboard.write([clipboardItem]);
-      console.log("Image copied to clipboard");
+
       setIsCopied("true");
       setTimeout(() => setIsCopied(""), 2000); // Reset state after 2 seconds
     } else {
@@ -38,6 +39,8 @@ function ComboImage({
   thirdDiceRoll,
   setSecondEmoji,
   menuStyle,
+  bottomMenuStyle,
+  imgStyle,
 }: {
   firstEmoji: string;
   secondEmoji: string;
@@ -45,21 +48,23 @@ function ComboImage({
   setSecondEmoji: (value: string) => void;
   thirdDiceRoll?: () => void;
   menuStyle?: string;
+  bottomMenuStyle?: string;
+  imgStyle?: string;
 }) {
-  const [filteredCombos, setFilteredCombos] = useState<EmojiDataType["combos"]>([]);
+  const [filteredCombos, setFilteredCombos] = useState<EmojiDataType["combos"]>(
+    []
+  );
   const [imageBlobs, setImageBlobs] = useState<Map<string, Blob>>(new Map());
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
   useEffect(() => {
-    console.log("Effect triggered with:", { firstEmoji, secondEmoji, emojiData });
-
     if (!firstEmoji || !secondEmoji) {
-      console.log("No emojis selected, clearing combos");
       setFilteredCombos([]);
       setImageBlobs(new Map()); // Clear image blobs
       return;
     }
 
+    //Since mobile browsers don't allow fetching images from API while copying to clipboard, the workaround is to fetch the images and store them in local storage, then allow the button event to copy them to clipboard directly.
     const fetchAndStoreImage = async (url: string) => {
       try {
         const response = await fetch(url);
@@ -69,7 +74,7 @@ function ComboImage({
 
         const blob = await response.blob();
         if (blob) {
-          setImageBlobs(prev => new Map(prev).set(url, blob));
+          setImageBlobs((prev) => new Map(prev).set(url, blob));
         } else {
           console.error("Failed to create blob from response");
         }
@@ -95,13 +100,13 @@ function ComboImage({
       firstEmojiBaseUnicode = "u" + firstEmojiBaseUnicode.split("-").join("-u");
 
     if (secondEmojiBaseUnicode.length >= 9)
-      secondEmojiBaseUnicode = "u" + secondEmojiBaseUnicode.split("-").join("-u");
+      secondEmojiBaseUnicode =
+        "u" + secondEmojiBaseUnicode.split("-").join("-u");
 
     if (firstEmojiBaseUnicode === "u00a9") firstEmojiBaseUnicode = "ua9";
     if (firstEmojiBaseUnicode === "u00ae") firstEmojiBaseUnicode = "uae";
 
     const combos = filterComboSet();
-    console.log("Filtered combos:", combos);
 
     setFilteredCombos([...new Set(combos)]);
 
@@ -117,7 +122,6 @@ function ComboImage({
     }
 
     const finalCombo = filterComboSet();
-    console.log("Final combos:", finalCombo);
 
     if (finalCombo && finalCombo.length > 0) {
       const imageUrl = `https://www.gstatic.com/android/keyboard/emojikitchen/${finalCombo[0]?.code}/${finalCombo[0]?.baseUnicode}/${finalCombo[0]?.unicode}.png`;
@@ -132,46 +136,47 @@ function ComboImage({
   }, [firstEmoji, secondEmoji, emojiData, setSecondEmoji]);
 
   const handleCopyClick = async () => {
-    console.log("Copy button clicked");
-    if (filteredCombos.length > 0 && Object.values(filteredCombos[0]).length > 0) {
+    if (
+      filteredCombos.length > 0 &&
+      Object.values(filteredCombos[0]).length > 0
+    ) {
       const imageUrl = `https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`;
       const blob = imageBlobs.get(imageUrl);
 
       if (blob) {
         await copyImgToClipboard(blob, setIsCopied);
       } else {
-        console.log("Image blob not found");
+        console.error("Image blob not found");
       }
     } else {
-      console.log("No combo available to copy");
+      console.error("No combo available to copy");
     }
   };
 
   return (
-    <div className="flex justify-center items-center">
-      {filteredCombos.length > 0 &&
-        Object.values(filteredCombos[0]).length > 0 && (
-          <>
-            <img
-              className={`${
-                isCopied ? "opacity-0" : "opacity-1"
-              } flex w-12 md:w-20`}
-              key={`${filteredCombos[0]?.unicode}-${filteredCombos[0]?.baseUnicode}-${filteredCombos[0]?.code}-combo-img`}
-              loading="lazy"
-              alt={`Combination of two emojis ${filteredCombos[0]?.unicode}`}
-              src={`https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`}
-            />
-            {isCopied && (
-              <h2 className="text-rose-500 absolute font-nunito text-lg py-[1em]">
-                Copied!
-              </h2>
-            )}
-          </>
-        )}
-
-      <div
-        className={`absolute -bottom-10 scale-[.80] flex gap-5 sm:gap-6 ${menuStyle}`}
-      >
+    <div className={`flex relative justify-center  items-center ${imgStyle}`}>
+      <div className="w-12 h-12">
+        {filteredCombos.length > 0 &&
+          Object.values(filteredCombos[0]).length > 0 && (
+            <>
+              <img
+                className={`${
+                  isCopied ? "opacity-0" : "opacity-1"
+                } flex w-12 md:w-20 mt-1 `}
+                key={`${filteredCombos[0]?.unicode}-${filteredCombos[0]?.baseUnicode}-${filteredCombos[0]?.code}-combo-img`}
+                loading="lazy"
+                alt={`Combination of two emojis ${filteredCombos[0]?.unicode}`}
+                src={`https://www.gstatic.com/android/keyboard/emojikitchen/${filteredCombos[0]?.code}/${filteredCombos[0]?.baseUnicode}/${filteredCombos[0]?.unicode}.png`}
+              />
+              {isCopied && (
+                <h2 className="text-rose-500 absolute font-nunito text-lg py-[1em] -translate-y-14 -translate-x-2">
+                  Copied!
+                </h2>
+              )}
+            </>
+          )}
+      </div>
+      <div className={`absolute flex  ${menuStyle}`}>
         <button
           onClick={handleCopyClick}
           aria-label="Copy Emoji Combo"
@@ -180,18 +185,7 @@ function ComboImage({
           <Icon
             icon="copy"
             customStyle="fill-rose-400 w-7"
-            title="Copy Emoji Combo PNG"
-          />
-        </button>
-        <button
-          aria-label="Deselect Emoji"
-          className="flex hover:scale-110"
-          onClick={() => setSecondEmoji("")}
-        >
-          <Icon
-            icon="deselect"
-            customStyle="fill-rose-400 w-7"
-            title="Deselect Emoji"
+            title="Copy Emoji As PN Image"
           />
         </button>
         <button
@@ -205,6 +199,30 @@ function ComboImage({
             title="Random Second Emoji"
           />
         </button>
+      </div>
+      <div className={`absolute  flex  ${bottomMenuStyle}`}>
+        <button
+          aria-label="Deselect Emoji"
+          className="flex hover:scale-110"
+          onClick={() => setSecondEmoji("")}
+        >
+          <Icon
+            icon="deselect"
+            customStyle="fill-rose-400 w-7"
+            title="Deselect Emoji"
+          />
+        </button>
+        {/* <button
+          onClick={handleCopyClick}
+          aria-label="Copy Emoji Combo as text"
+          className="flex hover:scale-110"
+        >
+          <Icon
+            icon="copy"
+            customStyle="fill-rose-400 w-7"
+            title="Copy Emoji As Text"
+          />
+        </button> */}
       </div>
     </div>
   );

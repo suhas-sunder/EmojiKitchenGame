@@ -18,7 +18,7 @@ export default function ThirdEmojiWindow({
   thirdDiceRoll,
   filenames,
 }: PropType) {
-  if(!filenames) return null
+  if (!filenames) return null;
 
   return (
     <div
@@ -69,7 +69,7 @@ export default function ThirdEmojiWindow({
           emojiData?.combos
             ? "grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-5"
             : "flex h-full"
-        } justify-center items-center overflow-y-auto py-6 px-1 scrollbar-thin scrollbar-thumb-rose-400 scrollbar-track-rose-100 pb-[8em] ${
+        }  overflow-y-auto py-6 px-1 scrollbar-thin scrollbar-thumb-rose-400 scrollbar-track-rose-100 pb-[8em] ${
           emojiData?.combos && "lg:pb-[13em]"
         } ${firstEmoji && secondEmoji && "!hidden"}`}
       >
@@ -130,13 +130,13 @@ export default function ThirdEmojiWindow({
             )
           )
         ) : (
-          <li className="flex flex-col sm:pt-0 justify-center items-center w-full gap-8 sm:gap-12 font-nunito text-xl sm:text-2xl px-5 text-center tracking-widest leading-loose text-rose-500">
-            <span className="hidden lg:flex flex-col scale-[3] md:scale-[2.5]">
-              👈🏼🧑🏼‍🍳
+          <li className="flex flex-col lg:pt-64 py-1 justify-start items-center w-full gap-2 sm:gap-12 font-nunito text-xl sm:text-2xl px-5 text-center tracking-widest leading-loose text-rose-500">
+            <span className="hidden lg:flex gap-6 scale-[3] md:scale-[2.5]">
+              <span>👈🏼</span><span>🧑🏼‍🍳</span>
             </span>
-            <span className="lg:hidden flex flex-col scale-[3] md:scale-[2.5]">
-              ☝🏼🧑🏼‍🍳
-            </span>{" "}
+            <span className="lg:hidden flex gap-10 scale-[3] md:scale-[2.5]">
+              <span>☝🏼</span><span>🧑🏼‍🍳</span>
+            </span>
             <span>
               {/* eslint-disable-next-line react/no-unescaped-entities */}
               Select an emoji from the first column & start cookin'!
@@ -153,7 +153,9 @@ export default function ThirdEmojiWindow({
               secondEmoji={secondEmoji}
               emojiData={emojiData}
               setSecondEmoji={setSecondEmoji}
-              menuStyle="scale-50 -translate-y-3"
+              imgStyle="translate-y-1 lg:translate-y-8"
+              menuStyle="scale-50 -top-[1.55em] scale-[.80] gap-16"
+              bottomMenuStyle="scale-50 -bottom-[2.4em] scale-[.80] gap-16"
               thirdDiceRoll={thirdDiceRoll}
             />
           </div>
