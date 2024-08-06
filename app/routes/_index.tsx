@@ -86,7 +86,7 @@ function EmojiDisplay({
       <li className="absolute w-full bg-black max-w-[650px]">
         <button
           onClick={() => setIsHidden(!isHidden)}
-          title={isHidden ? "Show Textarea" : "Hide Textarea"}
+          title={isHidden ? "👀 Show Emoji Combo Menu" : "🕶️ Hide Emoji Combo Menu"}
           className="absolute -top-[3.6rem] -right-3 z-10 mr-7 hover:bg-rose-400 bg-rose-100 rounded-t-lg p-2 text-3xl"
         >
           {!isHidden ? "🫣" : "😉"}
@@ -421,7 +421,7 @@ export default function Index() {
   return (
     <>
       <header>
-        <h1 className="w-full flex justify-center items-center text-sm sm:text-base -translate-y-[0.1em] sm:translate-y-0 sm:mt-2 sm:mb-1 text-purple-700  font-lora">
+        <h1 className="w-full flex justify-center items-center text-sm sm:text-base -translate-y-[0.3em] sm:translate-y-0 sm:mt-2 sm:mb-1 text-purple-700  font-lora">
           Emoji Kitchen Game
         </h1>
       </header>

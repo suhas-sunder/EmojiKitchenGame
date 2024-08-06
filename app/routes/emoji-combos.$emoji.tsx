@@ -120,8 +120,8 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
   }, [isCopied]);
 
   return (
-    <div className="max-w-[1200px] mx-5 flex sm:block flex-col sm:flex-row gap-12 sm:gap-0 text-center sm:text-left">
-      <div className="float-left border-2 bg-purple-50 border-purple-200 pb-12 pt-6 -translate-y-2  px-10 mr-8  flex flex-col rounded-lg ">
+    <div className="max-w-[1200px] mx-5 flex sm:block flex-col sm:flex-row gap-12 sm:gap-0 text-center justify-center items-center sm:text-left">
+      <div className="float-left border-2 bg-purple-50 min-w-[16em] border-purple-200 pb-12 pt-6 -translate-y-2  px-10 sm:mr-8  flex flex-col rounded-lg ">
         <h2 className="tracking-widest leading-relaxed uppercase font-lora flex justify-center items-center gap-2">
           <span className="text-2xl">{emoji.title}</span>(U+
           {emoji.unicode.slice(1)})
@@ -168,13 +168,15 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
                 className="flex bg-white w-40 justify-center items-center border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
               >
                 {isCopied === emoji?.title ? (
-                  <span className="text-sm py-[0.14em] min-w-[4.9em] flex text-center justify-center items-center">
+                  <span className="text-lg min-w-[4.9em] flex text-center justify-center items-center">
                     {" "}
                     Copied!
                   </span>
                 ) : (
-                  <div className="flex gap-1">
-                    <span>Copy Emoji</span>{" "}
+                  <div className="flex gap-1 px-2 justify-center items-center">
+                    <span className="whitespace-nowrap text-base">
+                      Copy Emoji
+                    </span>{" "}
                     <span className="flex">{emoji?.title}</span>
                   </div>
                 )}
@@ -250,6 +252,8 @@ function ComboTable({ emoji }: { emoji: EmojiDataType }) {
                     secondEmoji={combo.unicode.slice(1).split("-u").join("-")}
                     emojiData={emoji}
                     setSecondEmoji={() => {}}
+                    menuStyle="hidden"
+                    bottomMenuStyle="hidden"
                   />
                 </div>
               </td>
