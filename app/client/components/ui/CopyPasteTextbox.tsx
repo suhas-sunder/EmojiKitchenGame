@@ -16,14 +16,14 @@ export default function CopyPasteTextbox({
   return (
     <section
       className={`${
-        isHidden ? "h-0 translate-y-[1.7em] sm:translate-y-[1.2em]" : "h-40"
+        isHidden ? "h-0 touch-none translate-y-[1.7em] sm:translate-y-[1.2em]" : "h-40"
       } flex flex-col fixed bottom-4 sm:bottom-6 font-nunito px-5 w-full bg-white justify-center border-t-2 border-t-purple-200 items-center`}
     >
       <div className="flex w-full relative  max-w-[1200px]">
         <button
           onClick={() => setIsHidden(!isHidden)}
           title={isHidden ? "👀 Show Textarea" : "🕶️ Hide Textarea"}
-          className="absolute -top-[3.3rem] -right-3 hover:bg-rose-400 bg-rose-100 rounded-t-lg p-2 text-3xl"
+          className="absolute -top-[3.3rem] max-w-14 -right-3 hover:bg-rose-400 bg-rose-100 rounded-t-lg p-2 text-3xl"
         >
           {!isHidden ? "🫣" : "😉"}
         </button>

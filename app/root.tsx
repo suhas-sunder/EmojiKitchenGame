@@ -101,13 +101,22 @@ export default function App() {
 
   useEffect(() => {
     if (copyText) {
-      navigator.clipboard.writeText(copyText.replace(/\s*\n\s*/g, ""));
-      setDisplayCopyText(
-        displayCopyText + " " + copyText.replace(/\s*\n\s*/g, "")
-      );
-      setCopyText("");
+      // Clean the text by removing any line breaks or unnecessary spaces
+      const cleanedText = copyText.replace(/\s*\n\s*/g, "");
+
+      // Copy the cleaned text to the clipboard
+      navigator.clipboard.writeText(cleanedText)
+        .then(() => {
+          // Update the display text
+          setDisplayCopyText(prevDisplayCopyText => `${prevDisplayCopyText} ${cleanedText}`);
+          // Clear the copyText state
+          setCopyText("");
+        })
+        .catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
     }
-  }, [copyText, displayCopyText]);
+  }, [copyText]);
 
   return (
     <Outlet
