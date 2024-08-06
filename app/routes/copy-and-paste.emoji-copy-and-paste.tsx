@@ -173,7 +173,7 @@ export default function EmojiCopyAndPaste() {
             key={key}
             className="overflow-auto lg:overflow-hidden  pt-10 sm:px-10 scrollbar-thin border-2 rounded-lg border-rose-100 scrollbar-thumb-rose-700 scrollbar-track-rose-300 "
           >
-            <h2 className="flex capitalize mb-8 font-lora w-full text-rose-400 justify-center items-center text-center text-2xl">
+            <h2 className="flex capitalize mb-8 font-lora w-full text-rose-400 justify-center items-center text-center text-xl sm:text-2xl">
               {key}
             </h2>
             <ul className="text-2xl grid font-nunito grid-cols-4 sm:grid-cols-7 px-5 lg:grid-cols-12 xl:grid-cols-14 gap-5 w-full justify-center items-center">

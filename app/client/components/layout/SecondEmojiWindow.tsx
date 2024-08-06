@@ -36,7 +36,7 @@ export default function SecondEmojiWindow({
   };
 
   return (
-    <div className="flex flex-col h-[45vh] md:h-[50vh] lg:h-[70.5vh]">
+    <div className="flex flex-col h-[45vh] md:h-[50vh] lg:h-[70.5vh] border-b-2 rounded-lg border-purple-100 lg:border-none border-l-2">
       <SearchBar
         uniqueId="second"
         setSearchEmoji={setSearchEmoji}
@@ -46,7 +46,7 @@ export default function SecondEmojiWindow({
         searchEmoji={searchEmoji}
         handleDiceRoll={handleDiceRoll}
       />
-      <ul className="grid grid-cols-4 border-b-2 rounded-lg border-purple-100 lg:border-none border-l-2 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 pb-[4em] lg:pb-[13em]">
+      <ul className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 pb-[4em] lg:pb-[13em]">
         {emojiData?.combos
           ? [
               ...new Set(
