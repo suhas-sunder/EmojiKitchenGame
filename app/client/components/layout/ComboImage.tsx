@@ -118,11 +118,22 @@ function ComboImage({
     if (combos?.length === 0) {
       firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
       secondEmojiBaseUnicode += "-ufe0f";
+      console.log(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
       setFilteredCombos([...new Set(filterComboSet())]);
     }
 
     if (combos?.length === 0) {
       firstEmojiBaseUnicode += "-ufe0f";
+      setFilteredCombos([...new Set(filterComboSet())]);
+    }
+
+    if (combos?.length === 0) {
+      firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
+      const temp = secondEmojiBaseUnicode.split("-")[0];
+      secondEmojiBaseUnicode =
+      temp + "_" + firstEmojiBaseUnicode + "-ufe0f";
+      firstEmojiBaseUnicode = temp;
+      console.log(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
       setFilteredCombos([...new Set(filterComboSet())]);
     }
 
