@@ -40,7 +40,7 @@ function ComboImage({
   setSecondEmoji,
   menuStyle,
   bottomMenuStyle,
-  imgStyle,
+  containerStyle,
 }: {
   firstEmoji: string;
   secondEmoji: string;
@@ -49,7 +49,7 @@ function ComboImage({
   thirdDiceRoll?: () => void;
   menuStyle?: string;
   bottomMenuStyle?: string;
-  imgStyle?: string;
+  containerStyle?: string;
 }) {
   const [filteredCombos, setFilteredCombos] = useState<EmojiDataType["combos"]>(
     []
@@ -154,7 +154,7 @@ function ComboImage({
   };
 
   return (
-    <div className={`flex relative justify-center  items-center ${imgStyle}`}>
+    <div className={`flex relative justify-center  items-center ${containerStyle}`}>
       <div className="w-12 h-12">
         {filteredCombos.length > 0 &&
           Object.values(filteredCombos[0]).length > 0 && (

@@ -22,7 +22,7 @@ export default function ThirdEmojiWindow({
 
   return (
     <div
-      className={` flex relative items-center flex-col col-span-2 lg:col-span-1 min-w-20 h-[61vh] md:h-[66vh] lg:h-[70.5vh] border-l border-b sm:border-hidden`}
+      className={` flex relative items-center flex-col col-span-2 lg:col-span-1 min-w-20 h-[100vh] md:h-[66vh] lg:h-[70.5vh] border-l border-b sm:border-hidden`}
     >
       {emojiData?.combos && (
         <div
@@ -153,7 +153,7 @@ export default function ThirdEmojiWindow({
               secondEmoji={secondEmoji}
               emojiData={emojiData}
               setSecondEmoji={setSecondEmoji}
-              imgStyle="translate-y-1 lg:translate-y-8"
+              containerStyle="translate-y-1 lg:translate-y-8"
               menuStyle="scale-50 -top-[1.55em] scale-[.80] gap-16"
               bottomMenuStyle="scale-50 -bottom-[2.4em] scale-[.80] gap-16"
               thirdDiceRoll={thirdDiceRoll}

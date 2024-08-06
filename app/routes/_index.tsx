@@ -77,38 +77,15 @@ function EmojiDisplay({
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
   return (
-    <ul className="flex fixed bottom-6 justify-center items-center w-full h-[9em] sm:h-[12em] lg:h-[12.5em] gap-2 sm:gap-6 bg-white">
+    <ul className="flex touch-none fixed bottom-6 border-t-2 border-t-purple-200 justify-center items-center w-full gap-2 pt-1 pb-2 sm:gap-6 bg-white overflow-auto scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200">
       <li
         title={firstEmoji?.split("~")[1] + " " + firstEmoji?.split("~")[2]}
-        className={`flex relative border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-9`}
+        className="flex flex-col justify-center items-center"
       >
-        {firstEmoji && (
-          <img
-            loading="lazy"
-            className={`${
-              isCopied && isCopied === firstEmoji?.split("~")[1]
-                ? "opacity-0"
-                : "opacity-1"
-            } flex w-12 md:w-20`}
-            alt={`Emoji of ${firstEmoji?.split("~")[1]} ${
-              firstEmoji?.split("~")[2]
-            }`}
-            src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
-              firstEmoji?.split("~")[0].length < 9
-                ? firstEmoji?.split("~")[0].slice(1)
-                : firstEmoji?.split("~")[0].split("-").join("_")
-            }/emoji.svg`}
-          />
-        )}
-        {firstEmoji && isCopied && isCopied === firstEmoji?.split("~")[1] && (
-          <h2 className="text-purple-600 absolute  font-nunito text-lg py-[1em]">
-            Copied!
-          </h2>
-        )}
-        <div
-          className={`absolute -top-10 flex w-full justify-center items-center gap-11 ${
-            secondEmoji && "md:scale-[1.4] md:-translate-y-3"
-          }`}
+       <div
+          className={`${
+            firstEmoji && "scale-110"
+          } flex w-full sm:gap-11 gap-7 justify-center items-center pt-2 pb-4`}
         >
           <button
             onClick={() => {
@@ -136,10 +113,36 @@ function EmojiDisplay({
             />
           </button>
         </div>
+
+        <div className=" border-2 rounded-2xl  p-4 border-dashed flex relative flex-col justify-center items-center border-purple-500 min-h-[5em] min-w-[5em]">
+          {firstEmoji && (
+            <img
+              loading="lazy"
+              className={`${
+                isCopied && isCopied === firstEmoji?.split("~")[1]
+                  ? "opacity-0"
+                  : "opacity-1"
+              } flex w-12 md:w-20`}
+              alt={`Emoji of ${firstEmoji?.split("~")[1]} ${
+                firstEmoji?.split("~")[2]
+              }`}
+              src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
+                firstEmoji?.split("~")[0].length < 9
+                  ? firstEmoji?.split("~")[0].slice(1)
+                  : firstEmoji?.split("~")[0].split("-").join("_")
+              }/emoji.svg`}
+            />
+          )}
+          {firstEmoji && isCopied && isCopied === firstEmoji?.split("~")[1] && (
+            <h2 className="text-purple-600 absolute  font-nunito text-lg py-[1em]">
+              Copied!
+            </h2>
+          )}
+        </div>
         <div
-          className={`absolute -bottom-10 flex w-full justify-center items-center gap-11 ${
-            secondEmoji && "md:scale-[1.4] translate-y-2"
-          }`}
+          className={`${
+            firstEmoji && "scale-110"
+          } flex w-full sm:gap-11 gap-7 justify-center items-center pb-2 pt-4`}
         >
           <button
             onClick={() => {
@@ -172,38 +175,15 @@ function EmojiDisplay({
           </button>
         </div>
       </li>
-      <li className={`-translate-y-9`}>➕</li>
+      <li>➕</li>
       <li
         title={secondEmoji?.split("~")[1] + " " + secondEmoji?.split("~")[2]}
-        className={`flex relative  border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-9`}
+        className="flex flex-col justify-center items-center"
       >
-        {secondEmoji && (
-          <img
-            loading="lazy"
-            className={`${
-              isCopied && isCopied === secondEmoji?.split("~")[1]
-                ? "opacity-0"
-                : "opacity-1"
-            } w-12 md:w-20 flex`}
-            alt={`Emoji of ${secondEmoji?.split("~")[1]} ${
-              secondEmoji?.split("~")[2]
-            }`}
-            src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
-              secondEmoji?.split("~")[0].length < 9
-                ? secondEmoji?.split("~")[0].slice(1)
-                : secondEmoji?.split("~")[0].split("-").join("_")
-            }/emoji.svg`}
-          />
-        )}
-        {secondEmoji && isCopied && isCopied === secondEmoji?.split("~")[1] && (
-          <h2 className="text-purple-600 absolute font-nunito text-lg py-[1em]">
-            Copied!
-          </h2>
-        )}
         <div
-          className={`absolute -top-10 flex w-full justify-center items-center gap-11 ${
-            secondEmoji && "md:scale-[1.4] md:-translate-y-3"
-          }`}
+          className={`${
+            secondEmoji && "scale-110"
+          } flex w-full sm:gap-11 gap-7 justify-center items-center pt-2 pb-4`}
         >
           <button
             onClick={() => {
@@ -219,6 +199,7 @@ function EmojiDisplay({
               title={`Copy ${secondEmoji?.split("~")[1]} Emoji`}
             />
           </button>
+
           <button
             onClick={() =>
               emojiData && secondDiceRoll({ newEmojiData: emojiData })
@@ -233,10 +214,37 @@ function EmojiDisplay({
             />
           </button>
         </div>
+        <div className=" border-2 rounded-2xl  p-4 border-dashed flex relative flex-col justify-center items-center border-purple-500 min-h-[5em] min-w-[5em]">
+          {secondEmoji && (
+            <img
+              loading="lazy"
+              className={`${
+                isCopied && isCopied === secondEmoji?.split("~")[1]
+                  ? "opacity-0"
+                  : "opacity-1"
+              } w-12 md:w-20 flex`}
+              alt={`Emoji of ${secondEmoji?.split("~")[1]} ${
+                secondEmoji?.split("~")[2]
+              }`}
+              src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
+                secondEmoji?.split("~")[0].length < 9
+                  ? secondEmoji?.split("~")[0].slice(1)
+                  : secondEmoji?.split("~")[0].split("-").join("_")
+              }/emoji.svg`}
+            />
+          )}
+          {secondEmoji &&
+            isCopied &&
+            isCopied === secondEmoji?.split("~")[1] && (
+              <h2 className="text-purple-600 absolute font-nunito text-lg py-[1em]">
+                Copied!
+              </h2>
+            )}
+        </div>
         <div
-          className={`absolute -bottom-10 flex w-full justify-center items-center gap-11 ${
-            secondEmoji && "md:scale-[1.4] translate-y-2"
-          }`}
+          className={`${
+            secondEmoji && "scale-110"
+          } flex w-full sm:gap-11 gap-7 justify-center items-center pb-2 pt-4`}
         >
           <button
             onClick={() => {
@@ -265,19 +273,19 @@ function EmojiDisplay({
           </button>
         </div>
       </li>
-      <li className={`-translate-y-9`}>🟰</li>
+      <li>🟰</li>
       <li
-        className={`flex border-2 rounded-2xl  justify-center items-center p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] -translate-y-9 ${
-          firstEmoji && secondEmoji && "md:scale-[1.4] lg:translate-x-5"
+        className={`flex border-2 rounded-2xl  justify-center items-center p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] ${
+          firstEmoji && secondEmoji && "lg:translate-x-5 md:scale-[1.4]"
         }`}
       >
         <ComboImage
           firstEmoji={firstEmoji}
           secondEmoji={secondEmoji}
           emojiData={emojiData}
-          imgStyle="-translate-y-1"
-          menuStyle=" -top-[3.2em] gap-11"
-          bottomMenuStyle="-bottom-[3.6em]"
+          containerStyle={`-translate-y-1 `}
+          menuStyle={`-top-[3.3em] sm:gap-11 gap-7 justify-center  items-center ${secondEmoji && "md:scale-[0.8] md:-top-[2.9em]"}`}
+          bottomMenuStyle={`-bottom-[3.7em]  ${secondEmoji && "md:scale-[0.8] scale-110 md:-bottom-[3.37em] -bottom-[3.9em]"}`}
           setSecondEmoji={setSecondEmoji}
           thirdDiceRoll={thirdDiceRoll}
         />
