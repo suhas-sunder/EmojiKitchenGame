@@ -80,7 +80,7 @@ function EmojiDisplay({
     <ul className="flex fixed bottom-6 justify-center items-center w-full h-[9em] sm:h-[12em] lg:h-[12.5em] gap-2 sm:gap-6 bg-white">
       <li
         title={firstEmoji?.split("~")[1] + " " + firstEmoji?.split("~")[2]}
-        className="flex relative border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-4 sm:-translate-y-5"
+        className={`flex relative border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-9`}
       >
         {firstEmoji && (
           <img
@@ -105,7 +105,42 @@ function EmojiDisplay({
             Copied!
           </h2>
         )}
-        <div className="absolute -bottom-10 scale-[.80] flex gap-5 sm:gap-6">
+        <div
+          className={`absolute -top-10 flex w-full justify-center items-center gap-11 ${
+            secondEmoji && "md:scale-[1.4] md:-translate-y-3"
+          }`}
+        >
+          <button
+            onClick={() => {
+              setIsCopied(firstEmoji?.split("~")[1]);
+              navigator.clipboard.writeText(`${firstEmoji?.split("~")[1]}`);
+            }}
+            aria-label="Copy First Emoji"
+            className="flex hover:scale-110"
+          >
+            <Icon
+              icon="copy"
+              customStyle="fill-purple-500 w-7"
+              title={`Copy ${firstEmoji?.split("~")[1]} Emoji`}
+            />
+          </button>
+          <button
+            onClick={firstDiceRoll}
+            aria-label="Random Emoji"
+            className="flex hover:scale-110"
+          >
+            <Icon
+              icon="dice"
+              customStyle="fill-purple-500 w-7"
+              title="Random Second Emoji"
+            />
+          </button>
+        </div>
+        <div
+          className={`absolute -bottom-10 flex w-full justify-center items-center gap-11 ${
+            secondEmoji && "md:scale-[1.4] translate-y-2"
+          }`}
+        >
           <button
             onClick={() => {
               setIsCopied(firstEmoji?.split("~")[1]);
@@ -135,23 +170,12 @@ function EmojiDisplay({
               title="Deselect Emoji"
             />
           </button>
-          <button
-            onClick={firstDiceRoll}
-            aria-label="Random Emoji"
-            className="flex hover:scale-110"
-          >
-            <Icon
-              icon="dice"
-              customStyle="fill-purple-500 w-7"
-              title="Random Second Emoji"
-            />
-          </button>
         </div>
       </li>
-      <li className="-translate-y-3">➕</li>
+      <li className={`-translate-y-9`}>➕</li>
       <li
         title={secondEmoji?.split("~")[1] + " " + secondEmoji?.split("~")[2]}
-        className="flex relative border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-4 sm:-translate-y-5"
+        className={`flex relative  border-2 rounded-2xl justify-center items-center p-4 border-dashed border-purple-500 min-h-[5em] min-w-[5em] -translate-y-9`}
       >
         {secondEmoji && (
           <img
@@ -176,7 +200,44 @@ function EmojiDisplay({
             Copied!
           </h2>
         )}
-        <div className="absolute -bottom-10 scale-[.80] flex  gap-5 sm:gap-6">
+        <div
+          className={`absolute -top-10 flex w-full justify-center items-center gap-11 ${
+            secondEmoji && "md:scale-[1.4] md:-translate-y-3"
+          }`}
+        >
+          <button
+            onClick={() => {
+              setIsCopied(secondEmoji?.split("~")[1]);
+              navigator.clipboard.writeText(`${secondEmoji?.split("~")[1]}`);
+            }}
+            aria-label="Copy Second Emoji"
+            className="flex hover:scale-110"
+          >
+            <Icon
+              icon="copy"
+              customStyle="fill-purple-500 w-7"
+              title={`Copy ${secondEmoji?.split("~")[1]} Emoji`}
+            />
+          </button>
+          <button
+            onClick={() =>
+              emojiData && secondDiceRoll({ newEmojiData: emojiData })
+            }
+            aria-label="Random Emoji"
+            className="flex hover:scale-110"
+          >
+            <Icon
+              icon="dice"
+              customStyle="fill-purple-500 w-7"
+              title="Random Second Emoji"
+            />
+          </button>
+        </div>
+        <div
+          className={`absolute -bottom-10 flex w-full justify-center items-center gap-11 ${
+            secondEmoji && "md:scale-[1.4] translate-y-2"
+          }`}
+        >
           <button
             onClick={() => {
               setIsCopied(secondEmoji?.split("~")[1]);
@@ -202,27 +263,21 @@ function EmojiDisplay({
               title="Deselect Emoji"
             />
           </button>
-          <button
-            onClick={() =>
-              emojiData && secondDiceRoll({ newEmojiData: emojiData })
-            }
-            aria-label="Random Emoji"
-            className="flex hover:scale-110"
-          >
-            <Icon
-              icon="dice"
-              customStyle="fill-purple-500 w-7"
-              title="Random Second Emoji"
-            />
-          </button>
         </div>
       </li>
-      <li className="-translate-y-3">🟰</li>
-      <li className="flex border-2 rounded-2xl justify-center items-center p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] -translate-y-4 sm:-translate-y-5">
+      <li className={`-translate-y-9`}>🟰</li>
+      <li
+        className={`flex border-2 rounded-2xl  justify-center items-center p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] -translate-y-9 ${
+          firstEmoji && secondEmoji && "md:scale-[1.4] lg:translate-x-5"
+        }`}
+      >
         <ComboImage
           firstEmoji={firstEmoji}
           secondEmoji={secondEmoji}
           emojiData={emojiData}
+          imgStyle="-translate-y-1"
+          menuStyle=" -top-[3.2em] gap-11"
+          bottomMenuStyle="-bottom-[3.6em]"
           setSecondEmoji={setSecondEmoji}
           thirdDiceRoll={thirdDiceRoll}
         />
@@ -239,7 +294,6 @@ export default function Index() {
     () => (isRouteData(matches[0]?.data) ? matches[0].data.filenames : []),
     [matches]
   );
-  
 
   const { isLoading } = useIsLoading();
 
@@ -306,7 +360,9 @@ export default function Index() {
     )[0];
 
     // Set the secondEmoji state with the id of the selected emoji
-    setSecondEmoji(selectedFilename.id + "~" + selectedFilename.keys.split("~")[0]);
+    setSecondEmoji(
+      selectedFilename.id + "~" + selectedFilename.keys.split("~")[0]
+    );
   };
 
   const thirdDiceRoll = async () => {
@@ -323,12 +379,12 @@ export default function Index() {
   return (
     <>
       <header>
-        <h1 className="w-full flex justify-center gap-1 items-center text-base mt-2 mb-1 text-purple-700  font-lora top-0 ">
+        <h1 className="w-full flex justify-center items-center text-sm sm:text-base -translate-y-[0.1em] sm:translate-y-0 sm:mt-2 sm:mb-1 text-purple-700  font-lora">
           Emoji Kitchen Game
         </h1>
       </header>
       <main>
-        <div className="grid grid-cols-2 lg:grid-cols-3 justify-center items-center w-full max-w-[1500px] mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-3 justify-center -translate-y-1 sm:translate-y-0 items-center w-full max-w-[1500px] mx-auto">
           <FirstEmojiWindow
             emojiData={emojiData}
             isLoading={isLoading}

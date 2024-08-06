@@ -38,7 +38,7 @@ export default function FirstEmojiWindow({
   };
 
   return (
-    <div className="flex flex-col h-[61vh] md:h-[66vh] lg:h-[70.5vh]">
+    <div className="flex flex-col h-[45vh] md:h-[50vh] lg:h-[70.5vh]">
       <SearchBar
         uniqueId="first"
         setSearchEmoji={setSearchEmoji}
@@ -51,7 +51,7 @@ export default function FirstEmojiWindow({
         }}
       />
       <ul
-        className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
+        className={`grid grid-cols-4 border-r-2 border-b-2 rounded-lg border-purple-100 lg:border-none sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
           isLoading && "opacity-30"
         } pb-[4em] lg:pb-[13em]`}
       >
