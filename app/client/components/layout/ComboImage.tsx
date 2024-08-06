@@ -121,6 +121,11 @@ function ComboImage({
       setFilteredCombos([...new Set(filterComboSet())]);
     }
 
+    if (combos?.length === 0) {
+      firstEmojiBaseUnicode += "-ufe0f";
+      setFilteredCombos([...new Set(filterComboSet())]);
+    }
+
     const finalCombo = filterComboSet();
 
     if (finalCombo && finalCombo.length > 0) {
@@ -154,7 +159,9 @@ function ComboImage({
   };
 
   return (
-    <div className={`flex relative justify-center  items-center ${containerStyle}`}>
+    <div
+      className={`flex relative justify-center  items-center ${containerStyle}`}
+    >
       <div className="w-12 h-12">
         {filteredCombos.length > 0 &&
           Object.values(filteredCombos[0]).length > 0 && (
