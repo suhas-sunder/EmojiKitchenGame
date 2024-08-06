@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo } from 'react';
 import { EmojiDataType, Filename } from "../../../routes/_index";
 import useSearch from "../hooks/useSearch";
 import SearchBar from "../ui/SearchBar";
@@ -15,27 +16,32 @@ interface PropType {
   setSecondEmoji: (value: string) => void;
 }
 
-export default function FirstEmojiWindow({
+const FirstEmojiWindow: React.FC<PropType> = ({
   isLoading,
   filenames,
   emojiData,
   firstEmoji,
   setEmojiData,
   setFirstEmoji,
-}: PropType) {
+}) => {
   const { searchEmoji, setSearchEmoji } = useSearch();
 
-  const loadEmojiData = async (emojiUnicode: string) => {
+  const loadEmojiData = useCallback(async (emojiUnicode: string) => {
     if (emojiData?.unicode === emojiUnicode) return;
-    HandleCacheEmojiData(emojiUnicode);
-  };
+    await HandleCacheEmojiData(emojiUnicode);
+  }, [emojiData]);
 
-  const handleDisplayCombos = async (emojiUnicode: string, emoji: string) => {
+  const handleDisplayCombos = useCallback(async (emojiUnicode: string, emoji: string) => {
     const emojiData = await HandleCacheEmojiData(emojiUnicode);
-    setFirstEmoji(emojiUnicode + "~" + emoji);
-
+    setFirstEmoji(`${emojiUnicode}~${emoji}`);
     setEmojiData(emojiData);
-  };
+  }, [setFirstEmoji, setEmojiData]);
+
+  const filteredFilenames = useMemo(() => {
+    return filenames?.filter(filename => 
+      filename?.keys?.includes(searchEmoji.trim()) || searchEmoji === ""
+    );
+  }, [filenames, searchEmoji]);
 
   return (
     <div className="flex flex-col h-[45vh] border-r-2 border-b-2 rounded-lg border-purple-100 lg:border-none md:h-[50vh] lg:h-[70.5vh]">
@@ -52,54 +58,40 @@ export default function FirstEmojiWindow({
       />
       <ul
         className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
-          isLoading && "opacity-30"
+          isLoading ? "opacity-30" : ""
         } pb-[4em] lg:pb-[13em]`}
       >
-        {filenames?.map((filename: Filename) => {
-          return filename?.keys?.includes(searchEmoji.trim()) ||
-            searchEmoji === "" ? (
-            <li
-              title={
-                filename.keys.split("~")[0] + " " + filename.keys.split("~")[1]
-              }
-              aria-label={
-                filename.keys.split("~")[0] + " " + filename.keys.split("~")[1]
-              }
-              key={filename?.id}
+        {filteredFilenames?.map((filename: Filename) => (
+          <li
+            title={`${filename.keys.split("~")[0]} ${filename.keys.split("~")[1]}`}
+            aria-label={`${filename.keys.split("~")[0]} ${filename.keys.split("~")[1]}`}
+            key={filename.id}
+          >
+            <button
+              tabIndex={-1}
+              onMouseEnter={() => loadEmojiData(filename.id)}
+              onClick={() => handleDisplayCombos(
+                filename.id,
+                `${filename.keys.split("~")[0]}~${filename.keys.split("~")[1]}`
+              )}
+              disabled={isLoading}
+              className={`${
+                filename.id === firstEmoji.split("~")[0] ? "border-purple-400 bg-purple-100" : ""
+              } flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400`}
             >
-              <button
-                tabIndex={-1}
-                onMouseEnter={() => loadEmojiData(filename.id)}
-                onClick={() =>
-                  handleDisplayCombos(
-                    filename.id,
-                    filename.keys.split("~")[0] +
-                      "~" +
-                      filename.keys.split("~")[1]
-                  )
-                }
-                disabled={isLoading}
-                className={`${
-                  filename.id === firstEmoji.split("~")[0] &&
-                  "border-purple-400 bg-purple-100"
-                } flex justify-center items-center w-full hover:scale-110 cursor-pointer p-1 border-2 rounded-lg border-transparent hover:border-purple-400`}
-              >
-                <img
-                  loading="lazy"
-                  alt={`Emoji of ${filename?.keys?.split("~")[0]} ${
-                    filename?.id
-                  }`}
-                  src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
-                    filename?.id?.length < 9
-                      ? filename?.id.slice(1)
-                      : filename?.id.split("-").join("_")
-                  }/emoji.svg`}
-                />
-              </button>
-            </li>
-          ) : null;
-        })}
+              <img
+                loading="lazy"
+                alt={`Emoji of ${filename.keys.split("~")[0]} ${filename.id}`}
+                src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
+                  filename.id.length < 9 ? filename.id.slice(1) : filename.id.split("-").join("_")
+                }/emoji.svg`}
+              />
+            </button>
+          </li>
+        ))}
       </ul>
     </div>
   );
-}
+};
+
+export default FirstEmojiWindow;

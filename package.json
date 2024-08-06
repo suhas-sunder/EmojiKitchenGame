@@ -16,6 +16,7 @@
     "@remix-run/express": "^2.11.0",
     "@remix-run/node": "^2.10.3",
     "@remix-run/react": "^2.10.3",
+    "@types/react-window": "^1.8.8",
     "@types/uuid": "^10.0.0",
     "axios": "^1.7.2",
     "clipboard-copy": "^4.0.1",
@@ -27,6 +28,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-paginate": "^8.2.0",
+    "react-window": "^1.8.10",
     "tailwind-scrollbar": "^3.1.0",
     "uuid": "^10.0.0"
   },

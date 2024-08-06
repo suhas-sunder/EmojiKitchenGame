@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import { useMatches } from "@remix-run/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FirstEmojiWindow from "../client/components/layout/FirstEmojiWindow";
 import SecondEmojiWindow from "../client/components/layout/SecondEmojiWindow";
 import ThirdEmojiWindow from "../client/components/layout/ThirdEmojiWindow";
@@ -75,18 +75,40 @@ function EmojiDisplay({
   thirdDiceRoll: () => void;
 }) {
   const { isCopied, setIsCopied } = useManageCopiedMsg();
-  const [isHidden, setIsHidden] = useState<boolean>(true);
+  const [isHidden, setIsHidden] = useState<boolean>(false);
+
+  //For large screens display the emoji combo menu by default, but hide for small screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1023) {
+        setIsHidden(true);
+      } else {
+        setIsHidden(false);
+      }
+    };
+
+    handleResize(); // Check on mount
+    window.addEventListener("resize", handleResize); // Add event listener to handle resize
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // Clean up event listener on unmount
+    };
+  }, []); // Empty dependency array means this runs only on mount and unmount
 
   return (
     <ul
-      className={`flex touch-none fixed bottom-6 border-t-2 border-t-purple-200 justify-center w-full gap-2 pt-1 pb-2 sm:gap-6 bg-white ${
-        isHidden ? "h-0 translate-y-4 lg:translate-y-2 sm:translate-y-[1.2em]" : "h-auto"
+      className={`flex touch-none fixed border-t-2 border-t-purple-200 justify-center w-full gap-2 pt-1 pb-2 sm:gap-6 bg-white ${
+        isHidden
+          ? "h-0 translate-y-4 lg:translate-y-2 sm:translate-y-[1.2em] bottom-6 md:bottom-9 lg:bottom-6"
+          : "h-auto bottom-6"
       }`}
     >
       <li className="absolute w-full bg-black max-w-[650px]">
         <button
           onClick={() => setIsHidden(!isHidden)}
-          title={isHidden ? "👀 Show Emoji Combo Menu" : "🕶️ Hide Emoji Combo Menu"}
+          title={
+            isHidden ? "👀 Show Emoji Combo Menu" : "🕶️ Hide Emoji Combo Menu"
+          }
           className="absolute -top-[3.6rem] -right-3 z-10 mr-7 hover:bg-rose-400 bg-rose-100 rounded-t-lg p-2 text-3xl"
         >
           {!isHidden ? "🫣" : "😉"}

@@ -214,11 +214,6 @@ export default function EmojiCombos() {
                     " " +
                     filename.keys.split("~")[1]
                   }
-                  aria-label={
-                    filename.keys.split("~")[0] +
-                    " " +
-                    filename.keys.split("~")[1]
-                  }
                   width={50}
                   height={50}
                   alt={`Emoji of ${filename?.keys?.split("~")[0]} ${
