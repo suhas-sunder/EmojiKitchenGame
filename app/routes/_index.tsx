@@ -75,14 +75,30 @@ function EmojiDisplay({
   thirdDiceRoll: () => void;
 }) {
   const { isCopied, setIsCopied } = useManageCopiedMsg();
+  const [isHidden, setIsHidden] = useState<boolean>(true);
 
   return (
-    <ul className="flex touch-none fixed bottom-6 border-t-2 border-t-purple-200 justify-center items-center w-full gap-2 pt-1 pb-2 sm:gap-6 bg-white overflow-auto scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200">
+    <ul
+      className={`flex touch-none fixed bottom-6 border-t-2 border-t-purple-200 justify-center w-full gap-2 pt-1 pb-2 sm:gap-6 bg-white ${
+        isHidden ? "h-0 translate-y-4 lg:translate-y-2 sm:translate-y-[1.2em]" : "h-auto"
+      }`}
+    >
+      <li className="absolute w-full bg-black max-w-[650px]">
+        <button
+          onClick={() => setIsHidden(!isHidden)}
+          title={isHidden ? "Show Textarea" : "Hide Textarea"}
+          className="absolute -top-[3.6rem] -right-3 z-10 mr-7 hover:bg-rose-400 bg-rose-100 rounded-t-lg p-2 text-3xl"
+        >
+          {!isHidden ? "🫣" : "😉"}
+        </button>
+      </li>
       <li
         title={firstEmoji?.split("~")[1] + " " + firstEmoji?.split("~")[2]}
-        className="flex flex-col justify-center items-center"
+        className={`${
+          isHidden ? "hidden" : "flex"
+        }  flex-col justify-center items-center `}
       >
-       <div
+        <div
           className={`${
             firstEmoji && "scale-110"
           } flex w-full sm:gap-11 gap-7 justify-center items-center pt-2 pb-4`}
@@ -113,7 +129,6 @@ function EmojiDisplay({
             />
           </button>
         </div>
-
         <div className=" border-2 rounded-2xl  p-4 border-dashed flex relative flex-col justify-center items-center border-purple-500 min-h-[5em] min-w-[5em]">
           {firstEmoji && (
             <img
@@ -175,10 +190,18 @@ function EmojiDisplay({
           </button>
         </div>
       </li>
-      <li>➕</li>
+      <li
+        className={`${
+          isHidden ? "hidden" : "flex"
+        }  flex-col justify-center items-center `}
+      >
+        ➕
+      </li>
       <li
         title={secondEmoji?.split("~")[1] + " " + secondEmoji?.split("~")[2]}
-        className="flex flex-col justify-center items-center"
+        className={`${
+          isHidden ? "hidden" : "flex"
+        }  flex-col justify-center items-center `}
       >
         <div
           className={`${
@@ -273,19 +296,30 @@ function EmojiDisplay({
           </button>
         </div>
       </li>
-      <li>🟰</li>
       <li
-        className={`flex border-2 rounded-2xl  justify-center items-center p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] ${
+        className={`${
+          isHidden ? "hidden" : "flex"
+        }  flex-col justify-center items-center `}
+      >
+        🟰
+      </li>
+      <li
+        className={`flex border-2 rounded-2xl  justify-center items-center my-auto p-4 border-dashed border-rose-400 min-h-[5em] min-w-[5em] ${
           firstEmoji && secondEmoji && "lg:translate-x-5 md:scale-[1.4]"
-        }`}
+        } ${isHidden ? "hidden" : "flex"}`}
       >
         <ComboImage
           firstEmoji={firstEmoji}
           secondEmoji={secondEmoji}
           emojiData={emojiData}
           containerStyle={`-translate-y-1 `}
-          menuStyle={`-top-[3.3em] sm:gap-11 gap-7 justify-center  items-center ${secondEmoji && "md:scale-[0.8] md:-top-[2.9em]"}`}
-          bottomMenuStyle={`-bottom-[3.7em]  ${secondEmoji && "md:scale-[0.8] scale-110 md:-bottom-[3.37em] -bottom-[3.9em]"}`}
+          menuStyle={`-top-[3.3em] sm:gap-11 gap-7 justify-center  items-center ${
+            secondEmoji && "md:scale-[0.8] md:-top-[2.9em]"
+          }`}
+          bottomMenuStyle={`-bottom-[3.7em]  ${
+            secondEmoji &&
+            "md:scale-[0.8] scale-110 md:-bottom-[3.37em] -bottom-[3.9em]"
+          }`}
           setSecondEmoji={setSecondEmoji}
           thirdDiceRoll={thirdDiceRoll}
         />
@@ -392,7 +426,7 @@ export default function Index() {
         </h1>
       </header>
       <main>
-        <div className="grid grid-cols-2 lg:grid-cols-3 justify-center -translate-y-1 sm:translate-y-0 items-center w-full max-w-[1500px] mx-auto">
+        <div className="grid relative grid-cols-2 lg:grid-cols-3 justify-center -translate-y-1 sm:translate-y-0 items-center w-full max-w-[1500px] mx-auto">
           <FirstEmojiWindow
             emojiData={emojiData}
             isLoading={isLoading}
@@ -420,6 +454,7 @@ export default function Index() {
             filenames={filenames}
           />
         </div>
+
         <EmojiDisplay
           emojiData={emojiData}
           firstEmoji={firstEmoji}
