@@ -12,6 +12,7 @@ import useSearch from "../client/components/hooks/useSearch";
 import SearchBar from "../client/components/ui/SearchBar";
 import HandleDiceRoll from "../client/components/utils/generators/HandleDiceRoll";
 import useWindowWidth from "../client/components/hooks/useWindowWidth";
+import useBodyEventListeners from "../client/components/hooks/useBodyEventListeners";
 
 export const meta: MetaFunction = () => {
   return [
@@ -126,6 +127,7 @@ export default function EmojiCombos() {
   const windowWidth = useWindowWidth();
   const [displayLimit, setDisplayLimit] = useState<number>(18);
   const [searchDisplayLimit, setSearchDisplayLimit] = useState<number>(73); // Default to 73
+  useBodyEventListeners({ setDisplayLimit: setSearchDisplayLimit })
 
   useEffect(() => {
     if (windowWidth !== undefined) {
@@ -215,8 +217,6 @@ export default function EmojiCombos() {
           />
         </div>
         <ul
-          onMouseEnter={() => setSearchDisplayLimit(1000)}
-          onTouchStart={() => setSearchDisplayLimit(1000)}
           className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto pt-2 rounded-md mx-5 max-h-[9em] mt-3 bg-purple-50 scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin"
         >
           {filenames?.map((filename, index) => {

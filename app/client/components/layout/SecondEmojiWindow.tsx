@@ -5,6 +5,7 @@ import SearchBar from "../ui/SearchBar";
 import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
 import useWindowWidth from "../hooks/useWindowWidth";
 import useLoadAnimation from "../hooks/useLoadAnimation";
+import useBodyEventListeners from "../hooks/useBodyEventListeners";
 
 interface PropType {
   isLoading: boolean;
@@ -26,6 +27,7 @@ const SecondEmojiWindow: React.FC<PropType> = ({
   const windowWidth = useWindowWidth();
   const { fadeAnim } = useLoadAnimation();
   const [displayLimit, setDisplayLimit] = useState<number>(145);
+  useBodyEventListeners({ setDisplayLimit })
 
   useEffect(() => {
     if (windowWidth !== undefined) {
@@ -146,8 +148,6 @@ const SecondEmojiWindow: React.FC<PropType> = ({
           filteredFilenames.map((filename, index) => {
             return index < displayLimit ? (
               <li
-                onMouseEnter={() => setDisplayLimit(1000)}
-                onTouchStart={() => setDisplayLimit(1000)}
                 key={filename.id}
               >
                 <button

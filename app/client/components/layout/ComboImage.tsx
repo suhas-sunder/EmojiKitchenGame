@@ -259,9 +259,9 @@ function ComboImage({
           className="flex hover:scale-110"
         >
           <Icon
-            icon="copy"
+            icon="copyPhotoIcon"
             customStyle="fill-rose-400 w-7"
-            title="Copy Emoji As PN Image"
+            title="Copy Emoji As PNG Image"
           />
         </button>
         <button
