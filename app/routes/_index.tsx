@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import { useMatches } from "@remix-run/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FirstEmojiWindow from "../client/components/layout/FirstEmojiWindow";
 import SecondEmojiWindow from "../client/components/layout/SecondEmojiWindow";
 import ThirdEmojiWindow from "../client/components/layout/ThirdEmojiWindow";
@@ -80,6 +80,105 @@ function EmojiDisplay({
   const { isHidden, setIsHidden } = useResponsive();
   const { fadeAnim } = useLoadAnimation();
 
+  const [imageCache, setImageCache] = useState<Record<string, string>>({});
+
+  const extractUnicode = (emoji: string) => {
+    const parts = emoji.split("~");
+    let unicode = parts[0]; // Extract Unicode from the first part
+    // Remove leading 'u' if present
+    if (unicode.startsWith("u")) {
+      unicode = unicode.substring(1);
+    }
+    return unicode;
+  };
+
+  const prefetchImage = async (unicode: string) => {
+    if (imageCache[unicode]) {
+      // Image is already cached
+      return;
+    }
+
+    const imageUrl = `https://www.honeycombartist.com/emojis/base/${unicode}.png`;
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      setImageCache((prev) => ({ ...prev, [unicode]: objectUrl }));
+    } catch (error) {
+      console.error(`Failed to prefetch image for unicode ${unicode}:`, error);
+    }
+  };
+
+  useEffect(() => {
+    if (firstEmoji) {
+      const unicode = extractUnicode(firstEmoji);
+      prefetchImage(unicode);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstEmoji]);
+
+  useEffect(() => {
+    if (secondEmoji) {
+      const unicode = extractUnicode(secondEmoji);
+      prefetchImage(unicode);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondEmoji]);
+
+  const handleCopyClick = async (unicode: string) => {
+    if (!unicode) return;
+
+    // Ensure the unicode is trimmed properly
+    const trimmedUnicode = unicode.startsWith("u")
+      ? unicode.substring(1)
+      : unicode;
+    const imageUrl = imageCache[trimmedUnicode];
+    if (!imageUrl) {
+      console.error("Image not pre-fetched for this Unicode");
+      return;
+    }
+
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const imageBitmap = await createImageBitmap(blob);
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Failed to get canvas context");
+      }
+
+      canvas.width = imageBitmap.width;
+      canvas.height = imageBitmap.height;
+      ctx.drawImage(imageBitmap, 0, 0);
+
+      const pngBlob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("Failed to convert canvas to blob"));
+        }, "image/png");
+      });
+
+      if (!navigator.clipboard) {
+        throw new Error("Clipboard API not supported");
+      }
+
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": pngBlob }),
+      ]);
+    } catch (error) {
+      console.error("Failed to copy image to clipboard:", error);
+    }
+  };
+
   return (
     <ul
       className={`flex ${fadeAnim} touch-none fixed border-t-2 border-t-purple-200 justify-center w-full gap-2 pt-1 pb-2 sm:gap-6 bg-white ${
@@ -113,15 +212,17 @@ function EmojiDisplay({
           <button
             onClick={() => {
               setIsCopied(firstEmoji?.split("~")[1]);
-              navigator.clipboard.writeText(`${firstEmoji?.split("~")[1]}`);
+              handleCopyClick(firstEmoji.split("~")[0]);
             }}
-            aria-label="Copy First Emoji"
+            aria-label="Copy First Emoji as PNG"
             className="flex hover:scale-110"
           >
             <Icon
-              icon="copy"
+              icon="copyPhotoIcon"
               customStyle="fill-purple-500 w-7"
-              title={`Copy ${firstEmoji?.split("~")[1]} Emoji`}
+              title={`Copy ${
+                firstEmoji ? firstEmoji?.split("~")[1] : "First"
+              } Emoji as PNG`}
             />
           </button>
           <button
@@ -177,7 +278,9 @@ function EmojiDisplay({
             <Icon
               icon="copy"
               customStyle="fill-purple-500 w-7"
-              title={`Copy ${firstEmoji?.split("~")[1]} Emoji`}
+              title={`Copy ${
+                firstEmoji ? firstEmoji?.split("~")[1] : "First"
+              } Emoji`}
             />
           </button>
           <button
@@ -205,7 +308,11 @@ function EmojiDisplay({
         ➕
       </li>
       <li
-        title={secondEmoji?.split("~")[1] + " " + secondEmoji?.split("~")[2]}
+        title={
+          secondEmoji
+            ? secondEmoji?.split("~")[1] + " " + secondEmoji?.split("~")[2]
+            : "Second Emoji"
+        }
         className={`${
           isHidden ? "hidden" : "flex"
         }  flex-col justify-center items-center `}
@@ -218,15 +325,17 @@ function EmojiDisplay({
           <button
             onClick={() => {
               setIsCopied(secondEmoji?.split("~")[1]);
-              navigator.clipboard.writeText(`${secondEmoji?.split("~")[1]}`);
+              handleCopyClick(secondEmoji.split("~")[1]);
             }}
-            aria-label="Copy Second Emoji"
+            aria-label="Copy Second Emoji as PNG"
             className="flex hover:scale-110"
           >
             <Icon
-              icon="copy"
+              icon="copyPhotoIcon"
               customStyle="fill-purple-500 w-7"
-              title={`Copy ${secondEmoji?.split("~")[1]} Emoji`}
+              title={`Copy ${
+                secondEmoji ? secondEmoji?.split("~")[2] : "Second"
+              } Emoji as PNG`}
             />
           </button>
 
@@ -278,8 +387,8 @@ function EmojiDisplay({
         >
           <button
             onClick={() => {
-              setIsCopied(secondEmoji?.split("~")[1]);
-              navigator.clipboard.writeText(`${secondEmoji?.split("~")[1]}`);
+              setIsCopied(secondEmoji?.split("~")[2]);
+              navigator.clipboard.writeText(`${secondEmoji?.split("~")[2]}`);
             }}
             aria-label="Copy Second Emoji"
             className="flex hover:scale-110"
@@ -287,7 +396,9 @@ function EmojiDisplay({
             <Icon
               icon="copy"
               customStyle="fill-purple-500 w-7"
-              title={`Copy ${secondEmoji?.split("~")[1]} Emoji`}
+              title={`Copy ${
+                secondEmoji ? secondEmoji?.split("~")[2] : "Second"
+              } Emoji`}
             />
           </button>
           <button

@@ -6,6 +6,7 @@ import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
 import HandleCacheEmojiData from "../utils/requests/HandleCacheEmojiData";
 import useWindowWidth from "../hooks/useWindowWidth";
 import useLoadAnimation from "../hooks/useLoadAnimation";
+import useBodyEventListeners from "../hooks/useBodyEventListeners";
 
 interface PropType {
   isLoading: boolean;
@@ -30,6 +31,7 @@ const FirstEmojiWindow: React.FC<PropType> = ({
   const windowWidth = useWindowWidth();
   const { fadeAnim } = useLoadAnimation();
   const [displayLimit, setDisplayLimit] = useState<number>(145);
+  useBodyEventListeners({ setDisplayLimit })
 
   useEffect(() => {
     if (windowWidth !== undefined) {
@@ -63,10 +65,10 @@ const FirstEmojiWindow: React.FC<PropType> = ({
     );
   }, [filenames, searchEmoji]);
 
+
   return (
     <div
-      onMouseEnter={() => setDisplayLimit(1000)}
-      onTouchStart={() => setDisplayLimit(1000)}
+     
       className="flex flex-col h-[45vh] border-r-2 border-b-2 rounded-lg border-purple-100 lg:border-none md:h-[50vh] lg:h-[70.5vh]"
     >
       <SearchBar
