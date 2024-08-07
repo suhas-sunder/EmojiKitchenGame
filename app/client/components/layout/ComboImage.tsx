@@ -58,101 +58,156 @@ function ComboImage({
   const { isCopied, setIsCopied } = useManageCopiedMsg();
 
   useEffect(() => {
+    // If either emoji is missing, clear the combos and image blobs
     if (!firstEmoji || !secondEmoji) {
       setFilteredCombos([]);
       setImageBlobs(new Map()); // Clear image blobs
       return;
     }
 
-    //Since mobile browsers don't allow fetching images from API while copying to clipboard, the workaround is to fetch the images and store them in local storage, then allow the button event to copy them to clipboard directly.
+    // Function to fetch an image and store its blob in the state
     const fetchAndStoreImage = async (url: string) => {
       try {
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-
         const blob = await response.blob();
         if (blob) {
           setImageBlobs((prev) => new Map(prev).set(url, blob));
-        } else {
-          console.error("Failed to create blob from response");
         }
       } catch (error) {
         console.error("Failed to fetch image:", error);
       }
     };
 
-    //Based on the code combination sent in, find a combo set that matches
-    const filterComboSet = () => {
+    // Function to filter emoji combos
+    const filterComboSet = (firstUnicode: string, secondUnicode: string) => {
       return emojiData?.combos?.filter(
         (combo) =>
-          (combo.baseUnicode === firstEmojiBaseUnicode &&
-            combo.unicode.endsWith(secondEmojiBaseUnicode)) ||
-          (combo.baseUnicode === secondEmojiBaseUnicode &&
-            combo.unicode.endsWith(firstEmojiBaseUnicode))
+          (combo.baseUnicode === firstUnicode &&
+            combo.unicode.endsWith(secondUnicode)) ||
+          (combo.baseUnicode === secondUnicode &&
+            combo.unicode.endsWith(firstUnicode))
       );
     };
 
-    //Figure out which code combination exists for the selected emojis and cover all of the strange edge cases.
-    let firstEmojiBaseUnicode = firstEmoji.split("~")[0];
-    let secondEmojiBaseUnicode = secondEmoji.split("~")[0];
+    // Normalize and prepare emoji unicode
+    const normalizeUnicode = (emoji: string) => {
+      let baseUnicode = emoji.split("~")[0];
+      if (baseUnicode.length >= 9) {
+        baseUnicode = "u" + baseUnicode.split("-").join("-u");
+      }
+      return baseUnicode;
+    };
 
-    if (firstEmojiBaseUnicode.length >= 9)
-      firstEmojiBaseUnicode = "u" + firstEmojiBaseUnicode.split("-").join("-u");
+    // Initialize base unicode values
+    let firstEmojiBaseUnicode = normalizeUnicode(firstEmoji);
+    let secondEmojiBaseUnicode = normalizeUnicode(secondEmoji);
 
-    if (secondEmojiBaseUnicode.length >= 9)
-      secondEmojiBaseUnicode =
-        "u" + secondEmojiBaseUnicode.split("-").join("-u");
+    // Helper function to update combos
+    const updateCombos = (firstUnicode: string, secondUnicode: string) => {
+      const combos = filterComboSet(firstUnicode, secondUnicode);
+      setFilteredCombos([...new Set(combos)]);
+      return combos;
+    };
 
-    if (firstEmojiBaseUnicode === "u00a9") firstEmojiBaseUnicode = "ua9";
-    if (firstEmojiBaseUnicode === "u00ae") firstEmojiBaseUnicode = "uae";
+    // Try different combinations
+    const tryCombos = () => {
+      let combos = updateCombos(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+      if (combos?.length === 0) {
+        firstEmojiBaseUnicode += "-ufe0f";
+        combos = updateCombos(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+      }
+      if (combos?.length === 0) {
+        firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
+        secondEmojiBaseUnicode += "-ufe0f";
+        combos = updateCombos(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+      }
+      if (combos?.length === 0) {
+        firstEmojiBaseUnicode += "-ufe0f";
+        combos = updateCombos(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+      }
+      if (combos?.length === 0) {
+        firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
+        const temp = secondEmojiBaseUnicode.split("-")[0];
+        secondEmojiBaseUnicode = `${temp}_${firstEmojiBaseUnicode}-ufe0f`;
+        firstEmojiBaseUnicode = temp;
+        combos = updateCombos(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+      }
+      if (combos?.length === 0) {
+        const temp = firstEmojiBaseUnicode;
+        firstEmojiBaseUnicode = secondEmojiBaseUnicode.split("_")[1];
+        secondEmojiBaseUnicode = `${firstEmojiBaseUnicode}_${temp}`;
+        combos = updateCombos(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+      }
+      if (combos?.length === 0) {
+        firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
+        secondEmojiBaseUnicode = `${firstEmojiBaseUnicode}_${
+          secondEmojiBaseUnicode.split("_")[1]
+        }-ufe0f`;
+        combos = updateCombos(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+      }
+      if (combos?.length === 0) {
+        firstEmojiBaseUnicode += "-ufe0f";
+        secondEmojiBaseUnicode = `${firstEmojiBaseUnicode}_${
+          secondEmojiBaseUnicode.split("_")[1]
+        }`;
+        combos = updateCombos(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+      }
+    };
 
-    const combos = filterComboSet();
+    // Try different combinations
+    tryCombos();
 
-    setFilteredCombos([...new Set(combos)]);
-
+    // Handle the case when no combinations are found
+    let combos = filterComboSet(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
     if (combos?.length === 0) {
-      firstEmojiBaseUnicode += "-ufe0f";
-      setFilteredCombos([...new Set(filterComboSet())]);
+      firstEmojiBaseUnicode = normalizeUnicode(secondEmoji);
+      secondEmojiBaseUnicode = normalizeUnicode(firstEmoji);
+      tryCombos();
+    }
+    combos = filterComboSet(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+    if (combos?.length === 0) {
+      firstEmojiBaseUnicode = normalizeUnicode(secondEmoji).replace(
+        /u00/g,
+        "u"
+      );
+      secondEmojiBaseUnicode = normalizeUnicode(firstEmoji).replace(
+        /u00/g,
+        "u"
+      );
+      tryCombos();
+    }
+    combos = filterComboSet(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+    if (combos?.length === 0) {
+      firstEmojiBaseUnicode = normalizeUnicode(firstEmoji).replace(/u00/g, "u");
+      secondEmojiBaseUnicode = normalizeUnicode(secondEmoji).replace(
+        /u00/g,
+        "u"
+      );
+      tryCombos();
     }
 
-    if (combos?.length === 0) {
-      firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
-      secondEmojiBaseUnicode += "-ufe0f";
-      console.log(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
-      setFilteredCombos([...new Set(filterComboSet())]);
-    }
-
-    if (combos?.length === 0) {
-      firstEmojiBaseUnicode += "-ufe0f";
-      setFilteredCombos([...new Set(filterComboSet())]);
-    }
-
-    if (combos?.length === 0) {
-      firstEmojiBaseUnicode = firstEmojiBaseUnicode.slice(0, -6);
-      const temp = secondEmojiBaseUnicode.split("-")[0];
-      secondEmojiBaseUnicode = temp + "_" + firstEmojiBaseUnicode + "-ufe0f";
-      firstEmojiBaseUnicode = temp;
-      console.log(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
-      setFilteredCombos([...new Set(filterComboSet())]);
-    }
-
-    //State has been set, but the variable isn't updated yet, so I'm saving the combo here again and using it to update url if a combo exists
-    const finalCombo = filterComboSet();
-
-    if (finalCombo && finalCombo.length > 0) {
-      const imageUrl = `https://www.gstatic.com/android/keyboard/emojikitchen/${finalCombo[0]?.code}/${finalCombo[0]?.baseUnicode}/${finalCombo[0]?.unicode}.png`;
+    // Fetch and store image if a valid combo is found
+    combos = filterComboSet(firstEmojiBaseUnicode, secondEmojiBaseUnicode);
+    if (combos && combos?.length > 0) {
+      const imageUrl = `https://www.gstatic.com/android/keyboard/emojikitchen/${combos[0]?.code}/${combos[0]?.baseUnicode}/${combos[0]?.unicode}.png`;
       fetchAndStoreImage(imageUrl);
     }
 
-    //If there's no combo, clear the second emoji with a delay to prevent bad state management.
-    if ((finalCombo && finalCombo.length > 2) || finalCombo?.length === 0) {
+    // If no valid combo is found, clear the second emoji with a delay
+    if ((combos && combos?.length > 2) || combos?.length === 0) {
       setTimeout(() => setSecondEmoji(""), 500);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstEmoji, secondEmoji, emojiData, setSecondEmoji]);
+  }, [
+    firstEmoji,
+    secondEmoji,
+    setSecondEmoji,
+    setFilteredCombos,
+    emojiData,
+    setImageBlobs,
+  ]);
 
   const handleCopyClick = async () => {
     if (

@@ -11,7 +11,7 @@ import localforage from "localforage";
 import { Dispatch, SetStateAction, useState } from "react";
 import SectionMenu from "../client/components/navigation/SectionMenu";
 import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
-import useDisplayLimitOnScroll from "~/client/components/hooks/useDisplayLimitOnScroll";
+import useDisplayLimitOnScroll from "../client/components/hooks/useDisplayLimitOnScroll";
 
 export const meta: MetaFunction = () => {
   return [
@@ -97,7 +97,7 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 export default function EmojiCopyAndPaste() {
   const { symbols }: { symbols: TextFaces } = useLoaderData();
   const [displayLimit, setDisplayLimit] = useState<number>(2);
-  
+
   useDisplayLimitOnScroll({ displayLimit, setDisplayLimit });
 
   const {
