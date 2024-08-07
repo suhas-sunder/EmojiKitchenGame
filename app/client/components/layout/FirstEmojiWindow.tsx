@@ -73,6 +73,7 @@ const FirstEmojiWindow: React.FC<PropType> = ({
         uniqueId="first"
         setSearchEmoji={setSearchEmoji}
         customStyle="md:-translate-x-6 md:pl-5 pr-3 md:pr-0 mb-1"
+        customSearchEmojiStyle="translate-x-[1em]"
         placeholder="Search first emoji"
         customLabelStyle="pr-[0.55em] pl-0"
         searchEmoji={searchEmoji}
