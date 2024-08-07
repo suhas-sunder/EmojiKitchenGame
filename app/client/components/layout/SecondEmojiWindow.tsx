@@ -77,6 +77,7 @@ const SecondEmojiWindow: React.FC<PropType> = ({
         uniqueId="second"
         setSearchEmoji={setSearchEmoji}
         customStyle="pr-2 mb-1 md:-translate-x-4 sm:pl-3 -translate-x-2"
+        customSearchEmojiStyle="translate-x-[1em]"
         placeholder="Search second emoji"
         customLabelStyle="pr-[0.55em]"
         searchEmoji={searchEmoji}

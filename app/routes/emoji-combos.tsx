@@ -205,6 +205,7 @@ export default function EmojiCombos() {
             uniqueId="combos"
             setSearchEmoji={setSearchEmoji}
             customStyle="mt-11 w-full max-w-[1200px]"
+            customSearchEmojiStyle="-translate-x-[0.38em]"
             placeholder="search emojis"
             customLabelStyle="pl-3"
             searchEmoji={searchEmoji}

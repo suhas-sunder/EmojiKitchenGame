@@ -4,6 +4,7 @@ import useIsLoading from "../hooks/useIsLoading";
 interface PropType {
   setSearchEmoji: (value: string) => void;
   customStyle?: string;
+  customSearchEmojiStyle?: string;
   placeholder?: string;
   customLabelStyle?: string;
   searchEmoji: string;
@@ -14,6 +15,7 @@ interface PropType {
 function SearchBar({
   setSearchEmoji,
   customStyle,
+  customSearchEmojiStyle,
   placeholder,
   customLabelStyle,
   searchEmoji,
@@ -31,7 +33,9 @@ function SearchBar({
         htmlFor={"search" + uniqueId}
         className={`flex absolute justify-end sm:justify-between w-full cursor-text text-purple-400 ${customLabelStyle}`}
       >
-        <span className="hidden sm:flex py-3 -translate-x-[0.38em] translate-y-[0.05em] scale-75">🔍</span>
+        <span className={`${customSearchEmojiStyle} hidden sm:flex py-3 translate-y-[0.05em] scale-75`}>
+          🔍
+        </span>
         <div className="flex ">
           {searchEmoji && (
             <button
