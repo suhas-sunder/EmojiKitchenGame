@@ -79,106 +79,101 @@ function EmojiDisplay({
   const { isCopied, setIsCopied } = useManageCopiedMsg();
   const { isHidden, setIsHidden } = useResponsive();
   const { fadeAnim } = useLoadAnimation();
-  const [imageCache, setImageCache] = useState<Record<string, string>>({}); // Cache for image URLs
 
-  const [imageBlobCache, setImageBlobCache] = useState<Record<string, Blob>>(
-    {}
-  ); // Cache for image Blobs
+  const [imageBlobs, setImageBlobs] = useState<Map<string, Blob>>(new Map());
 
-  // Function to extract Unicode from the emoji string
-  const extractUnicode = (emoji: string) => {
-    const parts = emoji.split("~");
-    let unicode = parts[0];
-    if (unicode.startsWith("u")) {
-      unicode = unicode.substring(1);
+  // Function to normalize and extract unicode from emoji code
+  const normalizeUnicode = (emoji: string) => {
+    let baseUnicode = emoji.split("~")[0]; // Extract the unicode part
+    if (baseUnicode.startsWith("u")) {
+      baseUnicode = baseUnicode.slice(1); // Remove leading 'u'
     }
-    return unicode;
+    return baseUnicode;
   };
 
-  // Function to prefetch and cache images
-  const prefetchImage = async (unicode: string) => {
-    if (imageCache[unicode]) {
-      // Image URL is already cached
-      return;
-    }
+  // Function to prefetch images and store their blobs in state
+  const prefetchImages = async () => {
+    // Normalize emojis
+    const firstEmojiUnicode = normalizeUnicode(firstEmoji);
+    const secondEmojiUnicode = normalizeUnicode(secondEmoji);
 
-    const imageUrl = `https://www.honeycombartist.com/emojis/base/${unicode}.png`;
-    try {
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`);
+    // Construct URLs
+    const firstImageUrl = firstEmojiUnicode
+      ? `https://www.honeycombartist.com/emojis/base/${firstEmojiUnicode}.png`
+      : "";
+    const secondImageUrl = secondEmojiUnicode
+      ? `https://www.honeycombartist.com/emojis/base/${secondEmojiUnicode}.png`
+      : "";
+
+    // Helper function to fetch and store image blob
+    const fetchAndStoreImage = async (url: string) => {
+      // Check if the URL is valid and if the image blob is already in the state
+      if (!url || imageBlobs.has(url)) {
+        return;
       }
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      setImageCache((prev) => ({ ...prev, [unicode]: objectUrl }));
-      setImageBlobCache((prev) => ({ ...prev, [unicode]: blob }));
-    } catch (error) {
-      console.error(`Failed to prefetch image for unicode ${unicode}:`, error);
-    }
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.error(
+            `Failed to fetch image from URL: ${url}, Status: ${response.status}`
+          );
+          return;
+        }
+        const blob = await response.blob();
+        if (blob) {
+          setImageBlobs((prev) => new Map(prev).set(url, blob));
+        } else {
+          console.error(`No blob received for URL: ${url}`);
+        }
+      } catch (error) {
+        console.error(`Error fetching image from URL: ${url}`, error);
+      }
+    };
+
+    // Fetch and store blobs
+    await fetchAndStoreImage(firstImageUrl);
+    await fetchAndStoreImage(secondImageUrl);
   };
 
-  useEffect(() => {
-    if (firstEmoji) {
-      const unicode = extractUnicode(firstEmoji);
-      prefetchImage(unicode);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firstEmoji]);
-
-  useEffect(() => {
-    if (secondEmoji) {
-      const unicode = extractUnicode(secondEmoji);
-      prefetchImage(unicode);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [secondEmoji]);
-
+  // Function to handle copy click event
   const handleCopyClick = async (unicode: string) => {
-    if (!unicode) return;
+    // Normalize the unicode
+    const normalizedUnicode = normalizeUnicode(unicode);
 
-    const trimmedUnicode = unicode.startsWith("u")
-      ? unicode.substring(1)
-      : unicode;
-    const imageUrl = imageCache[trimmedUnicode];
-    const imageBlob = imageBlobCache[trimmedUnicode];
+    // Construct the image URL
+    const imageUrl = `https://www.honeycombartist.com/emojis/base/${normalizedUnicode}.png`;
 
-    if (!imageUrl || !imageBlob) {
-      console.error("Image not pre-fetched for this Unicode");
-      return;
-    }
+    // Check if the blob exists in state
+    const blob = imageBlobs.get(imageUrl);
+    if (blob) {
+      try {
+        // Check if Clipboard API is supported
+        if (navigator.clipboard && ClipboardItem) {
+          const clipboardItem = new ClipboardItem({
+            "image/png": blob,
+          });
 
-    try {
-      const blob = imageBlob;
-
-      const imageBitmap = await createImageBitmap(blob);
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        throw new Error("Failed to get canvas context");
+          await navigator.clipboard.write([clipboardItem]);
+          console.log("Image copied to clipboard successfully.");
+        } else {
+          console.error("Clipboard API or ClipboardItem is not supported");
+        }
+      } catch (error) {
+        console.error("Failed to copy image to clipboard:", error);
       }
-
-      canvas.width = imageBitmap.width;
-      canvas.height = imageBitmap.height;
-      ctx.drawImage(imageBitmap, 0, 0);
-
-      const pngBlob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob((blob) => {
-          if (blob) resolve(blob);
-          else reject(new Error("Failed to convert canvas to blob"));
-        }, "image/png");
-      });
-
-      if (!navigator.clipboard) {
-        throw new Error("Clipboard API not supported");
-      }
-
-      await navigator.clipboard.write([
-        new ClipboardItem({ "image/png": pngBlob }),
-      ]);
-    } catch (error) {
-      console.error("Failed to copy image to clipboard:", error);
+    } else {
+      console.error(`Image blob not found for URL: ${imageUrl}`);
     }
   };
+
+  // Effect to prefetch images when firstEmoji or secondEmoji changes
+  useEffect(() => {
+    if (firstEmoji || secondEmoji) {
+      prefetchImages();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstEmoji, secondEmoji]);
 
   return (
     <ul
