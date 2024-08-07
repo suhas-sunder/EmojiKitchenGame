@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useSearch from "../hooks/useSearch";
 import { EmojiDataType } from "../../../routes/_index";
 import SearchBar from "../ui/SearchBar";
@@ -25,9 +25,14 @@ const SecondEmojiWindow: React.FC<PropType> = ({
   const { searchEmoji, setSearchEmoji } = useSearch();
   const windowWidth = useWindowWidth();
   const { fadeAnim } = useLoadAnimation();
-  const [displayLimit, setDisplayLimit] = useState<number>(
-    windowWidth && windowWidth < 1022 ? 88 : 145
-  );
+  const [displayLimit, setDisplayLimit] = useState<number>(145);
+
+  useEffect(() => {
+    if (windowWidth !== undefined) {
+      setDisplayLimit(windowWidth < 1022 ? 88 : 145);
+    }
+  }, [windowWidth]); // Run effect when windowWidth changes
+
   const handleDiceRoll = useCallback(() => {
     if (!filenames) return;
 

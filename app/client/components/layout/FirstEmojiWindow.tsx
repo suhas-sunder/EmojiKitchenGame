@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { EmojiDataType, Filename } from "../../../routes/_index";
 import useSearch from "../hooks/useSearch";
 import SearchBar from "../ui/SearchBar";
@@ -29,9 +29,13 @@ const FirstEmojiWindow: React.FC<PropType> = ({
   const { searchEmoji, setSearchEmoji } = useSearch();
   const windowWidth = useWindowWidth();
   const { fadeAnim } = useLoadAnimation();
-  const [displayLimit, setDisplayLimit] = useState<number>(
-    windowWidth && windowWidth < 1022 ? 88 : 145
-  );
+  const [displayLimit, setDisplayLimit] = useState<number>(145);
+
+  useEffect(() => {
+    if (windowWidth !== undefined) {
+      setDisplayLimit(windowWidth < 1022 ? 88 : 145);
+    }
+  }, [windowWidth]); // Run effect when windowWidth changes
 
   const loadEmojiData = useCallback(
     async (emojiUnicode: string) => {
@@ -56,7 +60,6 @@ const FirstEmojiWindow: React.FC<PropType> = ({
         filename?.keys?.includes(searchEmoji.trim()) || searchEmoji === ""
     );
   }, [filenames, searchEmoji]);
-
 
   return (
     <div
