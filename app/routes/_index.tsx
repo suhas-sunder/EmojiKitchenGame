@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import { useMatches } from "@remix-run/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import FirstEmojiWindow from "../client/components/layout/FirstEmojiWindow";
 import SecondEmojiWindow from "../client/components/layout/SecondEmojiWindow";
 import ThirdEmojiWindow from "../client/components/layout/ThirdEmojiWindow";
@@ -10,6 +10,7 @@ import useIsLoading from "../client/components/hooks/useIsLoading";
 import HandleDiceRoll from "../client/components/utils/generators/HandleDiceRoll";
 import HandleCacheEmojiData from "../client/components/utils/requests/HandleCacheEmojiData";
 import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
+import useResponsive from "../client/components/hooks/useResponsive";
 
 export type Filename = {
   id: string;
@@ -75,25 +76,7 @@ function EmojiDisplay({
   thirdDiceRoll: () => void;
 }) {
   const { isCopied, setIsCopied } = useManageCopiedMsg();
-  const [isHidden, setIsHidden] = useState<boolean>(false);
-
-  //For large screens display the emoji combo menu by default, but hide for small screens
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1023) {
-        setIsHidden(true);
-      } else {
-        setIsHidden(false);
-      }
-    };
-
-    handleResize(); // Check on mount
-    window.addEventListener("resize", handleResize); // Add event listener to handle resize
-
-    return () => {
-      window.removeEventListener("resize", handleResize); // Clean up event listener on unmount
-    };
-  }, []); // Empty dependency array means this runs only on mount and unmount
+  const { isHidden, setIsHidden } = useResponsive();
 
   return (
     <ul

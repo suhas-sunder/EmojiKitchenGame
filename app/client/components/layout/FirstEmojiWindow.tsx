@@ -4,6 +4,7 @@ import useSearch from "../hooks/useSearch";
 import SearchBar from "../ui/SearchBar";
 import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
 import HandleCacheEmojiData from "../utils/requests/HandleCacheEmojiData";
+import useWindowWidth from "../hooks/useWindowWidth";
 
 interface PropType {
   isLoading: boolean;
@@ -25,7 +26,10 @@ const FirstEmojiWindow: React.FC<PropType> = ({
   setFirstEmoji,
 }) => {
   const { searchEmoji, setSearchEmoji } = useSearch();
-  const [displayLimit, setDisplayLimit] = useState<number>(145);
+  const windowWidth = useWindowWidth();
+  const [displayLimit, setDisplayLimit] = useState<number>(
+    windowWidth < 1022 ? 88 : 145
+  );
 
   const loadEmojiData = useCallback(
     async (emojiUnicode: string) => {

@@ -3,6 +3,7 @@ import useSearch from "../hooks/useSearch";
 import { EmojiDataType } from "../../../routes/_index";
 import SearchBar from "../ui/SearchBar";
 import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
+import useWindowWidth from "../hooks/useWindowWidth";
 
 interface PropType {
   isLoading: boolean;
@@ -21,8 +22,10 @@ const SecondEmojiWindow: React.FC<PropType> = ({
   setSecondEmoji,
 }) => {
   const { searchEmoji, setSearchEmoji } = useSearch();
-  const [displayLimit, setDisplayLimit] = useState<number>(145);
-
+  const windowWidth = useWindowWidth();
+  const [displayLimit, setDisplayLimit] = useState<number>(
+    windowWidth < 1022 ? 88 : 145
+  );
   const handleDiceRoll = useCallback(() => {
     if (!filenames) return;
 
