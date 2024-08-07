@@ -8,9 +8,10 @@ import {
   useOutletContext,
 } from "@remix-run/react";
 import localforage from "localforage";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import SectionMenu from "../client/components/navigation/SectionMenu";
 import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
+import useDisplayLimitOnScroll from "~/client/components/hooks/useDisplayLimitOnScroll";
 
 export const meta: MetaFunction = () => {
   return [
@@ -95,6 +96,9 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 
 export default function EmojiCopyAndPaste() {
   const { symbols }: { symbols: TextFaces } = useLoaderData();
+  const [displayLimit, setDisplayLimit] = useState<number>(2);
+  
+  useDisplayLimitOnScroll({ displayLimit, setDisplayLimit });
 
   const {
     setCopyText,
@@ -166,55 +170,61 @@ export default function EmojiCopyAndPaste() {
           <div id="symbols" className="-translate-y-[100em]"></div>
         </h1>
       </header>
-      <main className="max-w-[1200px] my-10 flex gap-16 flex-col mb-64 justify-center items-center">
+      <main
+        onMouseEnter={() => setDisplayLimit(1000)}
+        onTouchStart={() => setDisplayLimit(1000)}
+        className="max-w-[1200px] my-10 flex gap-16 flex-col mb-64 justify-center items-center"
+      >
         <SectionMenu object={symbolMenuObject} />
-        {Object.keys(symbols).map((key, mainIndex) => (
-          <section
-            key={key}
-            className="overflow-auto lg:overflow-hidden  pt-10 sm:px-10 scrollbar-thin border-2 rounded-lg border-rose-100 scrollbar-thumb-rose-700 scrollbar-track-rose-300 "
-          >
-            <h2 className="flex capitalize mb-8 font-lora w-full text-rose-400 justify-center items-center text-center text-xl sm:text-2xl">
-              {key}
-            </h2>
-            <ul className="text-2xl grid font-nunito grid-cols-4 sm:grid-cols-7 px-5 lg:grid-cols-12 xl:grid-cols-14 gap-5 w-full justify-center items-center">
-              {symbols[key].map((symbol, index) => (
-                <li
-                  title={symbol}
-                  key={symbol + index}
-                  className="flex justify-center items-center"
-                >
-                  <button
-                    aria-label={`Copy ${symbol} emoji to clipboard`}
-                    onClick={() => {
-                      setCopyText(symbol);
-                      setIsCopied(symbol);
-                    }}
-                    className={`${
-                      isCopied === symbol ? "text-xs" : "text-4xl"
-                    } border-2 px-3 py-3 rounded-md max-w-[5.4em] hover:scale-110 border-rose-200 text-rose-500 cursor-pointer justify-center items-center flex w-full hover:border-rose-400 hover:text-rose-500`}
+        {Object.keys(symbols).map((key, mainIndex) => {
+          return mainIndex < displayLimit ? (
+            <section
+              key={key}
+              className="overflow-auto lg:overflow-hidden  pt-10 sm:px-10 scrollbar-thin border-2 rounded-lg border-rose-100 scrollbar-thumb-rose-700 scrollbar-track-rose-300 "
+            >
+              <h2 className="flex capitalize mb-8 font-lora w-full text-rose-400 justify-center items-center text-center text-xl sm:text-2xl">
+                {key}
+              </h2>
+              <ul className="text-2xl grid font-nunito grid-cols-4 sm:grid-cols-7 px-5 lg:grid-cols-12 xl:grid-cols-14 gap-5 w-full justify-center items-center">
+                {symbols[key].map((symbol, index) => (
+                  <li
+                    title={symbol}
+                    key={symbol + index}
+                    className="flex justify-center items-center"
                   >
-                    {isCopied === symbol ? "Copied!" : symbol}
-                    <div
-                      id={Object.keys(symbolMenuObject)[mainIndex]}
-                      className="-translate-y-64"
-                    ></div>
-                  </button>
+                    <button
+                      aria-label={`Copy ${symbol} emoji to clipboard`}
+                      onClick={() => {
+                        setCopyText(symbol);
+                        setIsCopied(symbol);
+                      }}
+                      className={`${
+                        isCopied === symbol ? "text-xs" : "text-4xl"
+                      } border-2 px-3 py-3 rounded-md max-w-[5.4em] hover:scale-110 border-rose-200 text-rose-500 cursor-pointer justify-center items-center flex w-full hover:border-rose-400 hover:text-rose-500`}
+                    >
+                      {isCopied === symbol ? "Copied!" : symbol}
+                      <div
+                        id={Object.keys(symbolMenuObject)[mainIndex]}
+                        className="-translate-y-64"
+                      ></div>
+                    </button>
+                  </li>
+                ))}
+                <li className="col-span-4 sm:col-span-7 lg:col-span-12 xl:col-span-14 w-full justify-center items-center flex mt-20 mb-10 text-xl">
+                  {" "}
+                  <Link
+                    area-label="Scroll To Menu"
+                    className=" text-sky-600 text-center hover:text-sky-500 flex gap-1 sm:gap-5"
+                    to="#symbols"
+                  >
+                    <span className="scale-x-[-1]">☝️☝🏻☝🏼</span>Scroll To Menu
+                    <span>☝🏽☝🏾☝🏿</span>
+                  </Link>
                 </li>
-              ))}
-              <li className="col-span-4 sm:col-span-7 lg:col-span-12 xl:col-span-14 w-full justify-center items-center flex mt-20 mb-10 text-xl">
-                {" "}
-                <Link
-                  area-label="Scroll To Menu"
-                  className=" text-sky-600 text-center hover:text-sky-500 flex gap-1 sm:gap-5"
-                  to="#symbols"
-                >
-                  <span className="scale-x-[-1]">☝️☝🏻☝🏼</span>Scroll To Menu
-                  <span>☝🏽☝🏾☝🏿</span>
-                </Link>
-              </li>
-            </ul>
-          </section>
-        ))}
+              </ul>
+            </section>
+          ) : null;
+        })}
         <CopyPaste
           isHidden={textareaIsHidden}
           setIsHidden={setTextareaIsHidden}

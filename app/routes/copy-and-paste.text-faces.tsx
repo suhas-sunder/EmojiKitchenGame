@@ -9,10 +9,11 @@ import {
 } from "@remix-run/react";
 import cloudflareR2API from "../client/components/api/cloudflareR2API";
 import localforage from "localforage";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import CopyPaste from "../client/components/ui/CopyPasteTextbox";
 import SectionMenu from "../client/components/navigation/SectionMenu";
 import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
+import useDisplayLimitOnScroll from "../client/components/hooks/useDisplayLimitOnScroll";
 
 export const meta: MetaFunction = () => {
   return [
@@ -81,13 +82,20 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   const cacheKey1 = "facesInfo";
 
   try {
-    const textFaces = await localforage.getItem<{ textFaces: TextFaces }>(cacheKey);
-    const facesInfo = await localforage.getItem<{ facesInfo: TextFaces }>(cacheKey1);
+    const textFaces = await localforage.getItem<{ textFaces: TextFaces }>(
+      cacheKey
+    );
+    const facesInfo = await localforage.getItem<{ facesInfo: TextFaces }>(
+      cacheKey1
+    );
 
     if (textFaces && facesInfo) {
       return { textFaces, facesInfo };
     } else {
-      const { textFaces, facesInfo }: { textFaces: TextFaces; facesInfo: TextFaces } = await serverLoader();
+      const {
+        textFaces,
+        facesInfo,
+      }: { textFaces: TextFaces; facesInfo: TextFaces } = await serverLoader();
       await localforage.setItem(cacheKey, textFaces);
       await localforage.setItem(cacheKey1, facesInfo);
       return { textFaces, facesInfo };
@@ -98,8 +106,13 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 }
 
 export default function TextFaces() {
-  const { textFaces, facesInfo }: { textFaces: TextFaces; facesInfo: TextFaces } = useLoaderData();
+  const {
+    textFaces,
+    facesInfo,
+  }: { textFaces: TextFaces; facesInfo: TextFaces } = useLoaderData();
   const { isCopied, setIsCopied } = useManageCopiedMsg();
+  const [displayLimit, setDisplayLimit] = useState<number>(2);
+  useDisplayLimitOnScroll({ displayLimit, setDisplayLimit });
 
   const {
     setCopyText,
@@ -116,8 +129,14 @@ export default function TextFaces() {
     setTextareaIsHidden: Dispatch<SetStateAction<boolean>>;
   }>();
 
-  const textFacesEntries = useMemo(() => Object.entries(textFaces), [textFaces]);
-  const facesInfoEntries = useMemo(() => Object.entries(facesInfo), [facesInfo]);
+  const textFacesEntries = useMemo(
+    () => Object.entries(textFaces),
+    [textFaces]
+  );
+  const facesInfoEntries = useMemo(
+    () => Object.entries(facesInfo),
+    [facesInfo]
+  );
 
   return (
     <div className="flex flex-col gap-5 justify-center items-center">
@@ -128,55 +147,61 @@ export default function TextFaces() {
           <div id="text-faces" className="-translate-y-32"></div>
         </h1>
       </header>
-      <main className="flex flex-col max-w-[1200px] gap-20 font-nunito justify-center items-center">
+      <main
+        onMouseEnter={() => setDisplayLimit(1000)}
+        onTouchStart={() => setDisplayLimit(1000)}
+        className="flex flex-col max-w-[1200px] gap-20 font-nunito justify-center items-center"
+      >
         <SectionMenu object={textFaces} />
         <div className="flex flex-col gap-14">
-          {textFacesEntries.map(([key, value], index) => (
-            <div
-              key={`${key}-${index}`}
-              className="-translate-y-6 flex flex-col overflow-auto lg:overflow-hidden pt-10 sm:px-10 scrollbar-thin border-2 rounded-lg border-slate-100 scrollbar-thumb-rose-700 scrollbar-track-rose-300"
-            >
-              <h2 className="flex capitalize mb-8 w-full text-rose-400 justify-center items-center text-center text-2xl">
-                {key.split("-").join(" ")} Faces
-              </h2>
-              <ul className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5 text-2xl justify-center items-center">
-                {value.map((face, index) => (
-                  <li
-                    className="flex sm:whitespace-nowrap justify-center items-center"
-                    title={face}
-                    key={`${key}-${face}-${index}`}
-                  >
-                    <button
-                      aria-label={`Copy ${face} face to clipboard`}
-                      onClick={() => {
-                        setIsCopied(face);
-                        setCopyText(face);
-                      }}
-                      className={`hover:text-slate-800 max-w-[13em] sm:max-w-auto flex text-center hover:scale-110 sm:overflow-visible text-slate-600 border-slate-300 hover:border-slate-400 w-full justify-center items-center border-2 sm:px-5 py-4 rounded-md`}
+          {textFacesEntries.map(([key, value], index) => {
+            return index < displayLimit ? (
+              <div
+                key={`${key}-${index}`}
+                className="-translate-y-6 flex flex-col overflow-auto lg:overflow-hidden pt-10 sm:px-10 scrollbar-thin xl:border-2 rounded-lg border-slate-100 scrollbar-thumb-rose-700 scrollbar-track-rose-300"
+              >
+                <h2 className="flex capitalize mb-8 w-full text-rose-400 justify-center items-center text-center text-2xl">
+                  {key.split("-").join(" ")} Faces
+                </h2>
+                <ul className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5 text-2xl justify-center items-center">
+                  {value.map((face, index) => (
+                    <li
+                      className="flex sm:whitespace-nowrap justify-center items-center"
+                      title={face}
+                      key={`${key}-${face}-${index}`}
                     >
-                      <span className="flex">
-                        {isCopied === face.replace(/\s*\n\s*/g, "")
-                          ? "✧･ﾟ Copied! ･ﾟ✧"
-                          : face.split("  ").join("")}
-                      </span>
-                    </button>
-                    <div id={key} className="-translate-y-44"></div>
-                  </li>
-                ))}
+                      <button
+                        aria-label={`Copy ${face} face to clipboard`}
+                        onClick={() => {
+                          setIsCopied(face);
+                          setCopyText(face);
+                        }}
+                        className={`hover:text-slate-800 max-w-[13em] sm:max-w-auto flex text-center hover:scale-110 sm:overflow-visible text-slate-600 border-slate-300 hover:border-slate-400 w-full justify-center items-center border-2 sm:px-5 py-4 rounded-md`}
+                      >
+                        <span className="flex">
+                          {isCopied === face.replace(/\s*\n\s*/g, "")
+                            ? "✧･ﾟ Copied! ･ﾟ✧"
+                            : face.split("  ").join("")}
+                        </span>
+                      </button>
+                      <div id={key} className="-translate-y-44"></div>
+                    </li>
+                  ))}
 
-                <li className="sm:col-span-2 md:col-span-3 xl:col-span-5 w-full justify-center items-center flex mt-10 mb-20 text-xl">
-                  <Link
-                    aria-label="Scroll To Menu"
-                    className="text-sky-600 translate-y-8 text-center hover:text-sky-500 flex gap-1 sm:gap-5"
-                    to="#text-faces"
-                  >
-                    <span className="scale-x-[-1]">☝️☝🏻☝🏼</span>Scroll To Menu
-                    <span>☝🏽☝🏾☝🏿</span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          ))}
+                  <li className="sm:col-span-2 md:col-span-3 xl:col-span-5 w-full justify-center items-center flex mt-10 mb-20 text-xl">
+                    <Link
+                      aria-label="Scroll To Menu"
+                      className="text-sky-600 translate-y-8 text-center hover:text-sky-500 flex gap-1 sm:gap-5"
+                      to="#text-faces"
+                    >
+                      <span className="scale-x-[-1]">☝️☝🏻☝🏼</span>Scroll To Menu
+                      <span>☝🏽☝🏾☝🏿</span>
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            ) : null;
+          })}
         </div>
         <ul className="flex gap-10 mb-40 flex-col mx-5">
           {facesInfoEntries.map(([key, value], index) => (
