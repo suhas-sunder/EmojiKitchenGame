@@ -79,22 +79,26 @@ function EmojiDisplay({
   const { isCopied, setIsCopied } = useManageCopiedMsg();
   const { isHidden, setIsHidden } = useResponsive();
   const { fadeAnim } = useLoadAnimation();
+  const [imageCache, setImageCache] = useState<Record<string, string>>({}); // Cache for image URLs
 
-  const [imageCache, setImageCache] = useState<Record<string, string>>({});
+  const [imageBlobCache, setImageBlobCache] = useState<Record<string, Blob>>(
+    {}
+  ); // Cache for image Blobs
 
+  // Function to extract Unicode from the emoji string
   const extractUnicode = (emoji: string) => {
     const parts = emoji.split("~");
-    let unicode = parts[0]; // Extract Unicode from the first part
-    // Remove leading 'u' if present
+    let unicode = parts[0];
     if (unicode.startsWith("u")) {
       unicode = unicode.substring(1);
     }
     return unicode;
   };
 
+  // Function to prefetch and cache images
   const prefetchImage = async (unicode: string) => {
     if (imageCache[unicode]) {
-      // Image is already cached
+      // Image URL is already cached
       return;
     }
 
@@ -107,6 +111,7 @@ function EmojiDisplay({
       const blob = await response.blob();
       const objectUrl = URL.createObjectURL(blob);
       setImageCache((prev) => ({ ...prev, [unicode]: objectUrl }));
+      setImageBlobCache((prev) => ({ ...prev, [unicode]: blob }));
     } catch (error) {
       console.error(`Failed to prefetch image for unicode ${unicode}:`, error);
     }
@@ -117,7 +122,7 @@ function EmojiDisplay({
       const unicode = extractUnicode(firstEmoji);
       prefetchImage(unicode);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstEmoji]);
 
   useEffect(() => {
@@ -125,31 +130,27 @@ function EmojiDisplay({
       const unicode = extractUnicode(secondEmoji);
       prefetchImage(unicode);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondEmoji]);
 
   const handleCopyClick = async (unicode: string) => {
     if (!unicode) return;
 
-    // Ensure the unicode is trimmed properly
     const trimmedUnicode = unicode.startsWith("u")
       ? unicode.substring(1)
       : unicode;
     const imageUrl = imageCache[trimmedUnicode];
-    if (!imageUrl) {
+    const imageBlob = imageBlobCache[trimmedUnicode];
+
+    if (!imageUrl || !imageBlob) {
       console.error("Image not pre-fetched for this Unicode");
       return;
     }
 
     try {
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`);
-      }
+      const blob = imageBlob;
 
-      const blob = await response.blob();
       const imageBitmap = await createImageBitmap(blob);
-
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       if (!ctx) {
