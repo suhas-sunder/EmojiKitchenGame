@@ -11,6 +11,7 @@ import { Filename } from "./_index";
 import useSearch from "../client/components/hooks/useSearch";
 import SearchBar from "../client/components/ui/SearchBar";
 import HandleDiceRoll from "../client/components/utils/generators/HandleDiceRoll";
+import useWindowWidth from "../client/components/hooks/useWindowWidth";
 
 export const meta: MetaFunction = () => {
   return [
@@ -122,7 +123,15 @@ function Buttons({
 
 export default function EmojiCombos() {
   const matches = useMatches();
+  const windowWidth = useWindowWidth();
   const [displayLimit, setDisplayLimit] = useState<number>(18);
+  const [searchDisplayLimit, setSearchDisplayLimit] = useState<number>(73); // Default to 73
+
+  useEffect(() => {
+    if (windowWidth !== undefined) {
+      setSearchDisplayLimit(windowWidth < 1022 ? 49 : 73);
+    }
+  }, [windowWidth]); // Run effect when windowWidth changes
 
   useEffect(() => {
     const handleScroll = () => {
@@ -200,21 +209,27 @@ export default function EmojiCombos() {
             }}
           />
         </div>
-        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto pt-2 rounded-md mx-5 max-h-[9em] mt-3 bg-purple-50 scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
-          {filenames?.map((filename) => (
-            <li key={filename.id + "emoji-search-preview"}>
-              <button
-                title={`${filename.keys.split("~")[0]} ${
-                  filename.keys.split("~")[1]
-                }`}
-                tabIndex={-1}
-                onClick={() => setSearchEmoji(filename.keys.split("~")[0])}
-                className="text-2xl w-10 h-10 border-2 rounded-md hover:scale-110 bg-white border-purple-200 hover:border-purple-500"
-              >
-                {filename.keys.split("~")[0]}
-              </button>
-            </li>
-          ))}
+        <ul
+          onMouseEnter={() => setSearchDisplayLimit(1000)}
+          onTouchStart={() => setSearchDisplayLimit(1000)}
+          className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto pt-2 rounded-md mx-5 max-h-[9em] mt-3 bg-purple-50 scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin"
+        >
+          {filenames?.map((filename, index) => {
+            return index < searchDisplayLimit ? (
+              <li key={filename.id + "emoji-search-preview"}>
+                <button
+                  title={`${filename.keys.split("~")[0]} ${
+                    filename.keys.split("~")[1]
+                  }`}
+                  tabIndex={-1}
+                  onClick={() => setSearchEmoji(filename.keys.split("~")[0])}
+                  className="text-2xl w-10 h-10 border-2 rounded-md hover:scale-110 bg-white border-purple-200 hover:border-purple-500"
+                >
+                  {filename.keys.split("~")[0]}
+                </button>
+              </li>
+            ) : null;
+          })}
         </ul>
         <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-9 mt-10 md:w-full max-w-[1150px] px-5">
           {filteredFilenames.map((filename, index) => {
