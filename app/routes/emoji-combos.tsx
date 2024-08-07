@@ -51,10 +51,12 @@ function Buttons({
     return () => clearTimeout(timeout);
   }, [isCopied]);
 
+  const emoji = filename.keys.split("~")[0];
+
   return (
     <ul className="grid grid-cols-4 gap-x-10 w-full gap-y-6">
       <li
-        title={`Like ${filename.keys.split("~")[0]} emoji`}
+        title={`Like ${emoji} emoji`}
         className="flex justify-center items-center col-span-2"
       >
         <button className="flex gap-2 ml-auto col-span-2 justify-center border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
@@ -69,49 +71,47 @@ function Buttons({
         </button>
       </li>
       <li
-        title={`${filename.keys.split("~")[0]} Emoji meaning`}
-        className="col-span-2  gap-4 mr-auto justify-center flex  items-center"
+        title={`${emoji} Emoji meaning`}
+        className="col-span-2 gap-4 mr-auto justify-center flex items-center"
       >
         <Link
           to={`/emoji-combos/${
-            filename?.id +
+            filename.id +
             "_✨" +
-            filename.keys.split("~")[0] +
+            emoji +
             "✨_" +
             filename.keys.split("~")[1].split(" ").join("-") +
             "-emoji"
           }`}
           onClick={() => setTimeout(() => setSearchEmoji(""), 1000)}
-          className="flex justify-center  sm:justify-between border-2 px-3 gap-1 py-2 hover:scale-105 rounded-md border-rose-300 text-rose-500 cursor-pointer hover:border-rose-500 hover:text-rose-600"
+          className="flex justify-center sm:justify-between border-2 px-3 gap-1 py-2 hover:scale-105 rounded-md border-rose-300 text-rose-500 cursor-pointer hover:border-rose-500 hover:text-rose-600"
         >
-          {" "}
           <span>View</span>{" "}
           <span className="flex">
             <Icon
               icon="viewPage"
               title="New Tab Icon"
-              customStyle="fill-rose-500 w-5 "
+              customStyle="fill-rose-500 w-5"
             />
           </span>
         </Link>
       </li>
       <li
         className="flex col-span-4 justify-center items-center"
-        title={`Copy ${filename.keys.split("~")[0]} Emoji`}
+        title={`Copy ${emoji} Emoji`}
       >
         <button
           onClick={() => {
-            setIsCopied(filename?.keys?.split("~")[0]);
-            navigator.clipboard.writeText(filename?.keys?.split("~")[0]);
+            setIsCopied(emoji);
+            navigator.clipboard.writeText(emoji);
           }}
           className="flex justify-center items-center border-2 px-3 py-2 w-40 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
         >
-          {isCopied === filename?.keys?.split("~")[0] ? (
+          {isCopied === emoji ? (
             <span className="text-sm py-[0.14em]">Copied!</span>
           ) : (
             <div className="flex gap-1">
-              <span>Copy Emoji</span>{" "}
-              <span className="flex">{filename.keys.split("~")[0]}</span>
+              <span>Copy Emoji</span> <span className="flex">{emoji}</span>
             </div>
           )}
         </button>
@@ -122,8 +122,22 @@ function Buttons({
 
 export default function EmojiCombos() {
   const matches = useMatches();
+  const [displayLimit, setDisplayLimit] = useState<number>(18);
 
-  // Use type guard to check if the data is of the expected type
+  useEffect(() => {
+    const handleScroll = () => {
+      if (displayLimit < 1000) {
+        setDisplayLimit(1000);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [displayLimit]);
+
   const filenames = useMemo(
     () => (isRouteData(matches[0]?.data) ? matches[0].data.filenames : []),
     [matches]
@@ -131,8 +145,17 @@ export default function EmojiCombos() {
 
   const { searchEmoji, setSearchEmoji } = useSearch();
 
-  const pathname: string =
+  const pathname =
     useLocation().pathname?.split("/")?.at(-1)?.split("_")[0] || "";
+
+  const filteredFilenames = useMemo(() => {
+    if (!filenames) return [];
+    return filenames.filter(
+      (filename) =>
+        filename.id !== pathname &&
+        (searchEmoji === "" || filename.keys.includes(searchEmoji.trim()))
+    );
+  }, [filenames, searchEmoji, pathname]);
 
   return (
     <>
@@ -140,11 +163,11 @@ export default function EmojiCombos() {
         id="#emoji-combo-header"
         className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito mx-5"
       >
-        <h1 className="capitalize font-lora text-2xl leading-relaxed text-center  md:text-3xl lg:text-4xl mt-10 text-purple-700 flex justify-center items-center  gap-3">
+        <h1 className="capitalize font-lora text-2xl leading-relaxed text-center md:text-3xl lg:text-4xl mt-10 text-purple-700 flex justify-center items-center gap-3">
           {pathname === "emoji-combos"
             ? "🥘 All Emojis With Combos 😋"
             : filenames
-                ?.filter((filename) => filename.id === pathname)[0]
+                ?.find((filename) => filename.id === pathname)
                 ?.keys.split("~")[1] + " Emoji"}{" "}
           {pathname !== "emoji-combos" && (
             <Link
@@ -157,9 +180,9 @@ export default function EmojiCombos() {
           )}
         </h1>
       </header>
-      <main className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito ">
+      <main className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito">
         <Outlet />
-        <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center  mx-5">
+        <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center mx-5">
           <Link to="/copy-and-paste/emoji-copy-and-paste">
             Click here to view a list of all copy and paste emojis!
           </Link>
@@ -168,7 +191,7 @@ export default function EmojiCombos() {
           <SearchBar
             uniqueId="combos"
             setSearchEmoji={setSearchEmoji}
-            customStyle="mt-11 w-full max-w-[1200px] "
+            customStyle="mt-11 w-full max-w-[1200px]"
             placeholder="search emojis"
             customLabelStyle="pl-3"
             searchEmoji={searchEmoji}
@@ -177,18 +200,16 @@ export default function EmojiCombos() {
             }}
           />
         </div>
-        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto pt-2 rounded-md  mx-5 max-h-[9em] mt-3 bg-purple-50 scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
+        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto pt-2 rounded-md mx-5 max-h-[9em] mt-3 bg-purple-50 scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
           {filenames?.map((filename) => (
-            <li key={filename?.id + "emoji-search-preview"}>
+            <li key={filename.id + "emoji-search-preview"}>
               <button
-                title={
-                  filename.keys.split("~")[0] +
-                  " " +
+                title={`${filename.keys.split("~")[0]} ${
                   filename.keys.split("~")[1]
-                }
+                }`}
                 tabIndex={-1}
                 onClick={() => setSearchEmoji(filename.keys.split("~")[0])}
-                className="text-2xl w-10 h-10 border-2 rounded-md hover:scale-110 bg-white border-purple-200 hover:border-purple-500 "
+                className="text-2xl w-10 h-10 border-2 rounded-md hover:scale-110 bg-white border-purple-200 hover:border-purple-500"
               >
                 {filename.keys.split("~")[0]}
               </button>
@@ -196,12 +217,10 @@ export default function EmojiCombos() {
           ))}
         </ul>
         <ul className="grid md:grid-cols-2 xl:grid-cols-3 gap-9 mt-10 md:w-full max-w-[1150px] px-5">
-          {filenames?.map((filename) =>
-            filename.id !== pathname &&
-            (searchEmoji === "" ||
-              filename?.keys?.includes(searchEmoji.trim())) ? (
+          {filteredFilenames.map((filename, index) => {
+            return index < displayLimit ? (
               <li
-                key={filename?.id}
+                key={filename.id}
                 className="flex flex-col gap-5 justify-center items-center border-2 border-purple-200 p-5 rounded-lg w-full min-h-[15em] text-center"
               >
                 <h2 className="uppercase font-lora">
@@ -209,34 +228,29 @@ export default function EmojiCombos() {
                 </h2>
                 <img
                   loading="lazy"
-                  title={
-                    filename.keys.split("~")[0] +
-                    " " +
+                  title={`${filename.keys.split("~")[0]} ${
                     filename.keys.split("~")[1]
-                  }
+                  }`}
                   width={50}
                   height={50}
-                  alt={`Emoji of ${filename?.keys?.split("~")[0]} ${
-                    filename?.id
-                  }`}
+                  alt={`Emoji of ${filename.keys.split("~")[0]} ${filename.id}`}
                   src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
-                    filename?.id?.length < 9
-                      ? filename?.id.slice(1)
-                      : filename?.id.split("-").join("_")
+                    filename.id.length < 9
+                      ? filename.id.slice(1)
+                      : filename.id.split("-").join("_")
                   }/emoji.svg`}
                 />
                 <p className="capitalize font-lora mb-2">
-                  {" "}
                   {filename.keys.split("~")[1]}
                 </p>
                 <Buttons filename={filename} setSearchEmoji={setSearchEmoji} />
               </li>
-            ) : null
-          )}
+            ) : null;
+          })}
         </ul>
         <Link
           to={"#emoji-combo-header"}
-          className="font-nunito text-2xl translate-y-24 flex gap-4 justify-center items-center  text-sky-600 hover:text-sky-500"
+          className="font-nunito text-2xl translate-y-24 flex gap-4 justify-center items-center text-sky-600 hover:text-sky-500"
         >
           <span className="scale-x-[-1]">☝️☝🏻☝🏼</span>Scroll To Top
           <span>☝🏽☝🏾☝🏿</span>

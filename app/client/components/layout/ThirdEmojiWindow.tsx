@@ -28,18 +28,15 @@ export default function ThirdEmojiWindow({
     const baseUnicodeId = comboCodes.baseUnicode.split("-")[0];
     const unicodeId = comboCodes.unicode.split("_")[1].split("-")[0];
 
-    const newEmojiId = baseUnicodeId === firstEmoji.split("~")[0]
-      ? unicodeId
-      : baseUnicodeId;
+    const newEmojiId =
+      baseUnicodeId === firstEmoji.split("~")[0] ? unicodeId : baseUnicodeId;
 
     const selectedFilename = filenames.find(
       (filename) => filename.id === newEmojiId
     );
 
     if (selectedFilename) {
-      setSecondEmoji(
-        `${newEmojiId}~${selectedFilename.keys.split("~")[0]}`
-      );
+      setSecondEmoji(`${newEmojiId}~${selectedFilename.keys.split("~")[0]}`);
     }
   };
 
@@ -47,7 +44,7 @@ export default function ThirdEmojiWindow({
     <div className="flex relative items-center flex-col col-span-2 lg:col-span-1 min-w-20 h-[100vh] md:h-[66vh] lg:h-[70.5vh] border-l border-b sm:border-hidden">
       {emojiData?.combos && (
         <div
-          className={`hidden lg:flex justify-center items-center max-w-[30em] -translate-x-1 w-full rounded-lg gap-2 py-1 my-2 text-md text-purple-800 font-nunito ${
+          className={`hidden lg:flex justify-center items-center border-dashed max-w-[30em] -translate-x-1 border-2 w-full border-rose-300 rounded-lg gap-2 py-1 my-2 text-md text-purple-800 font-nunito ${
             firstEmoji && secondEmoji ? "!hidden" : ""
           }`}
         >
@@ -57,19 +54,30 @@ export default function ThirdEmojiWindow({
             🙃
           </span>
           <span
-            className={`${emojiData.combos.length > 200 && emojiData.combos.length < 500 ? "flex" : "hidden"}`}
+            className={`${
+              emojiData.combos.length > 200 && emojiData.combos.length < 500
+                ? "flex"
+                : "hidden"
+            }`}
           >
             🙀
           </span>
           <span
-            className={`${emojiData.combos.length > 500 && emojiData.combos.length < 600 ? "flex" : "hidden"}`}
+            className={`${
+              emojiData.combos.length > 500 && emojiData.combos.length < 600
+                ? "flex"
+                : "hidden"
+            }`}
           >
             😵
           </span>
-          <span className={`${emojiData.combos.length > 600 ? "flex" : "hidden"}`}>
+          <span
+            className={`${emojiData.combos.length > 600 ? "flex" : "hidden"}`}
+          >
             💀
           </span>
-          Total Combos <span className="scale-75">🟰</span> {emojiData.combos.length}
+          Total Combos <span className="scale-75">🟰</span>{" "}
+          {emojiData.combos.length}
         </div>
       )}
       <ul
