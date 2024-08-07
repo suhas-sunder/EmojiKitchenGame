@@ -31,7 +31,7 @@ function SearchBar({
         htmlFor={"search" + uniqueId}
         className={`flex absolute justify-end sm:justify-between w-full cursor-text text-purple-400 ${customLabelStyle}`}
       >
-        <span className="hidden sm:flex py-3 pl-4">🔍</span>
+        <span className="hidden sm:flex py-3 -translate-x-[0.38em] translate-y-[0.05em] scale-75">🔍</span>
         <div className="flex ">
           {searchEmoji && (
             <button
@@ -45,7 +45,7 @@ function SearchBar({
           <button
             title="🎲 Add Random Emoji To Search"
             onClick={handleDiceRoll}
-            className="flex ml-2 py-3 sm:p-3 hover:scale-[1.15]"
+            className="flex ml-2 py-3 p-3 hover:scale-[1.15]"
           >
             🎲
           </button>

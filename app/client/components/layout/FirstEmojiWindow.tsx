@@ -57,7 +57,9 @@ const FirstEmojiWindow: React.FC<PropType> = ({
   const filteredFilenames = useMemo(() => {
     return filenames?.filter(
       (filename) =>
-        filename?.keys?.includes(searchEmoji.trim()) || searchEmoji === ""
+        filename?.id?.includes(searchEmoji) ||
+        filename?.keys?.includes(searchEmoji.trim()) ||
+        searchEmoji === ""
     );
   }, [filenames, searchEmoji]);
 

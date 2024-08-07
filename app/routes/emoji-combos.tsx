@@ -189,7 +189,11 @@ export default function EmojiCombos() {
           )}
         </h1>
       </header>
-      <main className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito">
+      <main
+        onMouseEnter={() => setDisplayLimit(1000)}
+        onTouchStart={() => setDisplayLimit(1000)}
+        className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito"
+      >
         <Outlet />
         <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center mx-5">
           <Link to="/copy-and-paste/emoji-copy-and-paste">
