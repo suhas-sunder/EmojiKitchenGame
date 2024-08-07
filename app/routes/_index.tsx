@@ -11,6 +11,7 @@ import HandleDiceRoll from "../client/components/utils/generators/HandleDiceRoll
 import HandleCacheEmojiData from "../client/components/utils/requests/HandleCacheEmojiData";
 import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
 import useResponsive from "../client/components/hooks/useResponsive";
+import useLoadAnimation from "../client/components/hooks/useLoadAnimation";
 
 export type Filename = {
   id: string;
@@ -77,10 +78,11 @@ function EmojiDisplay({
 }) {
   const { isCopied, setIsCopied } = useManageCopiedMsg();
   const { isHidden, setIsHidden } = useResponsive();
+  const { fadeAnim } = useLoadAnimation();
 
   return (
     <ul
-      className={`flex touch-none fixed border-t-2 border-t-purple-200 justify-center w-full gap-2 pt-1 pb-2 sm:gap-6 bg-white ${
+      className={`flex ${fadeAnim} touch-none fixed border-t-2 border-t-purple-200 justify-center w-full gap-2 pt-1 pb-2 sm:gap-6 bg-white ${
         isHidden
           ? "h-0 translate-y-4 lg:translate-y-2 sm:translate-y-[1.2em] bottom-6 md:bottom-9 lg:bottom-6"
           : "h-auto bottom-6"

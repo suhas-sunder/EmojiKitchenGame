@@ -4,6 +4,7 @@ import { EmojiDataType } from "../../../routes/_index";
 import SearchBar from "../ui/SearchBar";
 import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
 import useWindowWidth from "../hooks/useWindowWidth";
+import useLoadAnimation from "../hooks/useLoadAnimation";
 
 interface PropType {
   isLoading: boolean;
@@ -23,8 +24,9 @@ const SecondEmojiWindow: React.FC<PropType> = ({
 }) => {
   const { searchEmoji, setSearchEmoji } = useSearch();
   const windowWidth = useWindowWidth();
+  const { fadeAnim } = useLoadAnimation();
   const [displayLimit, setDisplayLimit] = useState<number>(
-    windowWidth < 1022 ? 88 : 145
+    windowWidth && windowWidth < 1022 ? 88 : 145
   );
   const handleDiceRoll = useCallback(() => {
     if (!filenames) return;
@@ -72,7 +74,9 @@ const SecondEmojiWindow: React.FC<PropType> = ({
         searchEmoji={searchEmoji}
         handleDiceRoll={handleDiceRoll}
       />
-      <ul className="grid w-full grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 pb-[4em] lg:pb-[13em]">
+      <ul
+        className={`${fadeAnim} grid w-full grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 pb-[4em] lg:pb-[13em] `}
+      >
         {emojiCombos.map((secondEmojiFilename) => {
           const keywords = filenames?.find(
             (filename) => filename.id === secondEmojiFilename

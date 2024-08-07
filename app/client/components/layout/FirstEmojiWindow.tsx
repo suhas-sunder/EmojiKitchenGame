@@ -5,6 +5,7 @@ import SearchBar from "../ui/SearchBar";
 import HandleDiceRoll from "../utils/generators/HandleDiceRoll";
 import HandleCacheEmojiData from "../utils/requests/HandleCacheEmojiData";
 import useWindowWidth from "../hooks/useWindowWidth";
+import useLoadAnimation from "../hooks/useLoadAnimation";
 
 interface PropType {
   isLoading: boolean;
@@ -27,8 +28,9 @@ const FirstEmojiWindow: React.FC<PropType> = ({
 }) => {
   const { searchEmoji, setSearchEmoji } = useSearch();
   const windowWidth = useWindowWidth();
+  const { fadeAnim } = useLoadAnimation();
   const [displayLimit, setDisplayLimit] = useState<number>(
-    windowWidth < 1022 ? 88 : 145
+    windowWidth && windowWidth < 1022 ? 88 : 145
   );
 
   const loadEmojiData = useCallback(
@@ -55,6 +57,7 @@ const FirstEmojiWindow: React.FC<PropType> = ({
     );
   }, [filenames, searchEmoji]);
 
+
   return (
     <div
       onMouseEnter={() => setDisplayLimit(1000)}
@@ -73,7 +76,7 @@ const FirstEmojiWindow: React.FC<PropType> = ({
         }}
       />
       <ul
-        className={`grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
+        className={`grid ${fadeAnim} grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
           isLoading ? "opacity-30" : ""
         } pb-[4em] lg:pb-[13em]`}
       >
