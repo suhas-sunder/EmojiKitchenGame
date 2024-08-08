@@ -27,7 +27,7 @@ const SecondEmojiWindow: React.FC<PropType> = ({
   const windowWidth = useWindowWidth();
   const { fadeAnim } = useLoadAnimation();
   const [displayLimit, setDisplayLimit] = useState<number>(145);
-  useBodyEventListeners({ setDisplayLimit })
+  useBodyEventListeners({ setDisplayLimit });
 
   useEffect(() => {
     if (windowWidth !== undefined) {
@@ -147,9 +147,7 @@ const SecondEmojiWindow: React.FC<PropType> = ({
         {!firstEmoji &&
           filteredFilenames.map((filename, index) => {
             return index < displayLimit ? (
-              <li
-                key={filename.id}
-              >
+              <li key={filename.id}>
                 <button
                   disabled
                   className="flex justify-center items-center w-full hover:scale-110 p-1 border-2 rounded-lg border-transparent opacity-30"

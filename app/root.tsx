@@ -64,6 +64,39 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
     } else {
       const { filenames }: { filenames: Filename[] } = await serverLoader();
       await localforage.setItem(cacheKey, filenames);
+
+      //Cache each emoji image from the server
+      const fetchAndStoreImage = async (url: string) => {
+        // Check if the URL is valid and if the image blob is already in the state
+        if (!url) {
+          return;
+        }
+
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            console.error(
+              `Failed to fetch image from URL: ${url}, Status: ${response.status}`
+            );
+            return;
+          }
+          const blob = await response.blob();
+          if (blob) {
+            await localforage.setItem(url, blob);
+          } else {
+            console.error(`No blob received for URL: ${url}`);
+          }
+        } catch (error) {
+          console.error(`Error fetching image from URL: ${url}`, error);
+        }
+      };
+
+      filenames.forEach((filename) => {
+        fetchAndStoreImage(
+          `https://www.honeycombartist.com/emojis/base/${filename.id.slice(1)}.png`
+        );
+      });
+
       return { filenames };
     }
   } catch (error) {
@@ -105,15 +138,18 @@ export default function App() {
       const cleanedText = copyText.replace(/\s*\n\s*/g, "");
 
       // Copy the cleaned text to the clipboard
-      navigator.clipboard.writeText(cleanedText)
+      navigator.clipboard
+        .writeText(cleanedText)
         .then(() => {
           // Update the display text
-          setDisplayCopyText(prevDisplayCopyText => `${prevDisplayCopyText} ${cleanedText}`);
+          setDisplayCopyText(
+            (prevDisplayCopyText) => `${prevDisplayCopyText} ${cleanedText}`
+          );
           // Clear the copyText state
           setCopyText("");
         })
-        .catch(err => {
-          console.error('Failed to copy text: ', err);
+        .catch((err) => {
+          console.error("Failed to copy text: ", err);
         });
     }
   }, [copyText]);
