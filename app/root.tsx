@@ -135,6 +135,7 @@ export default function App() {
   const [copyText, setCopyText] = useState("");
   const [displayCopyText, setDisplayCopyText] = useState("");
   const [textareaIsHidden, setTextareaIsHidden] = useState(false);
+  const [stopGADelayOnStart, setStopGADelayOnStart] = useState(false);
   const pathname = useLocation().pathname;
 
   useEffect(() => {
@@ -149,7 +150,9 @@ export default function App() {
       });
     };
 
-    const delay = 4000;
+    const delay = stopGADelayOnStart ? 0 : 4000;
+
+    setStopGADelayOnStart(true);
 
     const timer = setTimeout(loadGoogleAnalyticsAdsense, delay);
 
