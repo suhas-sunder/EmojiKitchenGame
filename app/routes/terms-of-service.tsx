@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 
 export default function TermsOfService() {
   return (
-    <div className="my-20 flex flex-col items-center justify-center gap-8 font-nunito text-defaultblue">
+    <div className="my-20 flex flex-col  mx-10 items-center justify-center gap-8 font-nunito text-defaultblue">
       <header className="flex max-w-[1200px] flex-col gap-5">
         <h1 className="mb-5 flex py-2 text-4xl">TERMS OF SERVICE</h1>
         <h3 className="flex py-2 text-2xl">Last updated August 02, 2024</h3>

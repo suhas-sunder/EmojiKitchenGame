@@ -31,7 +31,7 @@ const FirstEmojiWindow: React.FC<PropType> = ({
   const windowWidth = useWindowWidth();
   const { fadeAnim } = useLoadAnimation();
   const [displayLimit, setDisplayLimit] = useState<number>(145);
-  useBodyEventListeners({ setDisplayLimit })
+  useBodyEventListeners({ setDisplayLimit });
 
   useEffect(() => {
     if (windowWidth !== undefined) {
@@ -65,12 +65,8 @@ const FirstEmojiWindow: React.FC<PropType> = ({
     );
   }, [filenames, searchEmoji]);
 
-
   return (
-    <div
-     
-      className="flex flex-col h-[45vh] border-r-2 border-b-2 rounded-lg border-purple-100 lg:border-none md:h-[50vh] lg:h-[70.5vh]"
-    >
+    <div className="flex flex-col h-[45vh] border-r-2 border-b-2 rounded-lg border-purple-100 lg:border-none md:h-[50vh] lg:h-[70.5vh]">
       <SearchBar
         uniqueId="first"
         setSearchEmoji={setSearchEmoji}
@@ -84,7 +80,7 @@ const FirstEmojiWindow: React.FC<PropType> = ({
         }}
       />
       <ul
-        className={`grid ${fadeAnim} grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
+        className={`grid ${fadeAnim} grid-cols-4 pt-1 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 ${
           isLoading ? "opacity-30" : ""
         } pb-[4em] lg:pb-[13em]`}
       >

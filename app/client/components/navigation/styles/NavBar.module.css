@@ -1,5 +1,4 @@
-/* This global function checks if a nav link has the .active class */
-/* .active is assigned by React Router automatically when clicked */
+/* Combine similar styles and ensure consistency */
 .nav :global(.active),
 .nav li:hover,
 .logo:hover,
@@ -56,11 +55,11 @@
 
 @keyframes fadeIn {
   0% {
-    opacity: 1%;
+    opacity: 0;
   }
 
   100% {
-    opacity: 100%;
+    opacity: 1;
   }
 }
 
@@ -72,7 +71,7 @@
     }
 
     100% {
-      opacity: 100%;
+      opacity: 1;
       transform: translateY(0);
     }
   }
@@ -92,7 +91,7 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 3.15em;
+    top: 4.1em;
     left: 0;
     right: 0;
     z-index: 20;
@@ -101,16 +100,14 @@
   }
 
   /* Toggle mobile nav */
-  nav input:checked + .burger-label {
-    .burger-close {
-      display: flex;
-      border: transparent;
-    }
+  nav input:checked + .burger-label .burger-close {
+    display: flex;
+    border: transparent;
+  }
 
-    .burger-open {
-      display: none;
-      border: transparent;
-    }
+  nav input:checked + .burger-label .burger-open {
+    display: none;
+    border: transparent;
   }
 
   .burger-open,
