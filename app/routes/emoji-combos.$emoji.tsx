@@ -14,6 +14,7 @@ import Icon from "../client/components/utils/other/Icon";
 import ComboImage from "../client/components/layout/ComboImage";
 import { EmojiDataType } from "./_index";
 import { useEffect, useState } from "react";
+import pako from "pako";
 
 export const meta: MetaFunction = ({ data }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -42,32 +43,43 @@ export const loader = async ({ params }: ClientLoaderFunctionArgs) => {
   if (!params.emoji) return redirect("/404");
 
   const unicode = params?.emoji?.split("_")[0];
-
   let emojiData = null;
 
   try {
-    const response = await cloudflareR2API
-      .get(`/emojis/${unicode.length < 9 ? unicode.slice(1) : unicode}.json`, {
+    // Fetch the gzipped JSON file from Cloudflare R2
+    const response = await cloudflareR2API.get(
+      `/emojis/${unicode.length < 9 ? unicode.slice(1) : unicode}.json.gz`,
+      {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data);
+        responseType: "arraybuffer",
+      }
+    );
 
-    if (response) {
-      emojiData = response;
+    // Check if the response data is gzipped
+    const isGzip = response.data[0] === 0x1f && response.data[1] === 0x8b;
+
+    let decompressedData = null;
+    if (isGzip) {
+      // Decompress the gzipped data
+      decompressedData = pako.ungzip(new Uint8Array(response.data), {
+        to: "string",
+      });
+    } else {
+      // If not gzipped, use the data directly
+      decompressedData = new TextDecoder().decode(response.data);
     }
+
+    // Parse the decompressed data as JSON
+    emojiData = JSON.parse(decompressedData);
   } catch (error) {
-    // If there is an error fetching the emoji filenames, log the error
-    console.error("Error fetching emoji filenames:", error);
+    console.error("Error fetching or decompressing emoji data:", error);
+    return redirect("/404");
   }
 
   if (!emojiData) return redirect("/404");
 
   return json({ emojiData });
 };
-
 /**
  * This function is responsible for fetching filenames (static json data) from the server and caching them in the browser.
  * It first checks if the filenames are already cached in local storage. If they are, it returns the cached filenames.
