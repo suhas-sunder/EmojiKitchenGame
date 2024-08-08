@@ -22,8 +22,12 @@ export const meta: MetaFunction = ({ data }) => {
 
   if (!emojiData)
     return [
-      { title: "Emoji" },
-      { name: "description", content: "Welcome to Remix!" },
+      { title: "🎉 Copy, Paste, & Share Fun Emojis & Symbols! ✨" },
+      {
+        name: "description",
+        content:
+          "😎🚀 Explore our collection of vibrant emojis and unique symbols ready for you to copy, paste, and share! Whether you're adding flair to your messages or expressing emotions with ease, you'll find the perfect emoji or symbol here. 🌟✨ Dive in and let your creativity shine!",
+      },
     ];
 
   return [

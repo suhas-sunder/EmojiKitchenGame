@@ -5,8 +5,12 @@ import { Filename } from "./_index";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "📋 Emoji Kitchen Game Sitemap!" },
-    { name: "description", content: "📋 Emoji Kitchen Game Sitemap!" },
+    { title: "🗺️ Emoji Kitchen Game Sitemap!" },
+    {
+      name: "description",
+      content:
+        "🗺️ Meta Description: Explore our comprehensive sitemap to navigate through our website effortlessly. Find links to all our main sections, including content pages, features, and resources, to quickly access what you're looking for. 🔍",
+    },
   ];
 };
 

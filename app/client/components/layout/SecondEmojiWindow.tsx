@@ -86,7 +86,7 @@ const SecondEmojiWindow: React.FC<PropType> = ({
         handleDiceRoll={handleDiceRoll}
       />
       <ul
-        className={`${fadeAnim} grid w-full grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 pb-[4em] lg:pb-[13em] `}
+        className={`${fadeAnim} grid w-full grid-cols-4 pt-1 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-9 overflow-y-auto sm:py-6 px-1 scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 pb-[4em] lg:pb-[13em] `}
       >
         {emojiCombos.map((secondEmojiFilename) => {
           const keywords =
