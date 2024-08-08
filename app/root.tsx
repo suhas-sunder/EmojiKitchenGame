@@ -149,8 +149,6 @@ export default function App() {
       });
     };
 
-    console.log(pathname);
-
     const delay = 4000;
 
     const timer = setTimeout(loadGoogleAnalyticsAdsense, delay);
