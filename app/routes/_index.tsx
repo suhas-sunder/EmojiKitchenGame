@@ -127,10 +127,12 @@ function EmojiDisplay({
 
     // Construct URLs
     const firstImageUrl = firstEmojiUnicode
-      ? `https://www.honeycombartist.com/emojis/base/${firstEmojiUnicode}.png`
+      ? `https://www.honeycombartist.com/emojis/base/${firstEmojiUnicode.split("-")
+        .join("_")}.png`
       : "";
     const secondImageUrl = secondEmojiUnicode
-      ? `https://www.honeycombartist.com/emojis/base/${secondEmojiUnicode}.png`
+      ? `https://www.honeycombartist.com/emojis/base/${secondEmojiUnicode.split("-")
+        .join("_")}.png`
       : "";
 
     // Helper function to fetch and store image blob
@@ -190,7 +192,9 @@ function EmojiDisplay({
     const normalizedUnicode = normalizeUnicode(unicode);
 
     // Construct the image URL
-    const imageUrl = `https://www.honeycombartist.com/emojis/base/${normalizedUnicode}.png`;
+    const imageUrl = `https://www.honeycombartist.com/emojis/base/${normalizedUnicode
+      .split("-")
+      .join("_")}.png`;
 
     // Check if the blob exists in state
     const blob = imageBlobs.get(imageUrl);
@@ -260,7 +264,9 @@ function EmojiDisplay({
             }}
             aria-label="Copy First Emoji as PNG"
             className={`flex cursor-pointer ${
-              !imagesPrefetched || !firstEmoji ? "opacity-30" : "hover:scale-110"
+              !imagesPrefetched || !firstEmoji
+                ? "opacity-30"
+                : "hover:scale-110"
             }`}
           >
             <Icon
@@ -378,7 +384,9 @@ function EmojiDisplay({
             }}
             aria-label="Copy Second Emoji as PNG"
             className={`flex ${
-              !imagesPrefetched || !secondEmoji ? "opacity-30" : "hover:scale-110"
+              !imagesPrefetched || !secondEmoji
+                ? "opacity-30"
+                : "hover:scale-110"
             }`}
           >
             <Icon
