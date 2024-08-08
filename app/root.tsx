@@ -1,6 +1,7 @@
 import "./tailwind.css";
 import NavBar from "./client/components/navigation/NavBar";
 import Footer from "./client/components/navigation/Footer";
+import ReactGA from "react-ga4";
 
 import {
   ClientLoaderFunctionArgs,
@@ -10,6 +11,7 @@ import {
   Meta,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react";
 import localforage from "localforage";
 import cloudflareR2API from "./client/components/api/cloudflareR2API";
@@ -93,7 +95,9 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 
       filenames.forEach((filename) => {
         fetchAndStoreImage(
-          `https://www.honeycombartist.com/emojis/base/${filename.id.slice(1)}.png`
+          `https://www.honeycombartist.com/emojis/base/${filename.id.slice(
+            1
+          )}.png`
         );
       });
 
@@ -131,6 +135,30 @@ export default function App() {
   const [copyText, setCopyText] = useState("");
   const [displayCopyText, setDisplayCopyText] = useState("");
   const [textareaIsHidden, setTextareaIsHidden] = useState(false);
+  const pathname = useLocation().pathname;
+
+  useEffect(() => {
+    const loadGoogleAnalyticsAdsense = async () => {
+      await ReactGA.initialize("G-MZ3BW959JC"); // Initialize Google Analytics
+
+      // Send page view with a custom path
+      ReactGA.send({
+        hitType: "pageview",
+        page: pathname,
+        title: "Custom Title",
+      });
+    };
+
+    console.log(pathname);
+
+    const delay = 4000;
+
+    const timer = setTimeout(loadGoogleAnalyticsAdsense, delay);
+
+    return () => clearTimeout(timer);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   useEffect(() => {
     if (copyText) {
