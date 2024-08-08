@@ -28,6 +28,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-paginate": "^8.2.0",
+    "react-toastify": "^10.0.5",
     "react-window": "^1.8.10",
     "tailwind-scrollbar": "^3.1.0",
     "uuid": "^10.0.0"

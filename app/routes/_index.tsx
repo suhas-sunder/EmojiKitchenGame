@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import { useMatches } from "@remix-run/react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import FirstEmojiWindow from "../client/components/layout/FirstEmojiWindow";
 import SecondEmojiWindow from "../client/components/layout/SecondEmojiWindow";
 import ThirdEmojiWindow from "../client/components/layout/ThirdEmojiWindow";
@@ -12,6 +12,7 @@ import HandleCacheEmojiData from "../client/components/utils/requests/HandleCach
 import useManageCopiedMsg from "../client/components/hooks/useManageCopiedMsg";
 import useResponsive from "../client/components/hooks/useResponsive";
 import useLoadAnimation from "../client/components/hooks/useLoadAnimation";
+import localforage from "localforage";
 
 export type Filename = {
   id: string;
@@ -81,6 +82,8 @@ function EmojiDisplay({
   const { fadeAnim } = useLoadAnimation();
 
   const [imageBlobs, setImageBlobs] = useState<Map<string, Blob>>(new Map());
+  const [imagesPrefetched, setImagesPrefetched] = useState(false);
+  const [isImageReady, setIsImageReady] = useState(false);
 
   // Function to normalize and extract unicode from emoji code
   const normalizeUnicode = (emoji: string) => {
@@ -91,8 +94,33 @@ function EmojiDisplay({
     return baseUnicode;
   };
 
+  // Function to get image from IndexedDB/localforage
+  const getImageFromLocalforage = async (
+    url: string
+  ): Promise<Blob | undefined> => {
+    try {
+      const blob = await localforage.getItem<Blob>(url);
+      return blob || undefined;
+    } catch (error) {
+      console.error("Error retrieving image from localforage:", error);
+      return undefined;
+    }
+  };
+
+  // Function to store image in IndexedDB/localforage
+  const storeImageInLocalforage = async (url: string, blob: Blob) => {
+    try {
+      await localforage.setItem(url, blob);
+    } catch (error) {
+      console.error("Error storing image in localforage:", error);
+    }
+  };
+
   // Function to prefetch images and store their blobs in state
-  const prefetchImages = async () => {
+  const prefetchImages = useCallback(async () => {
+    setImagesPrefetched(false);
+    setIsImageReady(false);
+
     // Normalize emojis
     const firstEmojiUnicode = normalizeUnicode(firstEmoji);
     const secondEmojiUnicode = normalizeUnicode(secondEmoji);
@@ -107,37 +135,57 @@ function EmojiDisplay({
 
     // Helper function to fetch and store image blob
     const fetchAndStoreImage = async (url: string) => {
-      // Check if the URL is valid and if the image blob is already in the state
-      if (!url || imageBlobs.has(url)) {
-        return;
+      // Check if the URL is valid and if the image blob is already in the state or storage
+      if (!url) return;
+
+      let blob = imageBlobs.get(url);
+
+      if (!blob) {
+        blob = await getImageFromLocalforage(url);
       }
 
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          console.error(
-            `Failed to fetch image from URL: ${url}, Status: ${response.status}`
-          );
-          return;
+      if (!blob) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            console.error(
+              `Failed to fetch image from URL: ${url}, Status: ${response.status}`
+            );
+            return;
+          }
+          blob = await response.blob();
+          if (blob) {
+            setImageBlobs((prev) => new Map(prev).set(url, blob as Blob));
+            await storeImageInLocalforage(url, blob);
+          }
+        } catch (error) {
+          console.error(`Error fetching image from URL: ${url}`, error);
         }
-        const blob = await response.blob();
-        if (blob) {
-          setImageBlobs((prev) => new Map(prev).set(url, blob));
-        } else {
-          console.error(`No blob received for URL: ${url}`);
-        }
-      } catch (error) {
-        console.error(`Error fetching image from URL: ${url}`, error);
+      } else {
+        setImageBlobs((prev) => new Map(prev).set(url, blob as Blob));
       }
     };
 
     // Fetch and store blobs
-    await fetchAndStoreImage(firstImageUrl);
-    await fetchAndStoreImage(secondImageUrl);
-  };
+    await Promise.all([
+      fetchAndStoreImage(firstImageUrl),
+      fetchAndStoreImage(secondImageUrl),
+    ]);
+
+    setImagesPrefetched(true);
+    setIsImageReady(true);
+  }, [firstEmoji, secondEmoji, imageBlobs]);
 
   // Function to handle copy click event
   const handleCopyClick = async (unicode: string) => {
+    if (!unicode) return;
+
+    // Wait until images are prefetched
+    if (!isImageReady) {
+      console.warn("Images are not ready to be copied yet. Please wait.");
+      return;
+    }
+
     // Normalize the unicode
     const normalizedUnicode = normalizeUnicode(unicode);
 
@@ -155,7 +203,6 @@ function EmojiDisplay({
           });
 
           await navigator.clipboard.write([clipboardItem]);
-          console.log("Image copied to clipboard successfully.");
         } else {
           console.error("Clipboard API or ClipboardItem is not supported");
         }
@@ -203,15 +250,18 @@ function EmojiDisplay({
         <div
           className={`${
             firstEmoji && "scale-110"
-          } flex w-full sm:gap-11 gap-7 justify-center items-center pt-2 pb-4`}
+          } flex w-full sm:gap-11 gap-7  justify-center items-center pt-2 pb-4`}
         >
           <button
+            disabled={!imagesPrefetched || !firstEmoji}
             onClick={() => {
               setIsCopied(firstEmoji?.split("~")[1]);
               handleCopyClick(firstEmoji.split("~")[0]);
             }}
             aria-label="Copy First Emoji as PNG"
-            className="flex hover:scale-110"
+            className={`flex cursor-pointer ${
+              !imagesPrefetched || !firstEmoji ? "opacity-30" : "hover:scale-110"
+            }`}
           >
             <Icon
               icon="copyPhotoIcon"
@@ -285,6 +335,8 @@ function EmojiDisplay({
             onClick={() => {
               setFirstEmoji("");
               setSecondEmoji("");
+              setIsImageReady(false);
+              setImagesPrefetched(false);
               setEmojiData(undefined);
             }}
           >
@@ -319,12 +371,15 @@ function EmojiDisplay({
           } flex w-full sm:gap-11 gap-7 justify-center items-center pt-2 pb-4`}
         >
           <button
+            disabled={!imagesPrefetched || !secondEmoji}
             onClick={() => {
               setIsCopied(secondEmoji?.split("~")[1]);
               handleCopyClick(secondEmoji.split("~")[1]);
             }}
             aria-label="Copy Second Emoji as PNG"
-            className="flex hover:scale-110"
+            className={`flex ${
+              !imagesPrefetched || !secondEmoji ? "opacity-30" : "hover:scale-110"
+            }`}
           >
             <Icon
               icon="copyPhotoIcon"
@@ -400,7 +455,11 @@ function EmojiDisplay({
           <button
             aria-label="Deselect Emoji"
             className="flex hover:scale-110"
-            onClick={() => setSecondEmoji("")}
+            onClick={() => {
+              setSecondEmoji("");
+              setIsImageReady(false);
+              setImagesPrefetched(false);
+            }}
           >
             <Icon
               icon="deselect"
