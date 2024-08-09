@@ -10,18 +10,10 @@ const { Pool } = pkg;
 // URL-encode the password to handle special characters
 const encode = (value) => encodeURIComponent(value);
 
-// Log environment variables for debugging (remove or mask sensitive information in production)
-console.log("DB_USER:", process.env.DB_USER);
-console.log("DB_PASSWORD:", process.env.DB_PASSWORD ? "******" : "Not set");
-console.log("DB_HOST:", process.env.DB_HOST);
-console.log("DB_PORT:", process.env.DB_PORT);
-console.log("DB_DATABASE:", process.env.DB_DATABASE);
-
 // Define the connection string for the PostgreSQL database
-const connectionString = `postgresql://${process.env.DB_USER}:${encode(process.env.DB_PASSWORD)}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
-
-// Log the connection string (ensure it's not logged in production)
-console.log("Database connection string:", connectionString);
+const connectionString = `postgresql://${process.env.DB_USER}:${encode(
+  process.env.DB_PASSWORD
+)}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
 
 // Create a new Pool instance with the connection string
 const pool = new Pool({
@@ -34,17 +26,24 @@ const testDbConnection = async () => {
     // Get a client from the pool
     const client = await pool.connect();
 
-    console.log("Database connection successful!");
-
     // Execute a simple query to test the connection
     const result = await client.query("SELECT NOW() AS now");
-    console.log("Current Time from DB:", result.rows[0].now);
+
+    // Log current time from DB only in development mode
+    if (process.env.NODE_ENV === "development") {
+      console.log("Current Time from DB:", result.rows[0].now);
+    }
 
     // Release the client back to the pool
     client.release();
   } catch (err) {
-    console.error("Database connection error:", err.message);
-    console.error("Stack trace:", err.stack);
+    // Log errors in development mode
+    if (process.env.NODE_ENV === "development") {
+      console.error("Database connection error:", err.message);
+      console.error("Stack trace:", err.stack);
+    } else {
+      console.error("Database connection error: An error occurred.");
+    }
   } finally {
     // End the pool
     await pool.end();

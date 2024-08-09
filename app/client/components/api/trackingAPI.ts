@@ -6,8 +6,6 @@ const baseURL =
     ? `https://emojikitchengame.com/v1/api/tracking`
     : `http://localhost:${import.meta.env.VITE_PORT || 3200}/v1/api/tracking`;
 
-console.log("Base URL:", baseURL); // Log base URL for debugging
-
 const instance = axios.create({
   baseURL,
   timeout: 30000,
