@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Set security HTTP headers with CSP using nonces
+// Set security HTTP headers with a more relaxed CSP
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -34,43 +34,47 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: [
           "'self'",
-          "https://static.cloudflareinsights.com", // Cloudflare Insights
-          "https://cdn.jsdelivr.net", // CDNJS for scripts
-          (req, res) => `'nonce-${res.locals.nonce}'` // Add nonce to allow inline scripts
+          "https://static.cloudflareinsights.com",
+          "https://cdn.jsdelivr.net",
+          "'unsafe-inline'", // Temporarily allow inline scripts
         ],
         styleSrc: [
           "'self'",
-          "https://fonts.googleapis.com" // Google Fonts
+          "https://fonts.googleapis.com",
+          "'unsafe-inline'", // Temporarily allow inline styles
         ],
         imgSrc: [
           "'self'",
-          "data:", // Allow data URIs for images
-          "https://fonts.gstatic.com", // Google Fonts images
-          "https://www.gstatic.com", // Google static images
-          "https://www.honeycombartist.com" // R2 bucket images
+          "data:",
+          "https://fonts.gstatic.com",
+          "https://www.gstatic.com",
+          "https://www.honeycombartist.com",
         ],
         connectSrc: [
           "'self'",
-          "https://www.honeycombartist.com", // Allow connections to R2 bucket
-          "https://static.cloudflareinsights.com", // Cloudflare Insights
-          "https://cdn.jsdelivr.net" // CDNJS
+          "https://www.honeycombartist.com",
+          "https://static.cloudflareinsights.com",
+          "https://cdn.jsdelivr.net",
         ],
         fontSrc: [
           "'self'",
-          "https://fonts.gstatic.com" // Allow Google Fonts
+          "https://fonts.gstatic.com",
         ],
-        frameSrc: ["'self'"], // Allow frames from the same origin
-        objectSrc: ["'self'"], // Allow objects from the same origin
-        mediaSrc: ["'self'"],  // Allow media from the same origin
-        childSrc: ["'self'"],  // Allow child frames from the same origin
-        manifestSrc: ["'self'"], // Allow web app manifests
-        workerSrc: ["'self'"],  // Allow workers from the same origin
+        frameSrc: ["'self'"],
+        objectSrc: ["'self'"],
+        mediaSrc: ["'self'"],
+        childSrc: ["'self'"],
+        manifestSrc: ["'self'"],
+        workerSrc: ["'self'"],
         scriptSrcElem: [
           "'self'",
-          "https://static.cloudflareinsights.com", // Cloudflare Insights scripts
-          "https://cdn.jsdelivr.net" // CDNJS
+          "https://static.cloudflareinsights.com",
+          "https://cdn.jsdelivr.net",
         ],
-        styleSrcElem: ["'self'"],
+        styleSrcElem: [
+          "'self'",
+          "'unsafe-inline'", // Temporarily allow inline styles
+        ],
         upgradeInsecureRequests: [], // Allow mixed content
       },
     },
