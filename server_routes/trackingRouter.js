@@ -1,17 +1,16 @@
-import express from "express";
-import { pool } from "./config/dbConfig.js"; // Ensure that dbConfig.js is also using ES module syntax
-import validator from "validator"; // Import the validator library
+import express from 'express';
+import { pool } from './config/dbConfig.js';
+import validator from 'validator';
 
 const router = express.Router();
 
 // Utility function for sanitizing inputs
 const sanitizeInput = (input) => {
-  return validator.escape(input); // Escapes HTML characters
+  return validator.escape(input);
 };
 
 // Basic validation function for emoji_unicode
 const validateEmojiUnicode = (emoji_unicode) => {
-  // Check if emoji_unicode is not empty and contains only valid characters
   if (!emoji_unicode || typeof emoji_unicode !== 'string' || !/^[\w\s\p{L}]+$/u.test(emoji_unicode)) {
     throw new Error("Invalid emoji_unicode format");
   }
@@ -26,6 +25,9 @@ router.use((req, res, next) => {
 router.get("/totals", async (req, res) => {
   console.log("Handling GET /totals");
   try {
+    // Log pool configuration for debugging
+    console.log("Pool config:", pool.options);
+
     // Fetch all records from the totals table
     const getSettings = await pool.query("SELECT * FROM totals");
 
@@ -36,7 +38,7 @@ router.get("/totals", async (req, res) => {
     res.json(getSettings.rows);
   } catch (err) {
     console.error("Error fetching totals:", err.message);
-    console.error(err.stack); // Log the stack trace
+    console.error("Error details:", err);
     res.status(500).json({ error: "Server Error: Could not get totals!" });
   }
 });
@@ -68,10 +70,8 @@ router.post("/update-view-count", async (req, res) => {
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("Update View Count Error:", err.message);
-    console.error(err.stack); // Log the stack trace
-    res
-      .status(500)
-      .json({ error: "Server Error: Could not update view count!", details: err.message });
+    console.error("Error details:", err);
+    res.status(500).json({ error: "Server Error: Could not update view count!", details: err.message });
   }
 });
 
@@ -102,10 +102,8 @@ router.post("/update-like-count", async (req, res) => {
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("Update Like Count Error:", err.message);
-    console.error(err.stack); // Log the stack trace
-    res
-      .status(500)
-      .json({ error: "Server Error: Could not update like count!", details: err.message });
+    console.error("Error details:", err);
+    res.status(500).json({ error: "Server Error: Could not update like count!", details: err.message });
   }
 });
 
