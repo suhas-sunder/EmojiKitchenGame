@@ -25,11 +25,11 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"], // Allow inline scripts if necessary
+        scriptSrc: ["'self'"], // Allows scripts from the same origin
         styleSrc: [
           "'self'",
           "'unsafe-inline'",
-          "https://fonts.googleapis.com", // Allow styles and Google Fonts
+          "https://fonts.googleapis.com", // Google Fonts
         ],
         imgSrc: [
           "'self'",  // Allow images from the same origin
@@ -52,15 +52,9 @@ app.use(
         childSrc: ["'self'"],  // Allow child frames from the same origin
         manifestSrc: ["'self'"], // Allow web app manifests
         workerSrc: ["'self'"],  // Allow workers from the same origin
+        scriptSrcElem: ["'self'"], // Allow script elements from the same origin
+        styleSrcElem: ["'self'"], // Allow style elements from the same origin
         upgradeInsecureRequests: [], // Allow mixed content
-
-        // Allow JSON and gzipped JSON files from R2 bucket
-        fetchSrc: [
-          "'self'",
-          "https://www.honeycombartist.com" // Allow fetching JSON and gzipped JSON
-        ],
-        styleSrcElem: ["'self'"], // Allow stylesheets
-        scriptSrcElem: ["'self'"], // Allow script elements
       },
     },
     crossOriginEmbedderPolicy: false,
