@@ -1,6 +1,6 @@
-import express from 'express';
-import { pool } from './config/dbConfig.js';
-import validator from 'validator';
+import express from "express";
+import { pool } from "./config/dbConfig.js";
+import validator from "validator";
 
 const router = express.Router();
 
@@ -11,7 +11,11 @@ const sanitizeInput = (input) => {
 
 // Basic validation function for emoji_unicode
 const validateEmojiUnicode = (emoji_unicode) => {
-  if (!emoji_unicode || typeof emoji_unicode !== 'string' || !/^[\w\s\p{L}]+$/u.test(emoji_unicode)) {
+  if (
+    !emoji_unicode ||
+    typeof emoji_unicode !== "string" ||
+    !/^[\w\s\p{L}]+$/u.test(emoji_unicode)
+  ) {
     throw new Error("Invalid emoji_unicode format");
   }
 };
@@ -71,7 +75,12 @@ router.post("/update-view-count", async (req, res) => {
   } catch (err) {
     console.error("Update View Count Error:", err.message);
     console.error("Error details:", err);
-    res.status(500).json({ error: "Server Error: Could not update view count!", details: err.message });
+    res
+      .status(500)
+      .json({
+        error: "Server Error: Could not update view count!",
+        details: err.message,
+      });
   }
 });
 
@@ -103,7 +112,12 @@ router.post("/update-like-count", async (req, res) => {
   } catch (err) {
     console.error("Update Like Count Error:", err.message);
     console.error("Error details:", err);
-    res.status(500).json({ error: "Server Error: Could not update like count!", details: err.message });
+    res
+      .status(500)
+      .json({
+        error: "Server Error: Could not update like count!",
+        details: err.message,
+      });
   }
 });
 
