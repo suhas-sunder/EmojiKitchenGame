@@ -40,7 +40,7 @@ app.use(
         ],
         styleSrc: [
           "'self'",
-          "https://fonts.googleapis.com", // Google Fonts
+          "https://fonts.googleapis.com" // Google Fonts
         ],
         imgSrc: [
           "'self'",
