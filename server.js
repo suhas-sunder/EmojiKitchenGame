@@ -19,41 +19,48 @@ const __dirname = dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3200;
 
-// Set security HTTP headers with lenient CSP
+// Set security HTTP headers with updated CSP
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"], // Restrict default sources
-        scriptSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "'unsafe-eval'",
-          "*", // Allow all script sources
-        ],
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"], // Allow inline scripts if necessary
         styleSrc: [
           "'self'",
           "'unsafe-inline'",
-          "*", // Allow all style sources
+          "https://fonts.googleapis.com", // Allow styles and Google Fonts
         ],
         imgSrc: [
-          "'self'",
-          "data:",
-          "*", // Allow all image sources
+          "'self'",  // Allow images from the same origin
+          "data:",    // Allow data URIs for images
+          "https://fonts.gstatic.com", // Google Fonts images
+          "https://www.gstatic.com",  // Google static images
+          "https://www.honeycombartist.com" // R2 bucket images
         ],
         connectSrc: [
-          "'self'",
-          "*", // Allow all connection sources
+          "'self'", 
+          "https://www.honeycombartist.com" // Allow connections to R2 bucket
         ],
         fontSrc: [
-          "'self'",
-          "*", // Allow all font sources
+          "'self'", 
+          "https://fonts.gstatic.com" // Allow Google Fonts
         ],
-        frameSrc: ["'self'", "*"], // Allow all frame sources
-        objectSrc: ["'self'", "*"], // Allow all object sources
-        mediaSrc: ["'self'", "*"], // Allow all media sources
-        childSrc: ["'self'", "*"], // Allow all child sources
+        frameSrc: ["'self'"], // Allow frames from the same origin
+        objectSrc: ["'self'"], // Allow objects from the same origin
+        mediaSrc: ["'self'"],  // Allow media from the same origin
+        childSrc: ["'self'"],  // Allow child frames from the same origin
+        manifestSrc: ["'self'"], // Allow web app manifests
+        workerSrc: ["'self'"],  // Allow workers from the same origin
         upgradeInsecureRequests: [], // Allow mixed content
+
+        // Allow JSON and gzipped JSON files from R2 bucket
+        fetchSrc: [
+          "'self'",
+          "https://www.honeycombartist.com" // Allow fetching JSON and gzipped JSON
+        ],
+        styleSrcElem: ["'self'"], // Allow stylesheets
+        scriptSrcElem: ["'self'"], // Allow script elements
       },
     },
     crossOriginEmbedderPolicy: false,
@@ -83,7 +90,7 @@ app.use(express.urlencoded({ extended: true }));
 // Data sanitization against XSS
 app.use(xss());
 
-// Removes duplicate fields from http parameters to prevent HTTP parameter pollution
+// Removes duplicate fields from HTTP parameters to prevent HTTP parameter pollution
 app.use(hpp());
 
 // Serve static files from 'build/client'
