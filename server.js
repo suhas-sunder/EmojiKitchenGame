@@ -36,7 +36,7 @@ app.use(
           "'self'",
           "https://static.cloudflareinsights.com",
           "https://cdn.jsdelivr.net",
-          "https://www.googletagmanager.com", // Allow Google Tag Manager
+          "https://www.googletagmanager.com",
           "'unsafe-inline'", // Allow inline scripts (for testing)
           "'unsafe-eval'" // Allow eval() (for testing)
         ],
@@ -57,7 +57,8 @@ app.use(
           "https://www.honeycombartist.com",
           "https://static.cloudflareinsights.com",
           "https://cdn.jsdelivr.net",
-          "https://www.googletagmanager.com" // Allow Google Tag Manager connections
+          "https://www.googletagmanager.com",
+          "https://www.gstatic.com" // Allow connections to gstatic.com
         ],
         fontSrc: [
           "'self'",
@@ -73,7 +74,7 @@ app.use(
           "'self'",
           "https://static.cloudflareinsights.com",
           "https://cdn.jsdelivr.net",
-          "https://www.googletagmanager.com", // Allow Google Tag Manager scripts
+          "https://www.googletagmanager.com",
           "'unsafe-inline'", // Allow inline scripts in script elements
           "'unsafe-eval'" // Allow eval() (for testing)
         ],
