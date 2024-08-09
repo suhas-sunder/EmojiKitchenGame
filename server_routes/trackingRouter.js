@@ -17,24 +17,37 @@ const validateEmojiUnicode = (emoji_unicode) => {
   }
 };
 
+// Middleware to log request details
+router.use((req, res, next) => {
+  console.log(`Received ${req.method} request for ${req.url}`);
+  next();
+});
+
 router.get("/totals", async (req, res) => {
+  console.log("Handling GET /totals");
   try {
     // Fetch all records from the totals table
     const getSettings = await pool.query("SELECT * FROM totals");
+
+    // Log the fetched results
+    console.log("Fetched totals:", getSettings.rows);
 
     // Send the results as JSON
     res.json(getSettings.rows);
   } catch (err) {
     console.error("Error fetching totals:", err.message);
+    console.error(err.stack); // Log the stack trace
     res.status(500).json({ error: "Server Error: Could not get totals!" });
   }
 });
 
 router.post("/update-view-count", async (req, res) => {
+  console.log("Handling POST /update-view-count with body:", req.body);
   try {
     let { emoji_unicode } = req.body;
 
     if (!emoji_unicode) {
+      console.warn("emoji_unicode is required but not provided");
       return res.status(400).json({ error: "emoji_unicode is required" });
     }
 
@@ -50,6 +63,8 @@ router.post("/update-view-count", async (req, res) => {
       [emoji_unicode]
     );
 
+    console.log("View count updated:", result.rows[0]);
+
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("Update View Count Error:", err.message);
@@ -61,10 +76,12 @@ router.post("/update-view-count", async (req, res) => {
 });
 
 router.post("/update-like-count", async (req, res) => {
+  console.log("Handling POST /update-like-count with body:", req.body);
   try {
     let { emoji_unicode } = req.body;
 
     if (!emoji_unicode) {
+      console.warn("emoji_unicode is required but not provided");
       return res.status(400).json({ error: "emoji_unicode is required" });
     }
 
@@ -80,6 +97,8 @@ router.post("/update-like-count", async (req, res) => {
       [emoji_unicode]
     );
 
+    console.log("Like count updated:", result.rows[0]);
+
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("Update Like Count Error:", err.message);
@@ -89,6 +108,5 @@ router.post("/update-like-count", async (req, res) => {
       .json({ error: "Server Error: Could not update like count!", details: err.message });
   }
 });
-
 
 export default router;

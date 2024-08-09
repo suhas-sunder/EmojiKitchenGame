@@ -15,18 +15,4 @@ const instance = axios.create({
   timeout: 30000,
 });
 
-// Add request and response interceptors for additional logging
-instance.interceptors.request.use((config) => {
-  console.log("Request URL:", config.url);
-  return config;
-});
-
-instance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("Network Error:", error.message);
-    return Promise.reject(error);
-  }
-);
-
 export default instance;
