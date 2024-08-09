@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Set security HTTP headers with very relaxed CSP
+// Set security HTTP headers with relaxed CSP, including necessary domains
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -36,8 +36,9 @@ app.use(
           "'self'",
           "https://static.cloudflareinsights.com",
           "https://cdn.jsdelivr.net",
-          "'unsafe-inline'", // Allow inline scripts
-          "'unsafe-eval'" // Allow eval() (be cautious with this)
+          "https://www.googletagmanager.com", // Allow Google Tag Manager
+          "'unsafe-inline'", // Allow inline scripts (for testing)
+          "'unsafe-eval'" // Allow eval() (for testing)
         ],
         styleSrc: [
           "'self'",
@@ -48,14 +49,15 @@ app.use(
           "'self'",
           "data:", // Allow data URIs for images
           "https://fonts.gstatic.com",
-          "https://www.gstatic.com",
+          "https://www.gstatic.com", // Allow images from gstatic.com
           "https://www.honeycombartist.com"
         ],
         connectSrc: [
           "'self'",
           "https://www.honeycombartist.com",
           "https://static.cloudflareinsights.com",
-          "https://cdn.jsdelivr.net"
+          "https://cdn.jsdelivr.net",
+          "https://www.googletagmanager.com" // Allow Google Tag Manager connections
         ],
         fontSrc: [
           "'self'",
@@ -71,8 +73,9 @@ app.use(
           "'self'",
           "https://static.cloudflareinsights.com",
           "https://cdn.jsdelivr.net",
+          "https://www.googletagmanager.com", // Allow Google Tag Manager scripts
           "'unsafe-inline'", // Allow inline scripts in script elements
-          "'unsafe-eval'" // Allow eval() (be cautious with this)
+          "'unsafe-eval'" // Allow eval() (for testing)
         ],
         styleSrcElem: [
           "'self'",
