@@ -5,6 +5,7 @@ import {
   MetaFunction,
   redirect,
   useLoaderData,
+  useOutletContext,
 } from "@remix-run/react";
 import localforage from "localforage";
 import cloudflareR2API from "../client/components/api/cloudflareR2API";
@@ -15,6 +16,10 @@ import ComboImage from "../client/components/layout/ComboImage";
 import { EmojiDataType } from "./_index";
 import { useEffect, useState } from "react";
 import pako from "pako";
+import trackingAPI from "../client/components/api/trackingAPI";
+import { TotalsType } from "./emoji-combos";
+import useUpdateLikes from "../client/components/hooks/useUpdateLikes";
+import LikesAndViews from "../client/components/ui/LikesAndViews";
 
 export const meta: MetaFunction = ({ data }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -126,6 +131,15 @@ export async function clientLoader({
 
 function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
   const [isCopied, setIsCopied] = useState<string>("");
+  const {
+    totalStats,
+    setTotalStats,
+  }: {
+    totalStats: TotalsType[];
+    setTotalStats: (value: (prev: TotalsType[]) => TotalsType[]) => void;
+  } = useOutletContext();
+
+  const { updateLikeCount } = useUpdateLikes({ setTotalStats });
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -135,9 +149,71 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
     return () => clearTimeout(timeout);
   }, [isCopied]);
 
+  useEffect(() => {
+    const updateViewCount = async () => {
+      if (process.env.NODE_ENV === "development") return;
+
+      if (emoji.unicode) {
+        try {
+          // Send the request to update the view count
+          const response = await trackingAPI.post("/update-view-count", {
+            emoji_unicode: emoji.unicode, // Ensure this matches the expected parameter name in your backend
+          });
+
+          if (response.status === 200) {
+            // Update the totalStats state with the new view count
+            setTotalStats((prevStats) => {
+              // Check if the emoji already exists in the stats
+              const existingStat = prevStats.find(
+                (stat) => stat.emoji_unicode === emoji.unicode
+              );
+
+              if (existingStat) {
+                // Update existing stat
+                return prevStats.map((stat) =>
+                  stat.emoji_unicode === emoji.unicode
+                    ? { ...stat, total_views: Number(stat.total_views) + 1 }
+                    : stat
+                );
+              } else {
+                // Add a new stat entry for the emoji if it doesn't exist
+                return [
+                  ...prevStats,
+                  {
+                    emoji_unicode: emoji.unicode,
+                    total_likes: 0,
+                    total_views: 1,
+                  },
+                ]; // Initialize likes to 0 since it's a new entry
+              }
+            });
+
+            // Optionally, handle any local storage updates here if necessary
+          } else {
+            console.error(`Failed to update view count: ${response.status}`);
+          }
+        } catch (err) {
+          let message: string;
+
+          if (err instanceof Error) {
+            message = err.message;
+          } else {
+            message = String(err);
+          }
+
+          // Log the error for debugging
+          console.error("Update View Count Error:", message);
+        }
+      }
+    };
+
+    updateViewCount();
+  }, [emoji.unicode, setTotalStats]);
+
   return (
     <div className="max-w-[1200px] mx-5 flex sm:block flex-col sm:flex-row gap-12 sm:gap-0 text-center justify-center items-center sm:text-left">
-      <div className="float-left border-2 bg-purple-50 min-w-[16em] border-purple-200 pb-12 pt-6 -translate-y-2  px-10 sm:mr-8  flex flex-col rounded-lg ">
+      <div className="float-left border-2 font-nunito bg-purple-50 min-w-[16em] border-purple-200 pb-12 pt-6 -translate-y-2  px-10 sm:mr-8  flex flex-col rounded-lg ">
+        <LikesAndViews totalStats={totalStats} unicode={emoji.unicode} />
         <h2 className="tracking-widest leading-relaxed uppercase font-lora flex justify-center items-center gap-2">
           <span className="text-2xl">{emoji.title}</span>(U+
           {emoji.unicode.slice(1)})
@@ -158,10 +234,13 @@ function EmojiPreview({ emoji }: { emoji: EmojiDataType }) {
           />
           <ul className="grid grid-cols-2 mt-5 gap-x-12 gap-y-6 text-lg font-nunito justify-center items-center">
             <li
-              title={`Like ${emoji?.title} emoji`}
+              title={`Like ${emoji?.unicode} emoji`}
               className="flex justify-center items-center col-span-2"
             >
-              <button className="flex gap-1 bg-white justify-between border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
+              <button
+                onClick={() => updateLikeCount(emoji?.unicode)}
+                className="flex gap-1 bg-white justify-between border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
+              >
                 <span>Like</span>{" "}
                 <span className="flex">
                   <Icon
