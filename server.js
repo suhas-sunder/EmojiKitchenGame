@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Set security HTTP headers with a more relaxed CSP
+// Set security HTTP headers with very relaxed CSP
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -36,29 +36,30 @@ app.use(
           "'self'",
           "https://static.cloudflareinsights.com",
           "https://cdn.jsdelivr.net",
-          "'unsafe-inline'", // Temporarily allow inline scripts
+          "'unsafe-inline'", // Allow inline scripts
+          "'unsafe-eval'" // Allow eval() (be cautious with this)
         ],
         styleSrc: [
           "'self'",
           "https://fonts.googleapis.com",
-          "'unsafe-inline'", // Temporarily allow inline styles
+          "'unsafe-inline'" // Allow inline styles
         ],
         imgSrc: [
           "'self'",
-          "data:",
+          "data:", // Allow data URIs for images
           "https://fonts.gstatic.com",
           "https://www.gstatic.com",
-          "https://www.honeycombartist.com",
+          "https://www.honeycombartist.com"
         ],
         connectSrc: [
           "'self'",
           "https://www.honeycombartist.com",
           "https://static.cloudflareinsights.com",
-          "https://cdn.jsdelivr.net",
+          "https://cdn.jsdelivr.net"
         ],
         fontSrc: [
           "'self'",
-          "https://fonts.gstatic.com",
+          "https://fonts.gstatic.com"
         ],
         frameSrc: ["'self'"],
         objectSrc: ["'self'"],
@@ -70,10 +71,12 @@ app.use(
           "'self'",
           "https://static.cloudflareinsights.com",
           "https://cdn.jsdelivr.net",
+          "'unsafe-inline'", // Allow inline scripts in script elements
+          "'unsafe-eval'" // Allow eval() (be cautious with this)
         ],
         styleSrcElem: [
           "'self'",
-          "'unsafe-inline'", // Temporarily allow inline styles
+          "'unsafe-inline'" // Allow inline styles in style elements
         ],
         upgradeInsecureRequests: [], // Allow mixed content
       },
