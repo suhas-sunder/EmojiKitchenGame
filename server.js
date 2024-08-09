@@ -26,43 +26,35 @@ app.use((req, res, next) => {
   next();
 });
 
-// Set security HTTP headers with relaxed CSP, including necessary domains
+// Set security HTTP headers with relaxed CSP, allowing everything from specified domains
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
+        defaultSrc: ["'self'", "*"], // Allow everything from specified domains
         scriptSrc: [
           "'self'",
-          "https://static.cloudflareinsights.com",
-          "https://cdn.jsdelivr.net",
-          "https://www.googletagmanager.com",
+          "*", // Allow all scripts from specified domains
           "'unsafe-inline'", // Allow inline scripts (for testing)
           "'unsafe-eval'" // Allow eval() (for testing)
         ],
         styleSrc: [
           "'self'",
-          "https://fonts.googleapis.com",
+          "*", // Allow all styles from specified domains
           "'unsafe-inline'" // Allow inline styles
         ],
         imgSrc: [
           "'self'",
-          "data:", // Allow data URIs for images
-          "https://fonts.gstatic.com",
-          "https://www.gstatic.com", // Allow images from gstatic.com
-          "https://www.honeycombartist.com"
+          "*", // Allow all images from specified domains
+          "data:" // Allow data URIs for images
         ],
         connectSrc: [
           "'self'",
-          "https://www.honeycombartist.com",
-          "https://static.cloudflareinsights.com",
-          "https://cdn.jsdelivr.net",
-          "https://www.googletagmanager.com",
-          "https://www.gstatic.com" // Allow connections to gstatic.com
+          "*", // Allow all connections from specified domains
         ],
         fontSrc: [
           "'self'",
-          "https://fonts.gstatic.com"
+          "*", // Allow all fonts from specified domains
         ],
         frameSrc: ["'self'"],
         objectSrc: ["'self'"],
@@ -72,14 +64,13 @@ app.use(
         workerSrc: ["'self'"],
         scriptSrcElem: [
           "'self'",
-          "https://static.cloudflareinsights.com",
-          "https://cdn.jsdelivr.net",
-          "https://www.googletagmanager.com",
+          "*", // Allow all scripts from specified domains
           "'unsafe-inline'", // Allow inline scripts in script elements
           "'unsafe-eval'" // Allow eval() (for testing)
         ],
         styleSrcElem: [
           "'self'",
+          "*", // Allow all styles from specified domains
           "'unsafe-inline'" // Allow inline styles in style elements
         ],
         upgradeInsecureRequests: [], // Allow mixed content
@@ -91,7 +82,7 @@ app.use(
   })
 );
 
-// Middleware
+// Middleware for CORS configuration
 app.use(
   cors({
     origin: [
@@ -103,6 +94,7 @@ app.use(
     ],
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true,
+    allowedHeaders: ["*"], // Allow all headers
   })
 );
 
