@@ -34,16 +34,12 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async () => {
-  console.log("before get request");
-  console.log(trackingAPI, "b4getRequest");
   // Check if we're in development mode
   if (process.env.NODE_ENV === "development") return json({ totals: [] });
 
   try {
     // Fetch all totals from the /totals endpoint
     const { data } = await trackingAPI.get("/totals");
-
-    console.log(trackingAPI, "getRequest");
 
     // Return the data to the component
     return json({ totals: data });
