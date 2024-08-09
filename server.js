@@ -17,48 +17,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 3200;
+const port = process.env.PORT || 5173;
 
-// Set security HTTP headers with lenient CSP
+// Set security HTTP headers with lenient CSP (temporarily disabled for debugging)
 app.use(
   helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"], // Restrict default sources
-        scriptSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "'unsafe-eval'",
-          "*", // Allow all script sources
-        ],
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "*", // Allow all style sources
-        ],
-        imgSrc: [
-          "'self'",
-          "data:",
-          "*", // Allow all image sources
-        ],
-        connectSrc: [
-          "'self'",
-          "*", // Allow all connection sources
-        ],
-        fontSrc: [
-          "'self'",
-          "*", // Allow all font sources
-        ],
-        frameSrc: ["'self'", "*"], // Allow all frame sources
-        objectSrc: ["'self'", "*"], // Allow all object sources
-        mediaSrc: ["'self'", "*"], // Allow all media sources
-        childSrc: ["'self'", "*"], // Allow all child sources
-        upgradeInsecureRequests: [], // Allow mixed content
-      },
-    },
-    crossOriginEmbedderPolicy: false,
-    crossOriginOpenerPolicy: false,
-    crossOriginResourcePolicy: false,
+    contentSecurityPolicy: false,
   })
 );
 
@@ -67,7 +31,8 @@ app.use(
   cors({
     origin: "*", // Allow all origins
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
-    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"], // Ensure required headers are allowed
+    credentials: false, // Set this to true only if you need to allow cookies/auth tokens to be sent
   })
 );
 
