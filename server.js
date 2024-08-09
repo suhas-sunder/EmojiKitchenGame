@@ -35,8 +35,8 @@ app.use(
         scriptSrc: [
           "'self'",
           "https://static.cloudflareinsights.com", // Cloudflare Insights
-          "https://cdnjs.cloudflare.com", // CDNJS for scripts
-          "https://cdn.cloudflare.com" // Cloudflare CDN
+          "https://cdn.jsdelivr.net", // CDNJS for scripts
+          (req, res) => `'nonce-${res.locals.nonce}'` // Add nonce to allow inline scripts
         ],
         styleSrc: [
           "'self'",
@@ -70,9 +70,7 @@ app.use(
           "https://static.cloudflareinsights.com", // Cloudflare Insights scripts
           "https://cdn.jsdelivr.net" // CDNJS
         ],
-        styleSrcElem: [
-          "'self'",
-        ],
+        styleSrcElem: ["'self'"],
         upgradeInsecureRequests: [], // Allow mixed content
       },
     },
