@@ -22,7 +22,7 @@ console.log("Database connection string:", connectionString);
 
 // Create a new Pool instance with the connection string
 const pool = new Pool({
-  connectionString: connectionString,
+  connectionString,
 });
 
 // Function to test the database connection
