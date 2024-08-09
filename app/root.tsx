@@ -109,8 +109,13 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   }
 }
 
+interface LayoutProps {
+  children: React.ReactNode;
+  nonce: string; // Include nonce as a prop
+}
+
 // Layout Component for rendering HTML structure
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children, nonce }: LayoutProps) {
   return (
     <html lang="en">
       <head>
@@ -118,12 +123,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        {/* Example of applying nonce to an inline style */}
+        <style
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: `
+              body {
+                font-family: Arial, sans-serif;
+              }
+            `,
+          }}
+        />
       </head>
       <body className="pt-14">
         <NavBar />
         <div className="min-h-svh">{children}</div>
         <ScrollRestoration />
-        <Scripts />
+        {/* Example of applying nonce to an inline script */}
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Your inline script here
+              console.log('Inline script with nonce');
+            `,
+          }}
+        />
+        <Scripts nonce={nonce} />
         <Footer />
       </body>
     </html>
@@ -137,7 +163,7 @@ export default function App() {
   const [textareaIsHidden, setTextareaIsHidden] = useState(false);
   const [stopGADelayOnStart, setStopGADelayOnStart] = useState(false);
   const pathname = useLocation().pathname;
-  
+
   useEffect(() => {
     const loadGoogleAnalyticsAdsense = async () => {
       await ReactGA.initialize("G-MZ3BW959JC"); // Initialize Google Analytics

@@ -9,6 +9,7 @@ import { xss } from "express-xss-sanitizer";
 import hpp from "hpp";
 import dotenv from "dotenv";
 import trackingRouter from "./server_routes/trackingRouter.js";
+import crypto from "crypto"; // For generating nonces
 
 dotenv.config({ path: "./.env" });
 
@@ -19,31 +20,43 @@ const __dirname = dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3200;
 
-// Set security HTTP headers with updated CSP
+// Middleware to generate nonce for each request
+app.use((req, res, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
+
+// Set security HTTP headers with CSP using nonces
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"], // Allows scripts from the same origin
+        scriptSrc: [
+          "'self'",
+          "https://static.cloudflareinsights.com", // Cloudflare Insights
+          "https://cdnjs.cloudflare.com", // CDNJS for scripts
+          "https://cdn.cloudflare.com" // Cloudflare CDN
+        ],
         styleSrc: [
           "'self'",
-          "'unsafe-inline'",
           "https://fonts.googleapis.com", // Google Fonts
         ],
         imgSrc: [
-          "'self'",  // Allow images from the same origin
-          "data:",    // Allow data URIs for images
+          "'self'",
+          "data:", // Allow data URIs for images
           "https://fonts.gstatic.com", // Google Fonts images
-          "https://www.gstatic.com",  // Google static images
+          "https://www.gstatic.com", // Google static images
           "https://www.honeycombartist.com" // R2 bucket images
         ],
         connectSrc: [
-          "'self'", 
-          "https://www.honeycombartist.com" // Allow connections to R2 bucket
+          "'self'",
+          "https://www.honeycombartist.com", // Allow connections to R2 bucket
+          "https://static.cloudflareinsights.com", // Cloudflare Insights
+          "https://cdn.jsdelivr.net" // CDNJS
         ],
         fontSrc: [
-          "'self'", 
+          "'self'",
           "https://fonts.gstatic.com" // Allow Google Fonts
         ],
         frameSrc: ["'self'"], // Allow frames from the same origin
@@ -52,8 +65,14 @@ app.use(
         childSrc: ["'self'"],  // Allow child frames from the same origin
         manifestSrc: ["'self'"], // Allow web app manifests
         workerSrc: ["'self'"],  // Allow workers from the same origin
-        scriptSrcElem: ["'self'"], // Allow script elements from the same origin
-        styleSrcElem: ["'self'"], // Allow style elements from the same origin
+        scriptSrcElem: [
+          "'self'",
+          "https://static.cloudflareinsights.com", // Cloudflare Insights scripts
+          "https://cdn.jsdelivr.net" // CDNJS
+        ],
+        styleSrcElem: [
+          "'self'",
+        ],
         upgradeInsecureRequests: [], // Allow mixed content
       },
     },
