@@ -34,12 +34,15 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async () => {
+  console.log("before get request");
   // Check if we're in development mode
   if (process.env.NODE_ENV === "development") return json({ totals: [] });
 
   try {
     // Fetch all totals from the /totals endpoint
     const { data } = await trackingAPI.get("/totals");
+
+    console.log(trackingAPI, "getRequest");
 
     // Return the data to the component
     return json({ totals: data });
@@ -296,7 +299,7 @@ export default function EmojiCombos() {
                 key={filename.id}
                 className="flex flex-col gap-2 justify-center items-center border-2 border-purple-300 p-5 rounded-lg w-full min-h-[15em] text-center"
               >
-               <LikesAndViews unicode={filename.id} totalStats={totalStats} />
+                <LikesAndViews unicode={filename.id} totalStats={totalStats} />
                 <h2 className="uppercase font-lora">
                   {filename.keys.split("~")[0]} (U+{filename.id.slice(1)})
                 </h2>
