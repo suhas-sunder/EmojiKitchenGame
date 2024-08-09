@@ -109,13 +109,8 @@ export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
   }
 }
 
-interface LayoutProps {
-  children: React.ReactNode;
-  nonce: string; // Include nonce as a prop
-}
-
 // Layout Component for rendering HTML structure
-export function Layout({ children, nonce }: LayoutProps) {
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -123,33 +118,12 @@ export function Layout({ children, nonce }: LayoutProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        {/* Example of applying nonce to an inline style */}
-        <style
-          nonce={nonce}
-          dangerouslySetInnerHTML={{
-            __html: `
-              body {
-                font-family: Arial, sans-serif;
-              }
-            `,
-          }}
-        />
       </head>
       <body className="pt-14">
         <NavBar />
         <div className="min-h-svh">{children}</div>
         <ScrollRestoration />
-        {/* Example of applying nonce to an inline script */}
-        <script
-          nonce={nonce}
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Your inline script here
-              console.log('Inline script with nonce');
-            `,
-          }}
-        />
-        <Scripts nonce={nonce} />
+        <Scripts />
         <Footer />
       </body>
     </html>
