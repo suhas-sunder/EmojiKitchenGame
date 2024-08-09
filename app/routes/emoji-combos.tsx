@@ -2,6 +2,7 @@ import {
   Link,
   MetaFunction,
   Outlet,
+  useLoaderData,
   useLocation,
   useMatches,
 } from "@remix-run/react";
@@ -13,6 +14,10 @@ import SearchBar from "../client/components/ui/SearchBar";
 import HandleDiceRoll from "../client/components/utils/generators/HandleDiceRoll";
 import useWindowWidth from "../client/components/hooks/useWindowWidth";
 import useBodyEventListeners from "../client/components/hooks/useBodyEventListeners";
+import trackingAPI from "../client/components/api/trackingAPI";
+import { json, LoaderFunction } from "@remix-run/node";
+import useUpdateLikes from "../client/components/hooks/useUpdateLikes";
+import LikesAndViews from "../client/components/ui/LikesAndViews";
 
 export const meta: MetaFunction = () => {
   return [
@@ -28,6 +33,33 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export const loader: LoaderFunction = async () => {
+  // Check if we're in development mode
+  if (process.env.NODE_ENV === "development") return json({ totals: [] });
+
+  try {
+    // Fetch all totals from the /totals endpoint
+    const { data } = await trackingAPI.get("/totals");
+
+    // Return the data to the component
+    return json({ totals: data });
+  } catch (err) {
+    let message: string;
+
+    if (err instanceof Error) {
+      message = err.message;
+    } else {
+      message = String(err);
+    }
+
+    // Log the error for debugging
+    console.error("Error fetching totals:", message);
+
+    // Return an error response
+    return json({ totals: [] });
+  }
+};
+
 interface RouteData {
   filenames?: Filename[];
 }
@@ -36,14 +68,33 @@ function isRouteData(data: unknown): data is RouteData {
   return typeof data === "object" && data !== null && "filenames" in data;
 }
 
+export type TotalsType = {
+  emoji_unicode: string;
+  total_views: number;
+  total_likes: number;
+};
+
 function Buttons({
   filename,
   setSearchEmoji,
+  setTotalStats,
+  totalStats,
 }: {
   filename: Filename;
   setSearchEmoji: (searchEmoji: string) => void;
+  totalStats: TotalsType[];
+  setTotalStats: React.Dispatch<React.SetStateAction<TotalsType[]>>;
 }) {
   const [isCopied, setIsCopied] = useState<string>("");
+  const { totals }: { totals: TotalsType[] } = useLoaderData();
+
+  useEffect(() => {
+    if (totals.length > 0 && totalStats.length === 0) {
+      setTotalStats(totals);
+    }
+  }, [setTotalStats, totalStats.length, totals]);
+
+  const { updateLikeCount } = useUpdateLikes({ setTotalStats });
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -61,7 +112,10 @@ function Buttons({
         title={`Like ${emoji} emoji`}
         className="flex justify-center items-center col-span-2"
       >
-        <button className="flex gap-2 ml-auto col-span-2 justify-center border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600">
+        <button
+          onClick={() => updateLikeCount(filename.id)}
+          className="flex gap-2 ml-auto col-span-2 justify-center border-2 px-3 py-2 hover:scale-105 rounded-md border-purple-300 text-purple-500 cursor-pointer hover:border-purple-500 hover:text-purple-600"
+        >
           <span>Like</span>{" "}
           <span className="flex">
             <Icon
@@ -127,7 +181,8 @@ export default function EmojiCombos() {
   const windowWidth = useWindowWidth();
   const [displayLimit, setDisplayLimit] = useState<number>(18);
   const [searchDisplayLimit, setSearchDisplayLimit] = useState<number>(73); // Default to 73
-  useBodyEventListeners({ setDisplayLimit: setSearchDisplayLimit })
+  const [totalStats, setTotalStats] = useState<TotalsType[]>([]);
+  useBodyEventListeners({ setDisplayLimit: setSearchDisplayLimit });
 
   useEffect(() => {
     if (windowWidth !== undefined) {
@@ -196,7 +251,7 @@ export default function EmojiCombos() {
         onTouchStart={() => setDisplayLimit(1000)}
         className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito"
       >
-        <Outlet />
+        <Outlet context={{ totalStats, setTotalStats }} />
         <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center mx-5">
           <Link to="/copy-and-paste/emoji-copy-and-paste">
             Click here to view a list of all copy and paste emojis!
@@ -216,9 +271,7 @@ export default function EmojiCombos() {
             }}
           />
         </div>
-        <ul
-          className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto pt-2 rounded-md mx-5 max-h-[9em] mt-3 bg-purple-50 scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin"
-        >
+        <ul className="grid grid-cols-6 sm:grid-cols-12 md:grid-cols-16 lg:grid-cols-20 xl:grid-cols-24 gap-2 overflow-y-auto pt-2 rounded-md mx-5 max-h-[9em] mt-3 bg-purple-50 scrollbar-thumb-purple-500 px-2 scrollbar-track-purple-200 scrollbar-thin">
           {filenames?.map((filename, index) => {
             return index < searchDisplayLimit ? (
               <li key={filename.id + "emoji-search-preview"}>
@@ -241,8 +294,9 @@ export default function EmojiCombos() {
             return index < displayLimit ? (
               <li
                 key={filename.id}
-                className="flex flex-col gap-5 justify-center items-center border-2 border-purple-200 p-5 rounded-lg w-full min-h-[15em] text-center"
+                className="flex flex-col gap-2 justify-center items-center border-2 border-purple-300 p-5 rounded-lg w-full min-h-[15em] text-center"
               >
+               <LikesAndViews unicode={filename.id} totalStats={totalStats} />
                 <h2 className="uppercase font-lora">
                   {filename.keys.split("~")[0]} (U+{filename.id.slice(1)})
                 </h2>
@@ -263,7 +317,12 @@ export default function EmojiCombos() {
                 <p className="capitalize font-lora mb-2">
                   {filename.keys.split("~")[1]}
                 </p>
-                <Buttons filename={filename} setSearchEmoji={setSearchEmoji} />
+                <Buttons
+                  totalStats={totalStats}
+                  setTotalStats={setTotalStats}
+                  filename={filename}
+                  setSearchEmoji={setSearchEmoji}
+                />
               </li>
             ) : null;
           })}

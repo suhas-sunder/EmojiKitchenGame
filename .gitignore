@@ -32,5 +32,6 @@ dist-ssr
 setup_droplet.txt
 
 config.env
+database.sql
 
 

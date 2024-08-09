@@ -137,7 +137,7 @@ export default function App() {
   const [textareaIsHidden, setTextareaIsHidden] = useState(false);
   const [stopGADelayOnStart, setStopGADelayOnStart] = useState(false);
   const pathname = useLocation().pathname;
-
+  
   useEffect(() => {
     const loadGoogleAnalyticsAdsense = async () => {
       await ReactGA.initialize("G-MZ3BW959JC"); // Initialize Google Analytics

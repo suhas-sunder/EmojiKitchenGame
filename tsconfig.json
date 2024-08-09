@@ -5,8 +5,13 @@
     "**/.server/**/*.ts",
     "**/.server/**/*.tsx",
     "**/.client/**/*.ts",
-    "**/.client/**/*.tsx"
-, "app/routes/emoji-combos.tsx", "app/routes/emoji-combos.$emoji.tsx", "app/routes/games.tsx"  ],
+    "**/.client/**/*.tsx",
+    "app/routes/emoji-combos.tsx",
+    "app/routes/emoji-combos.$emoji.tsx",
+    "app/routes/games.tsx",
+    "server_routes/config/dbConfig.js",
+    "../typing-test-app/client/src/api/accountAPI.ts"
+  ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@remix-run/node", "vite/client"],
