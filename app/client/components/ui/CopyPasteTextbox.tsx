@@ -16,6 +16,7 @@ export default function CopyPasteTextbox({
   const editableRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [hasText, setHasText] = useState(false);
 
   // Sync the `displayCopyText` with the `contentEditable` div's innerHTML
   useEffect(() => {
@@ -25,12 +26,16 @@ export default function CopyPasteTextbox({
     ) {
       editableRef.current.innerHTML = displayCopyText;
     }
+
+    // Update the hasText state based on current content
+    setHasText(editableRef.current?.innerHTML.trim() !== "");
   }, [displayCopyText]);
 
   // Handle input events in the contentEditable div
   const handleInput = () => {
     if (editableRef.current) {
       setDisplayCopyText(editableRef.current.innerHTML);
+      setHasText(editableRef.current.innerHTML.trim() !== "");
     }
   };
 
@@ -61,6 +66,7 @@ export default function CopyPasteTextbox({
             range.insertNode(imgElement);
           }
           setDisplayCopyText(editableRef.current?.innerHTML || "");
+          setHasText(editableRef.current?.innerHTML.trim() !== "");
         };
         if (file) {
           reader.readAsDataURL(file);
@@ -72,8 +78,14 @@ export default function CopyPasteTextbox({
     // If no image is pasted, insert text normally
     if (!pastedImage) {
       const text = clipboardData.getData("text/plain");
-      document.execCommand("insertText", false, text);
+      const selection = window.getSelection();
+      if (selection?.rangeCount) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(document.createTextNode(text));
+      }
       setDisplayCopyText(editableRef.current?.innerHTML || "");
+      setHasText(editableRef.current?.innerHTML.trim() !== "");
     }
   };
 
@@ -117,6 +129,7 @@ export default function CopyPasteTextbox({
     if (editableRef.current) {
       editableRef.current.innerHTML = "";
       setDisplayCopyText("");
+      setHasText(false); // Update the hasText state
     }
   };
 
@@ -148,6 +161,7 @@ export default function CopyPasteTextbox({
             range.insertNode(imgElement);
           }
           setDisplayCopyText(editableRef.current?.innerHTML || "");
+          setHasText(editableRef.current?.innerHTML.trim() !== "");
         };
         if (file) {
           reader.readAsDataURL(file);
@@ -174,22 +188,26 @@ export default function CopyPasteTextbox({
         </button>
 
         {/* Clear button */}
-        <button
-          onClick={clearContent}
-          title="Clear Content"
-          className="absolute -bottom-[2.9em] right-[0.9em] p-2 text-xl text-white rounded-full hover:scale-125  focus:outline-none"
-        >
-          ❌
-        </button>
+        {hasText && (
+          <button
+            onClick={clearContent}
+            title="Clear Content"
+            className="absolute -bottom-[2.9em] right-[0.9em] p-2 text-xl text-white rounded-full hover:scale-125 focus:outline-none"
+          >
+            ❌
+          </button>
+        )}
       </div>
       <div className="relative flex w-full max-w-[1200px] z-10">
-        <button
-          onClick={copyToClipboard}
-          title="Copy to Clipboard"
-          className="absolute -bottom-[4.6em] right-2 p-2 text-3xl text-white rounded-full hover:scale-125 focus:outline-none"
-        >
-          📋
-        </button>
+        {hasText && (
+          <button
+            onClick={copyToClipboard}
+            title="Copy to Clipboard"
+            className="absolute -bottom-[4.6em] right-2 p-2 text-3xl text-white rounded-full hover:scale-125 focus:outline-none"
+          >
+            📋
+          </button>
+        )}
         {/* Tooltip for the copy button */}
         {tooltipVisible && (
           <div className="absolute -bottom-[7.3em] -right-[0.4em] px-2 py-2 text-xs text-white bg-slate-700 rounded shadow-lg">
