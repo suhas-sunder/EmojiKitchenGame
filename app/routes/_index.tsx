@@ -45,12 +45,12 @@ export const meta: MetaFunction = () => {
   return [
     {
       title:
-        "Emoji Kitchen Game 🥘👨‍🍳 Mix, Match, and Create Fun and Unique Emoji Combos for Creative Messaging! 🎉✨",
+        "✨ Emoji Kitchen Game 🥘👨‍🍳 Mix, Match, and Create Fun and Unique Emoji Combos for Creative Messaging! 💀🎉",
     },
     {
       name: "description",
       content:
-        "Get creative with our Emoji Kitchen Game! 🍳👩‍🍳 Explore thousands of unique emoji combinations based on Google Gboard's emoji kitchen. Mix and match emojis to craft fun and unique combinations. Click and combine to discover endless emoji possibilities for your messages and social media posts. Start creating and share your favorite emoji combos today! 🎉📲",
+        "⭐ Get creative with our Emoji Kitchen Game! 🔥🍳👩‍🍳 Explore thousands of unique emoji combinations based on Google Gboard's emoji kitchen ✅. Mix and match emojis to craft fun and unique combinations 👀. Click and combine to discover endless emoji possibilities for your messages and social media posts 👍🫶🏻✔️. Start creating and share your favorite emoji combos today! 🙏🚀🤩",
     },
   ];
 };
@@ -127,12 +127,14 @@ function EmojiDisplay({
 
     // Construct URLs
     const firstImageUrl = firstEmojiUnicode
-      ? `https://www.honeycombartist.com/emojis/base/${firstEmojiUnicode.split("-")
-        .join("_")}.png`
+      ? `https://www.honeycombartist.com/emojis/base/${firstEmojiUnicode
+          .split("-")
+          .join("_")}.png`
       : "";
     const secondImageUrl = secondEmojiUnicode
-      ? `https://www.honeycombartist.com/emojis/base/${secondEmojiUnicode.split("-")
-        .join("_")}.png`
+      ? `https://www.honeycombartist.com/emojis/base/${secondEmojiUnicode
+          .split("-")
+          .join("_")}.png`
       : "";
 
     // Helper function to fetch and store image blob
@@ -584,7 +586,11 @@ export default function Index() {
 
     // Set the secondEmoji state with the id of the selected emoji
     setSecondEmoji(
-      selectedFilename.id + "~" + selectedFilename.keys.split("~")[0]
+      selectedFilename.id +
+        "~" +
+        selectedFilename.id +
+        "~" +
+        selectedFilename.keys.split("~")[0]
     );
   };
 
