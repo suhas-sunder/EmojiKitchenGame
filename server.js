@@ -22,7 +22,7 @@ const port = process.env.PORT || 3200;
 
 // Middleware to generate nonce for each request
 app.use((req, res, next) => {
-  res.locals.nonce = crypto.randomBytes(16).toString('base64');
+  res.locals.nonce = crypto.randomBytes(16).toString("base64");
   next();
 });
 
@@ -36,17 +36,17 @@ app.use(
           "'self'",
           "*", // Allow all scripts from specified domains
           "'unsafe-inline'", // Allow inline scripts (for testing)
-          "'unsafe-eval'" // Allow eval() (for testing)
+          "'unsafe-eval'", // Allow eval() (for testing)
         ],
         styleSrc: [
           "'self'",
           "*", // Allow all styles from specified domains
-          "'unsafe-inline'" // Allow inline styles
+          "'unsafe-inline'", // Allow inline styles
         ],
         imgSrc: [
           "'self'",
           "*", // Allow all images from specified domains
-          "data:" // Allow data URIs for images
+          "data:", // Allow data URIs for images
         ],
         connectSrc: [
           "'self'",
@@ -66,12 +66,12 @@ app.use(
           "'self'",
           "*", // Allow all scripts from specified domains
           "'unsafe-inline'", // Allow inline scripts in script elements
-          "'unsafe-eval'" // Allow eval() (for testing)
+          "'unsafe-eval'", // Allow eval() (for testing)
         ],
         styleSrcElem: [
           "'self'",
           "*", // Allow all styles from specified domains
-          "'unsafe-inline'" // Allow inline styles in style elements
+          "'unsafe-inline'", // Allow inline styles in style elements
         ],
         upgradeInsecureRequests: [], // Allow mixed content
       },
