@@ -107,7 +107,7 @@ const SecondEmojiWindow: React.FC<PropType> = ({
             !keywords.split("~").join("").includes(searchEmoji)
           )
             return null;
-
+            
           return (
             <li
               title={`${keywords.split("~")[0]} ${keywords.split("~")[1]}`}
@@ -118,7 +118,11 @@ const SecondEmojiWindow: React.FC<PropType> = ({
                 tabIndex={-1}
                 onClick={() =>
                   setSecondEmoji(
-                    `${secondEmojiFilename}~${keywords.split("~")[0]}~${
+                    `${
+                      secondEmojiFilename.length === 3
+                        ? "u00" + secondEmojiFilename.slice(1)
+                        : secondEmojiFilename
+                    }~${keywords.split("~")[0]}~${
                       keywords.split("~")[1]
                     }`
                   )

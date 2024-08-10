@@ -91,6 +91,9 @@ function EmojiDisplay({
     if (baseUnicode.startsWith("u")) {
       baseUnicode = baseUnicode.slice(1); // Remove leading 'u'
     }
+
+    if (baseUnicode.length == 2) baseUnicode = "00" + baseUnicode;
+
     return baseUnicode;
   };
 
@@ -381,8 +384,8 @@ function EmojiDisplay({
           <button
             disabled={!imagesPrefetched || !secondEmoji}
             onClick={() => {
-              setIsCopied(secondEmoji?.split("~")[1]);
-              handleCopyClick(secondEmoji.split("~")[1]);
+              setIsCopied(secondEmoji?.split("~")[0]);
+              handleCopyClick(secondEmoji.split("~")[0]);
             }}
             aria-label="Copy Second Emoji as PNG"
             className={`flex ${
