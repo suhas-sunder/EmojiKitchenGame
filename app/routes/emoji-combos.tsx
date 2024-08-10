@@ -23,12 +23,12 @@ export const meta: MetaFunction = () => {
   return [
     {
       title:
-        "🥘😋 All emojis with combos - emoji kitchen, emoji copy and paste, emoji meanings, emoji combos, and more!",
+        "✨ All emojis with combos 🟰 emoji kitchen, emoji copy and paste, emoji meanings, emoji combos, and more! 🥘😋 💀🎉",
     },
     {
       name: "description",
       content:
-        "Explore the emojipedia of emoji kitchen combinations! Discover endless emoji combos like 🥘😋, copy and paste your favorites, explore detailed emoji meanings, and find unique combinations for every occasion. Perfect for social media, messaging, and creative expression!",
+        "⭐ Explore the emojipedia of emoji kitchen combinations! Discover endless emoji combos like 🥘😋, copy and paste your favorites, explore detailed emoji meanings, and find unique combinations for every occasion. Perfect for social media, messaging, and creative expression! 🔥🍳👩‍🍳 Emoji Kitchen 👀👍🫶🏻✔️🙏🚀🤩",
     },
   ];
 };

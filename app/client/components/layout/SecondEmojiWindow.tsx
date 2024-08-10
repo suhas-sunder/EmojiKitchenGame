@@ -27,6 +27,18 @@ const SecondEmojiWindow: React.FC<PropType> = ({
   const [displayLimit, setDisplayLimit] = useState<number>(145);
   useBodyEventListeners({ setDisplayLimit });
 
+  const handleLinkCode = (emojiUnicode: string) => {
+    let code = emojiUnicode;
+    if (emojiUnicode.length <= 13) {
+      code = emojiUnicode.split("-")[0].slice(1);
+      code = emojiUnicode.split("-").join("_").split("u").join("");
+    }
+
+    if (code.length == 2) code = "00" + code;
+
+    return code;
+  };
+
   const handleDiceRoll = useCallback(() => {
     if (!filenames) return;
 
@@ -122,15 +134,9 @@ const SecondEmojiWindow: React.FC<PropType> = ({
                   alt={`Emoji of ${
                     keywords.split("~")[0]
                   } ${secondEmojiFilename}`}
-                  src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${
-                    secondEmojiFilename.length <= 13
-                      ? secondEmojiFilename.split("-")[0].slice(1)
-                      : secondEmojiFilename
-                          .split("-")
-                          .join("_")
-                          .split("u")
-                          .join("")
-                  }/emoji.svg`}
+                  src={`https://fonts.gstatic.com/s/e/notoemoji/latest/${handleLinkCode(
+                    secondEmojiFilename
+                  )}/emoji.svg`}
                 />
               </button>
             </li>

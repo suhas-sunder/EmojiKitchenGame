@@ -19,12 +19,12 @@ export const meta: MetaFunction = () => {
   return [
     {
       title:
-        "Text Faces (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ - Copy and Paste Cute and Creative Text Emoticons!",
+        "✨ Text Faces (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ - Copy and Paste Cute and Creative Text Emoticons! 💀🎉",
     },
     {
       name: "description",
       content:
-        "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ Discover and share the cutest and most creative text faces! ಥ_ಥ Easily copy and paste a variety of unique emoticons for all your messages and social media posts. Express yourself with our extensive collection of fun text faces!",
+        "⭐ (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ Discover and share the cutest and most creative text faces! ಥ_ಥ Easily copy and paste a variety of unique emoticons for all your messages and social media posts. Express yourself with our extensive collection of fun text faces! 🔥🍳👩‍🍳 Emoji Kitchen 👀👍🫶🏻✔️🙏🚀🤩",
     },
   ];
 };
