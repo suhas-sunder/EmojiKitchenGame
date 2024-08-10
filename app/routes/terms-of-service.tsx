@@ -17,21 +17,21 @@ export default function TermsOfService() {
 
         <h2>AGREEMENT TO OUR LEGAL TERMS</h2>
         <p className="flex flex-col gap-4 py-2">
-          We are https://freetypingcamp.com ('Company', 'we', 'us', 'our').
+          We are https://emojikitchengame.com ('Company', 'we', 'us', 'our').
         </p>
         <p>
-          We operate the website https://freetypingcamp.com (the 'Site'), as
+          We operate the website https://emojikitchengame.com (the 'Site'), as
           well as any other related products and services that refer or link to
           these legal terms (the 'Legal Terms') (collectively, the 'Services').
         </p>
         <p>
-          You can contact us by email at admin@freetypingcamp.com or by mail to
-          http://freetypingcamp.com, Toronto, Ontario, Canada.
+          You can contact us by email at admin@emojikitchengame.com or by mail
+          to http://emojikitchengame.com, Toronto, Ontario, Canada.
         </p>
         <p>
           These Legal Terms constitute a legally binding agreement made between
           you, whether personally or on behalf of an entity ('you'), and
-          https://freetypingcamp.com, concerning your access to and use of the
+          https://emojikitchengame.com, concerning your access to and use of the
           Services. You agree that by accessing the Services, you have read,
           understood, and agreed to be bound by all of these Legal Terms. IF YOU
           DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY
@@ -131,12 +131,12 @@ export default function TermsOfService() {
           <p>
             If you wish to make any use of the Services, Content, or Marks other
             than as set out in this section or elsewhere in our Legal Terms,
-            please address your request to: admin@freetypingcamp.com. If we ever
-            grant you the permission to post, reproduce, or publicly display any
-            part of our Services or Content, you must identify us as the owners
-            or licensors of the Services, Content, or Marks and ensure that any
-            copyright or proprietary notice appears or is visible on posting,
-            reproducing, or displaying our Content.
+            please address your request to: admin@emojikitchengame.com. If we
+            ever grant you the permission to post, reproduce, or publicly
+            display any part of our Services or Content, you must identify us as
+            the owners or licensors of the Services, Content, or Marks and
+            ensure that any copyright or proprietary notice appears or is
+            visible on posting, reproducing, or displaying our Content.
           </p>
           <p>
             We reserve all rights not expressly granted to you in and to the
@@ -295,7 +295,7 @@ export default function TermsOfService() {
             username being changed by the Free Typing Camp admin or, in extreme
             cases, may lead to account suspension or termination. If you notice
             any users abusing this policy please feel free to contact us at
-            admin@freetypingcamp.com and we will address the issue as soon as
+            admin@emojikitchengame.com and we will address the issue as soon as
             possible.
           </p>
         </section>
@@ -776,7 +776,7 @@ export default function TermsOfService() {
           <h2 className="flex py-2 text-2xl">16. PRIVACY POLICY</h2>
           <p>
             We care about data privacy and security. Please review our Privacy
-            Policy: https://freetypingcamp.com/privacypolicy. By using the
+            Policy: https://emojikitchengame.com/privacypolicy. By using the
             Services, you agree to be bound by our Privacy Policy, which is
             incorporated into these Legal Terms. Please be advised the Services
             are hosted in Canada. If you access the Services from any other
@@ -860,10 +860,10 @@ export default function TermsOfService() {
           <h2 className="flex py-2 text-2xl">20. GOVERNING LAW</h2>
           <p>
             These Legal Terms shall be governed by and defined following the
-            laws of Canada. https://freetypingcamp.com and yourself irrevocably
-            consent that the courts of Canada shall have exclusive jurisdiction
-            to resolve any dispute which may arise in connection with these
-            Legal Terms.
+            laws of Canada. https://emojikitchengame.com and yourself
+            irrevocably consent that the courts of Canada shall have exclusive
+            jurisdiction to resolve any dispute which may arise in connection
+            with these Legal Terms.
           </p>
         </section>
         <section className="flex flex-col gap-4">
@@ -876,7 +876,7 @@ export default function TermsOfService() {
             (individually, a 'Party' and collectively, the 'Parties'), the
             Parties agree to first attempt to negotiate any Dispute (except
             those Disputes expressly provided below) informally for at least
-            http://freetypingcamp.com days before initiating arbitration. Such
+            http://emojikitchengame.com days before initiating arbitration. Such
             informal negotiations commence upon written notice from one Party to
             the other Party.
           </p>
@@ -889,11 +889,11 @@ export default function TermsOfService() {
             Arbitration Chamber (Belgium, Brussels, Avenue Louise, 146)
             according to the Rules of this ICAC, which, as a result of referring
             to it, is considered as the part of this clause. The number of
-            arbitrators shall be http://freetypingcamp.com. The seat, or legal
-            place, or arbitration shall be http://freetypingcamp.com. The
-            language of the proceedings shall be http://freetypingcamp.com. The
-            governing law of these Legal Terms shall be substantive law of
-            http://freetypingcamp.com.
+            arbitrators shall be http://emojikitchengame.com. The seat, or legal
+            place, or arbitration shall be http://emojikitchengame.com. The
+            language of the proceedings shall be http://emojikitchengame.com.
+            The governing law of these Legal Terms shall be substantive law of
+            http://emojikitchengame.com.
           </p>
           <h3>Restrictions</h3>
           <p>
@@ -1090,10 +1090,10 @@ export default function TermsOfService() {
             further information regarding use of the Services, please contact us
             at:
           </p>
-          <p>https://freetypingcamp.com</p>
+          <p>https://emojikitchengame.com</p>
           <p>Toronto, Ontario</p>
           <p>Canada</p>
-          <p>admin@freetypingcamp.com</p>
+          <p>admin@emojikitchengame.com</p>
         </section>
       </main>
     </div>
