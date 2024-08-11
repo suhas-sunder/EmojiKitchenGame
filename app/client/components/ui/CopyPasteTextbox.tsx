@@ -14,9 +14,11 @@ export default function CopyPasteTextbox({
   setIsHidden,
 }: PropType) {
   const editableRef = useRef<HTMLDivElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [hasText, setHasText] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
+  const [hasText, setHasText] = useState<boolean>(false);
+  const [textBoxSize, setTextBoxSize] = useState<string>("h-[10em]");
 
   // Sync the `displayCopyText` with the `contentEditable` div's innerHTML
   useEffect(() => {
@@ -39,17 +41,53 @@ export default function CopyPasteTextbox({
     }
   };
 
-// Handle paste events to insert text or images
-const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
-  const clipboardData = e.clipboardData;
-  const items = clipboardData.items;
-  let pastedImage = false;
+  // Handle paste events to insert text or images
+  const handlePaste = async (e: React.ClipboardEvent<HTMLDivElement>) => {
+    const clipboardData = e.clipboardData;
+    const items = clipboardData.items;
+    let pastedImage = false;
 
-  // Iterate through clipboard items to detect images
-  for (const item of items) {
-    if (item.type.startsWith("image")) {
-      e.preventDefault(); // Prevent default for images only
-      const file = item.getAsFile();
+    for (const item of items) {
+      if (item.type.startsWith("image")) {
+        e.preventDefault(); // Prevent default for images only
+        const file = item.getAsFile();
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const imgElement = document.createElement("img");
+          imgElement.src = event.target?.result as string;
+          imgElement.style.maxWidth = "100%";
+          imgElement.style.height = "auto";
+          imgElement.style.display = "block";
+
+          const selection = window.getSelection();
+          if (selection?.rangeCount) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(imgElement);
+          }
+          setDisplayCopyText(editableRef.current?.innerHTML || "");
+          setHasText(editableRef.current?.innerHTML.trim() !== "");
+        };
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+        pastedImage = true;
+        break;
+      }
+    }
+
+    if (!pastedImage) {
+      setTimeout(() => {
+        setDisplayCopyText(editableRef.current?.innerHTML || "");
+        setHasText(editableRef.current?.innerHTML.trim() !== "");
+      }, 0);
+    }
+  };
+
+  // Handle file upload as a fallback for mobile devices
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const imgElement = document.createElement("img");
@@ -58,7 +96,6 @@ const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
         imgElement.style.height = "auto";
         imgElement.style.display = "block";
 
-        // Insert image at the current cursor position
         const selection = window.getSelection();
         if (selection?.rangeCount) {
           const range = selection.getRangeAt(0);
@@ -68,23 +105,9 @@ const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
         setDisplayCopyText(editableRef.current?.innerHTML || "");
         setHasText(editableRef.current?.innerHTML.trim() !== "");
       };
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-      pastedImage = true;
-      break;
+      reader.readAsDataURL(file);
     }
-  }
-
-  // Let the browser handle text pasting normally
-  if (!pastedImage) {
-    setTimeout(() => {
-      setDisplayCopyText(editableRef.current?.innerHTML || "");
-      setHasText(editableRef.current?.innerHTML.trim() !== "");
-    }, 0);
-  }
-};
-
+  };
 
   // Handle focus event
   const handleFocus = () => {
@@ -102,19 +125,16 @@ const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
       const content = editableRef.current.innerHTML;
 
       try {
-        // Create a temporary HTML string and convert it to a Blob
         const htmlBlob = new Blob([content], { type: "text/html" });
 
-        // Use the Clipboard API to copy the content
         await navigator.clipboard.write([
           new ClipboardItem({
             [htmlBlob.type]: htmlBlob,
           }),
         ]);
 
-        // Show tooltip
         setTooltipVisible(true);
-        setTimeout(() => setTooltipVisible(false), 2000); // Hide tooltip after 2 seconds
+        setTimeout(() => setTooltipVisible(false), 2000);
       } catch (err) {
         console.error("Failed to copy content: ", err);
       }
@@ -126,7 +146,7 @@ const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
     if (editableRef.current) {
       editableRef.current.innerHTML = "";
       setDisplayCopyText("");
-      setHasText(false); // Update the hasText state
+      setHasText(false);
     }
   };
 
@@ -150,7 +170,6 @@ const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
           imgElement.style.height = "auto";
           imgElement.style.display = "block";
 
-          // Insert image at the current cursor position
           const selection = window.getSelection();
           if (selection?.rangeCount) {
             const range = selection.getRangeAt(0);
@@ -172,7 +191,7 @@ const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
       className={`${
         isHidden
           ? "h-0 translate-y-[1.7em] sm:translate-y-[1.2em]"
-          : "h-40"
+          : `${textBoxSize}`
       } flex flex-col fixed bottom-6 font-nunito px-5 w-full bg-white justify-center border-t-2 border-t-purple-200 items-center`}
     >
       <div className="relative flex w-full max-w-[1200px] z-10">
@@ -205,15 +224,66 @@ const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
             📋
           </button>
         )}
-        {/* Tooltip for the copy button */}
         {tooltipVisible && (
           <div className="absolute -bottom-[7.3em] -right-[0.4em] px-2 py-2 text-xs text-white bg-slate-700 rounded shadow-lg">
             Copied! 🎉
           </div>
         )}
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className={`${textBoxSize === "h-[10em]" && "-bottom-[7em]"} ${
+            textBoxSize === "h-[20em]" && "-bottom-[15em]"
+          } ${
+            textBoxSize === "h-[40em]" && "-bottom-[31em]"
+          } absolute left-1 p-2 text-xl text-white  rounded-full hover:scale-125 focus:outline-none`}
+          title="Upload Image"
+        >
+          📷
+        </button>
+        <button
+          onClick={() => setTextBoxSize("h-[10em]")}
+          className={`${textBoxSize === "h-[10em]" && "-bottom-[8.2em]"} ${
+            textBoxSize === "h-[20em]" && "-bottom-[17em]"
+          } ${
+            textBoxSize === "h-[40em]" && "-bottom-[34.75em]"
+          } absolute left-[2.4em] p-2 text-lg text-purple-700  rounded-full hover:scale-125 focus:outline-none`}
+          title="Default Textbox Size"
+        >
+          1X
+        </button>
+        <button
+          onClick={() => setTextBoxSize("h-[20em]")}
+          className={`${textBoxSize === "h-[10em]" && "-bottom-[8.2em]"} ${
+            textBoxSize === "h-[20em]" && "-bottom-[17em]"
+          } ${
+            textBoxSize === "h-[40em]" && "-bottom-[34.75em]"
+          } absolute left-[4.4em] p-2 text-lg text-purple-700  rounded-full hover:scale-125 focus:outline-none`}
+          title="Double Textbox Size"
+        >
+          2X
+        </button>
+        <button
+          onClick={() => setTextBoxSize("h-[40em]")}
+          className={`${textBoxSize === "h-[10em]" && "-bottom-[8.2em]"} ${
+            textBoxSize === "h-[20em]" && "-bottom-[17em]"
+          } ${
+            textBoxSize === "h-[40em]" && "-bottom-[34.75em]"
+          } absolute left-[6.4em] p-2 text-lg text-purple-700  rounded-full hover:scale-125 focus:outline-none`}
+          title="Quadruple Textbox Size"
+        >
+          4X
+        </button>
       </div>
 
-      {/* Wrapper to handle relative positioning of placeholder */}
+      {/* File input for image upload (hidden) */}
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileUpload}
+      />
+
       <div
         className="relative flex w-full max-w-[1200px] text-xl border-2 border-purple-300 tracking-widest h-full mt-3 mb-5 leading-loose rounded-md scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 px-1 sm:px-3 pt-1 text-purple-600 overflow-y-auto"
         onDragOver={handleDragOver}
@@ -246,7 +316,7 @@ const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
           aria-describedby="copy-paste"
           spellCheck="false"
           id="copy-paste"
-          className="w-full h-full focus:outline-none pt-1"
+          className="w-full h-full pb-[60em] focus:outline-none pt-1"
         ></div>
       </div>
     </section>
