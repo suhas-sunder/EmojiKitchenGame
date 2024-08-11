@@ -39,55 +39,52 @@ export default function CopyPasteTextbox({
     }
   };
 
-  // Handle paste events to insert text or images
-  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const clipboardData = e.clipboardData;
-    const items = clipboardData.items;
-    let pastedImage = false;
+// Handle paste events to insert text or images
+const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+  const clipboardData = e.clipboardData;
+  const items = clipboardData.items;
+  let pastedImage = false;
 
-    // Iterate through clipboard items to detect images
-    for (const item of items) {
-      if (item.type.startsWith("image")) {
-        const file = item.getAsFile();
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const imgElement = document.createElement("img");
-          imgElement.src = event.target?.result as string;
-          imgElement.style.maxWidth = "100%";
-          imgElement.style.height = "auto";
-          imgElement.style.display = "block";
+  // Iterate through clipboard items to detect images
+  for (const item of items) {
+    if (item.type.startsWith("image")) {
+      e.preventDefault(); // Prevent default for images only
+      const file = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imgElement = document.createElement("img");
+        imgElement.src = event.target?.result as string;
+        imgElement.style.maxWidth = "100%";
+        imgElement.style.height = "auto";
+        imgElement.style.display = "block";
 
-          // Insert image at the current cursor position
-          const selection = window.getSelection();
-          if (selection?.rangeCount) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(imgElement);
-          }
-          setDisplayCopyText(editableRef.current?.innerHTML || "");
-          setHasText(editableRef.current?.innerHTML.trim() !== "");
-        };
-        if (file) {
-          reader.readAsDataURL(file);
+        // Insert image at the current cursor position
+        const selection = window.getSelection();
+        if (selection?.rangeCount) {
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(imgElement);
         }
-        pastedImage = true;
+        setDisplayCopyText(editableRef.current?.innerHTML || "");
+        setHasText(editableRef.current?.innerHTML.trim() !== "");
+      };
+      if (file) {
+        reader.readAsDataURL(file);
       }
+      pastedImage = true;
+      break;
     }
+  }
 
-    // If no image is pasted, insert text normally
-    if (!pastedImage) {
-      const text = clipboardData.getData("text/plain");
-      const selection = window.getSelection();
-      if (selection?.rangeCount) {
-        const range = selection.getRangeAt(0);
-        range.deleteContents();
-        range.insertNode(document.createTextNode(text));
-      }
+  // Let the browser handle text pasting normally
+  if (!pastedImage) {
+    setTimeout(() => {
       setDisplayCopyText(editableRef.current?.innerHTML || "");
       setHasText(editableRef.current?.innerHTML.trim() !== "");
-    }
-  };
+    }, 0);
+  }
+};
+
 
   // Handle focus event
   const handleFocus = () => {
@@ -174,7 +171,7 @@ export default function CopyPasteTextbox({
     <section
       className={`${
         isHidden
-          ? "h-0 touch-none translate-y-[1.7em] sm:translate-y-[1.2em]"
+          ? "h-0 translate-y-[1.7em] sm:translate-y-[1.2em]"
           : "h-40"
       } flex flex-col fixed bottom-6 font-nunito px-5 w-full bg-white justify-center border-t-2 border-t-purple-200 items-center`}
     >
@@ -218,7 +215,7 @@ export default function CopyPasteTextbox({
 
       {/* Wrapper to handle relative positioning of placeholder */}
       <div
-        className="relative flex touch-none w-full max-w-[1200px] text-xl border-2 border-purple-300 tracking-widest h-full mt-3 mb-5 leading-loose rounded-md scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 px-1 sm:px-3 pt-1 text-purple-600 overflow-y-auto"
+        className="relative flex w-full max-w-[1200px] text-xl border-2 border-purple-300 tracking-widest h-full mt-3 mb-5 leading-loose rounded-md scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-purple-200 px-1 sm:px-3 pt-1 text-purple-600 overflow-y-auto"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
