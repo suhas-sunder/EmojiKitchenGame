@@ -158,7 +158,7 @@ export default function TextFaces() {
             return index < displayLimit ? (
               <div
                 key={`${key}-${index}`}
-                className="-translate-y-6 flex flex-col overflow-auto lg:overflow-hidden pt-10 sm:px-10 scrollbar-thin xl:border-2 rounded-lg border-slate-100 scrollbar-thumb-rose-700 scrollbar-track-rose-300"
+                className="-translate-y-6 flex flex-col  lg:overflow-hidden pt-10 sm:px-10 scrollbar-thin xl:border-2 rounded-lg border-slate-100 scrollbar-thumb-rose-700 scrollbar-track-rose-300"
               >
                 <h2 className="flex capitalize mb-8 w-full text-rose-400 justify-center items-center text-center text-2xl">
                   {key.split("-").join(" ")} Faces
