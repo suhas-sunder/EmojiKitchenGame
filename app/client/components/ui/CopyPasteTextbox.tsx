@@ -20,20 +20,13 @@ export default function CopyPasteTextbox({
   const [hasText, setHasText] = useState<boolean>(false);
   const [textBoxSize, setTextBoxSize] = useState<string>("h-[10em]");
 
-  // Sync the `displayCopyText` with the `contentEditable` div's innerHTML
   useEffect(() => {
-    if (
-      editableRef.current &&
-      editableRef.current.innerHTML !== displayCopyText
-    ) {
+    if (editableRef.current && editableRef.current.innerHTML !== displayCopyText) {
       editableRef.current.innerHTML = displayCopyText;
     }
-
-    // Update the hasText state based on current content
     setHasText(editableRef.current?.innerHTML.trim() !== "");
   }, [displayCopyText]);
 
-  // Handle input events in the contentEditable div
   const handleInput = () => {
     if (editableRef.current) {
       setDisplayCopyText(editableRef.current.innerHTML);
@@ -41,7 +34,6 @@ export default function CopyPasteTextbox({
     }
   };
 
-  // Handle paste events to insert text or images
   const handlePaste = async (e: React.ClipboardEvent<HTMLDivElement>) => {
     const clipboardData = e.clipboardData;
     const items = clipboardData.items;
@@ -49,26 +41,26 @@ export default function CopyPasteTextbox({
 
     for (const item of items) {
       if (item.type.startsWith("image")) {
-        e.preventDefault(); // Prevent default for images only
+        e.preventDefault();
         const file = item.getAsFile();
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const imgElement = document.createElement("img");
-          imgElement.src = event.target?.result as string;
-          imgElement.style.maxWidth = "100%";
-          imgElement.style.height = "auto";
-          imgElement.style.display = "block";
-
-          const selection = window.getSelection();
-          if (selection?.rangeCount) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(imgElement);
-          }
-          setDisplayCopyText(editableRef.current?.innerHTML || "");
-          setHasText(editableRef.current?.innerHTML.trim() !== "");
-        };
         if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const imgElement = document.createElement("img");
+            imgElement.src = event.target?.result as string;
+            imgElement.style.maxWidth = "100%";
+            imgElement.style.height = "auto";
+            imgElement.style.display = "block";
+
+            const selection = window.getSelection();
+            if (selection?.rangeCount) {
+              const range = selection.getRangeAt(0);
+              range.deleteContents();
+              range.insertNode(imgElement);
+            }
+            setDisplayCopyText(editableRef.current?.innerHTML || "");
+            setHasText(editableRef.current?.innerHTML.trim() !== "");
+          };
           reader.readAsDataURL(file);
         }
         pastedImage = true;
@@ -84,7 +76,6 @@ export default function CopyPasteTextbox({
     }
   };
 
-  // Handle file upload as a fallback for mobile devices
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -109,17 +100,14 @@ export default function CopyPasteTextbox({
     }
   };
 
-  // Handle focus event
   const handleFocus = () => {
     setIsFocused(true);
   };
 
-  // Handle blur event
   const handleBlur = () => {
     setIsFocused(false);
   };
 
-  // Copy content to clipboard
   const copyToClipboard = async () => {
     if (editableRef.current) {
       const content = editableRef.current.innerHTML;
@@ -141,7 +129,6 @@ export default function CopyPasteTextbox({
     }
   };
 
-  // Clear content
   const clearContent = () => {
     if (editableRef.current) {
       editableRef.current.innerHTML = "";
@@ -150,36 +137,34 @@ export default function CopyPasteTextbox({
     }
   };
 
-  // Handle drag over event
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
-  // Handle drop event
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const items = e.dataTransfer.items;
     for (const item of items) {
       if (item.kind === "file" && item.type.startsWith("image")) {
         const file = item.getAsFile();
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const imgElement = document.createElement("img");
-          imgElement.src = event.target?.result as string;
-          imgElement.style.maxWidth = "100%";
-          imgElement.style.height = "auto";
-          imgElement.style.display = "block";
-
-          const selection = window.getSelection();
-          if (selection?.rangeCount) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(imgElement);
-          }
-          setDisplayCopyText(editableRef.current?.innerHTML || "");
-          setHasText(editableRef.current?.innerHTML.trim() !== "");
-        };
         if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const imgElement = document.createElement("img");
+            imgElement.src = event.target?.result as string;
+            imgElement.style.maxWidth = "100%";
+            imgElement.style.height = "auto";
+            imgElement.style.display = "block";
+
+            const selection = window.getSelection();
+            if (selection?.rangeCount) {
+              const range = selection.getRangeAt(0);
+              range.deleteContents();
+              range.insertNode(imgElement);
+            }
+            setDisplayCopyText(editableRef.current?.innerHTML || "");
+            setHasText(editableRef.current?.innerHTML.trim() !== "");
+          };
           reader.readAsDataURL(file);
         }
       }
@@ -203,7 +188,6 @@ export default function CopyPasteTextbox({
           {!isHidden ? "🫣" : "😉"}
         </button>
 
-        {/* Clear button */}
         {hasText && (
           <button
             onClick={clearContent}
@@ -235,7 +219,7 @@ export default function CopyPasteTextbox({
             textBoxSize === "h-[20em]" && "-bottom-[15em]"
           } ${
             textBoxSize === "h-[40em]" && "-bottom-[31em]"
-          } absolute left-1 p-2 text-xl text-white  rounded-full hover:scale-125 focus:outline-none`}
+          } absolute left-1 p-2 text-xl text-white rounded-full hover:scale-125 focus:outline-none`}
           title="Upload Image"
         >
           📷
@@ -246,7 +230,7 @@ export default function CopyPasteTextbox({
             textBoxSize === "h-[20em]" && "-bottom-[17em]"
           } ${
             textBoxSize === "h-[40em]" && "-bottom-[34.75em]"
-          } absolute left-[2.4em] p-2 text-lg text-purple-700  rounded-full hover:scale-125 focus:outline-none`}
+          } absolute left-[2.4em] p-2 text-lg text-purple-700 rounded-full hover:scale-125 focus:outline-none`}
           title="Default Textbox Size"
         >
           1X
@@ -257,7 +241,7 @@ export default function CopyPasteTextbox({
             textBoxSize === "h-[20em]" && "-bottom-[17em]"
           } ${
             textBoxSize === "h-[40em]" && "-bottom-[34.75em]"
-          } absolute left-[4.4em] p-2 text-lg text-purple-700  rounded-full hover:scale-125 focus:outline-none`}
+          } absolute left-[4.4em] p-2 text-lg text-purple-700 rounded-full hover:scale-125 focus:outline-none`}
           title="Double Textbox Size"
         >
           2X
@@ -268,14 +252,13 @@ export default function CopyPasteTextbox({
             textBoxSize === "h-[20em]" && "-bottom-[17em]"
           } ${
             textBoxSize === "h-[40em]" && "-bottom-[34.75em]"
-          } absolute left-[6.4em] p-2 text-lg text-purple-700  rounded-full hover:scale-125 focus:outline-none`}
+          } absolute left-[6.4em] p-2 text-lg text-purple-700 rounded-full hover:scale-125 focus:outline-none`}
           title="Quadruple Textbox Size"
         >
           4X
         </button>
       </div>
 
-      {/* File input for image upload (hidden) */}
       <input
         type="file"
         accept="image/*"
@@ -289,7 +272,6 @@ export default function CopyPasteTextbox({
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        {/* Custom placeholder */}
         <div
           className={`absolute left-0 right-0 top-1 flex items-center justify-center text-sm sm:text-lg tracking-widest leading-loose text-center text-purple-300 transition-opacity duration-300 ${
             !isFocused && displayCopyText.trim() === ""
@@ -302,7 +284,6 @@ export default function CopyPasteTextbox({
           your progress! (^‿^ 🌸)
         </div>
 
-        {/* Content editable div */}
         <div
           ref={editableRef}
           contentEditable
