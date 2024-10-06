@@ -17,7 +17,12 @@ export function loader() {
   return json({ error: "Not Found" }, { status: 404 });
 }
 
-export const action = () => {
+export const action = async ({ request }: { request: Request }) => {
+  if (request.method !== "POST") {
+    return new Response("Method Not Allowed", { status: 405 });
+  }
+
+  // Handle POST request (bot or other unknown POST routes)
   return new Response("Not Found", { status: 404 });
 };
 
