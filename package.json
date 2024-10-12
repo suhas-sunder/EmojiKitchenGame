@@ -39,7 +39,6 @@
     "posthog-js": "^1.166.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-ga4": "^2.1.0",
     "react-paginate": "^8.2.0",
     "react-toastify": "^10.0.5",
     "react-window": "^1.8.10",
