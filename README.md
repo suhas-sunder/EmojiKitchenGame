@@ -55,3 +55,5 @@ This repository (the demo version of this project) is open-source under the [MIT
 ---
 
 ✨ *Get ready to mix, match, and mash emojis like never before!* 🎉
+
+I built this site for fun and didn't spend very long on it. Therefore, there's a lot of room for improvement. Eg. Most of the pages have an excessive DOM size with the amount of content being loaded onto it without being lazy loaded or optimized in any significant way.
