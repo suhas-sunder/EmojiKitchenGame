@@ -47,9 +47,9 @@ Want to run it locally or contribute? Follow these steps to get the project up a
 💡 **Pro Tip:** This project is designed to be lightweight, so feel free to fork, extend, or make it your own! 🚀
 
 ## 🖋️ License
-This repository (the demo version of this project) is open-source under the [MIT License](LICENSE). 
+This repository (the demo version of this project) is open-source under the [MIT License](https://github.com/suhas-sunder/EmojiKitchenGame/blob/main/LICENSE). 
 
-**Note:** The full version of the Emoji Kitchen Game will not open-source, but that repo will be private when I eventually get around to adding some additional features down the line.
+**Note:** The full version of the Emoji Kitchen Game will not be open-source. That repository will be private when I eventually add more features down the line.
 
 ---
 
