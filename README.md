@@ -1,7 +1,8 @@
 # 🌟 Emoji Kitchen Game 🌟
 
 **🎮 Live Now:** [emojikitchengame.com](http://emojikitchengame.com)  
-Unleash your creativity with the **Emoji Kitchen Game**, where you can mix and mash emojis to create brand-new, fun combinations! Inspired by Google’s Gboard Emoji Kitchen, this game lets you explore over **100,000 unique emoji mashups**. Choose any two emojis and watch the magic happen! 🎨✨
+
+**Emoji Kitchen Game** is a website where you can mix and mash emojis to create brand-new, fun combinations! Inspired by Google’s Gboard Emoji Kitchen, this game lets you explore over **100,000 unique emoji mashups**. Choose any two emojis and watch the magic happen! 🎨✨
 
 ## 🚀 Built With
 This web app is powered by a modern tech stack to ensure a seamless experience:
