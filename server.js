@@ -91,6 +91,8 @@ app.use(
       "https://www.emojikitchengame.com",
       "emojikitchengame.com",
       "www.emojikitchengame.com",
+      "https://us.i.posthog.com",
+      "https://static.cloudflareinsights.com",
     ],
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true,
