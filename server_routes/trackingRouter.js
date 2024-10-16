@@ -47,6 +47,8 @@ router.get("/totals", async (req, res) => {
 });
 
 router.post("/update-view-count", async (req, res) => {
+  console.log("Updating view count... request recieved");
+
   try {
     let { emoji_unicode } = req.body;
 
