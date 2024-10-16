@@ -38,6 +38,9 @@ router.get("/totals", async (req, res) => {
       console.log("Fetched totals:", getSettings.rows);
     }
 
+    
+    console.log("Fetched totals:", getSettings.rows);
+
     // Send the results as JSON
     res.json(getSettings.rows);
   } catch (err) {

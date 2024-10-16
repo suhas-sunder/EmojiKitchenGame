@@ -15,19 +15,18 @@ const connectionString = `postgresql://${process.env.DB_USER}:${encode(
   process.env.DB_PASSWORD
 )}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
 
-console.log(connectionString)
-
 // Create a new Pool instance with the connection string
 const pool = new Pool({
   connectionString,
 });
 
 // Function to test the database connection
+// Function to test the database connection
 const testDbConnection = async () => {
   try {
     // Get a client from the pool
     const client = await pool.connect();
-
+    
     // Execute a simple query to test the connection
     const result = await client.query("SELECT NOW() AS now");
 
@@ -39,18 +38,15 @@ const testDbConnection = async () => {
     // Release the client back to the pool
     client.release();
   } catch (err) {
-    // Log errors in development mode
-    if (process.env.NODE_ENV === "development") {
-      console.error("Database connection error:", err.message);
-      console.error("Stack trace:", err.stack);
-    } else {
-      console.error("Database connection error: An error occurred.");
-    }
+    // Log errors with more context
+    console.error("Database connection error:", err.message);
+    console.error("Error stack trace:", err.stack);    
   } finally {
     // End the pool
     await pool.end();
   }
 };
+
 
 // Run the test function if this module is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
