@@ -59,6 +59,8 @@ router.post("/update-view-count", async (req, res) => {
     emoji_unicode = sanitizeInput(emoji_unicode);
     validateEmojiUnicode(emoji_unicode);
 
+    console.log(pool);
+
     const result = await pool.query(
       `INSERT INTO totals (emoji_unicode, total_views, total_likes)
        VALUES ($1, 1, 0)
@@ -72,6 +74,8 @@ router.post("/update-view-count", async (req, res) => {
     if (process.env.NODE_ENV === "development") {
       console.log("View count updated:", result.rows[0]);
     }
+
+    console.log("View count updated:", result.rows[0]);
 
     res.status(200).json(result.rows[0]);
   } catch (err) {
