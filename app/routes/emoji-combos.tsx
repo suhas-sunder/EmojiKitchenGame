@@ -89,8 +89,6 @@ function Buttons({
   const { totals }: { totals: TotalsType[] } = useLoaderData();
 
   useEffect(() => {
-    console.log(totals);
-
     if (totals.length > 0 && totalStats.length === 0) {
       setTotalStats(totals);
     }
