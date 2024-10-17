@@ -362,6 +362,8 @@ function ComboTable({ emoji }: { emoji: EmojiDataType }) {
 }
 
 function EmojiDetails({ emoji }: { emoji: EmojiDataType }) {
+  const { loadCombos }: { loadCombos: boolean } = useOutletContext();
+
   return (
     <div className="max-w-[1200px] my-10 flex gap-10 flex-col  text-lg leading-loose tracking-widest bg-white bg-opacity-[0.8] p-16 rounded-lg">
       <h2 className="tracking-widest leading-relaxed  font-lora capitalize text-2xl text-center">
@@ -416,7 +418,7 @@ function EmojiDetails({ emoji }: { emoji: EmojiDataType }) {
       >
         Looking for a specific combination? Click here to search!
       </Link>
-      <ComboTable emoji={emoji} />
+      {loadCombos && <ComboTable emoji={emoji} />}
       <div className="w-full border-b-2 border-rose-100 mt-2"></div>
       <h2 className="tracking-widest leading-relaxed font-lora capitalize text-2xl mt-3 text-center">
         <span className="text-rose-500">Related Keywords</span> to understand
