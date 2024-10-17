@@ -41,8 +41,6 @@ export const loader: LoaderFunction = async () => {
     // Fetch all totals from the /totals endpoint
     const { data } = await trackingAPI.get("/totals");
 
-    console.log(data);
-
     // Return the data to the component
     return json({ totals: data });
   } catch (err) {
