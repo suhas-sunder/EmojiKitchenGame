@@ -41,6 +41,8 @@ export const loader: LoaderFunction = async () => {
     // Fetch all totals from the /totals endpoint
     const { data } = await trackingAPI.get("/totals");
 
+    console.log(data);
+
     // Return the data to the component
     return json({ totals: data });
   } catch (err) {
@@ -89,6 +91,8 @@ function Buttons({
   const { totals }: { totals: TotalsType[] } = useLoaderData();
 
   useEffect(() => {
+    console.log(totals);
+
     if (totals.length > 0 && totalStats.length === 0) {
       setTotalStats(totals);
     }
@@ -182,6 +186,7 @@ export default function EmojiCombos() {
   const [displayLimit, setDisplayLimit] = useState<number>(18);
   const [searchDisplayLimit, setSearchDisplayLimit] = useState<number>(73); // Default to 73
   const [totalStats, setTotalStats] = useState<TotalsType[]>([]);
+  const [loadCombos, setLoadCombos] = useState<boolean>(false);
   useBodyEventListeners({ setDisplayLimit: setSearchDisplayLimit });
 
   useEffect(() => {
@@ -247,11 +252,17 @@ export default function EmojiCombos() {
         </h1>
       </header>
       <main
-        onMouseEnter={() => setDisplayLimit(1000)}
-        onTouchStart={() => setDisplayLimit(1000)}
+        onMouseEnter={() => {
+          setDisplayLimit(1000);
+          setLoadCombos(true);
+        }}
+        onTouchStart={() => {
+          setDisplayLimit(1000);
+          setLoadCombos(true);
+        }}
         className="flex flex-col justify-center items-center tracking-wider text-slate-800 font-nunito"
       >
-        <Outlet context={{ totalStats, setTotalStats }} />
+        <Outlet context={{ totalStats, setTotalStats, loadCombos }} />
         <h2 className="text-sky-600 mt-10 hover:text-sky-500 text-center mx-5">
           <Link to="/copy-and-paste/emoji-copy-and-paste">
             Click here to view a list of all copy and paste emojis!
