@@ -6,24 +6,18 @@ import { posthog } from "posthog-js";
 
 function PosthogInit() {
   useEffect(() => {
-    const initPosthog = () => {
+    const timer = setTimeout(() => {
       posthog.init("phc_mLbknZ7mYfJxODEdfCwb8T2Rmc6S488fHIiU9TARqWM", {
         api_host: "https://us.i.posthog.com",
-        person_profiles: "identified_only", // or 'always' for anonymous profiles
+        person_profiles: "identified_only", // or 'always' for anonymous users
       });
-    };
+    }, 5000); // 5 seconds delay
 
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      requestIdleCallback(initPosthog);
-    } else {
-      // Fallback for browsers without requestIdleCallback, with a delay
-      setTimeout(initPosthog, 5000); // 5s delay
-    }
+    return () => clearTimeout(timer); // Cleanup on unmount
   }, []);
 
   return null;
 }
-
 
 startTransition(() => {
   hydrateRoot(
